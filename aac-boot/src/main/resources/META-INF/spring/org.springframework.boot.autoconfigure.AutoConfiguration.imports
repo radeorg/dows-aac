@@ -1,0 +1,3 @@
+#com.shdy.admin.AacAdminAutoConfig
+#org.dows.aac.tenant.AacTenantAutoConfig
+#org.dows.aac.user.AacUserAutoConfig
