@@ -10,23 +10,12 @@ import java.util.Collection;
 import java.util.List;
 
 
-public class AacUser extends User implements UserDetails {
-    @Getter
-    @Setter
-    private Long accountId;
+public interface AacUser /*extends User implements UserDetails*/ {
 
-    @Getter
-    @Setter
-    private List<Long> roleIds;
+    Long getAccountId();
 
-    @Getter
-    @Setter
-    private boolean superAccount;
+    List<Long> getRoleIds();
 
-    public AacUser(Long accountId, String username, String password, Collection<? extends GrantedAuthority> authorities,List<Long> roleIds,boolean superAccount)  {
-        super(username, password, authorities);
-        this.accountId = accountId;
-        this.roleIds = roleIds;
-        this.superAccount = superAccount;
-    }
+    boolean isSuperAccount();
+
 }

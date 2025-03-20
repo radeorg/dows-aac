@@ -1,6 +1,5 @@
 package org.dows.aac.api;
 
-import cn.hutool.core.util.StrUtil;
 import lombok.Getter;
 
 /**
@@ -23,7 +22,7 @@ public enum AuthKey {
     }
 
     public String buildKey(String key) {
-        if (StrUtil.isBlank(key)) {
+        if (key.isBlank()) {
             throw new RuntimeException("key不能为空");
         }
         return keyPrefix + key;

@@ -29,7 +29,7 @@
     <property name="MAX_ERROR_HISTORY" value="P30D"/>
 
     <!--日志应用名，例如/data/logs/app/app-info.log-->
-    <property name="LOG_HOME" value="/application/logs/"/>
+    <property name="LOG_HOME" value="/logs"/>
 
     <property name="LOG_INFO_FILE" value="${LOG_HOME}/${APP_NAME}/${APP_ENV}-info.log"/>
     <property name="LOG_INFO_FILE_GZ" value="${LOG_HOME}/${APP_NAME}/${APP_ENV}-info.%d{yyyyMMdd-HHmm}-%i.log.gz"/>

@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.dows.cloud</groupId>
         <artifactId>dows-aac</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>${revision}</version>
     </parent>
     <artifactId>aac-oauth</artifactId>
 
@@ -19,14 +19,14 @@
             <artifactId>aac-security</artifactId>
         </dependency>
 
-        <dependency>
+        <!--<dependency>
             <groupId>org.dows.cloud</groupId>
-            <artifactId>uat-api</artifactId>
+            <artifactId>uim-api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.dows.cloud</groupId>
             <artifactId>rbac-api</artifactId>
-        </dependency>
+        </dependency>-->
 
         <dependency>
             <groupId>org.springframework.security</groupId>
@@ -35,6 +35,14 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jdbc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
         </dependency>
 
 

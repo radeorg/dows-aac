@@ -1,6 +1,8 @@
 package org.dows.aac.config;
 
 import lombok.RequiredArgsConstructor;
+import org.dows.aac.api.AacVerifyConfig;
+import org.dows.aac.yml.AacProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
@@ -16,16 +18,18 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @EnableConfigurationProperties({AacProperties.class})
 //@ConditionalOnProperty(name = "aac.enabled", havingValue = "true", matchIfMissing = true)
-public class AacConfig {
+public class AacConfig implements AacVerifyConfig {
     private final AacProperties aacProperties;
+
 
 
     /**
      * 使用启动登录
+     *
      * @return
      */
     public boolean isEnableLogin() {
-        return aacProperties.getLogin().isEnabled();
+        return aacProperties.getLoginSetting().isEnabled();
     }
 
     /**
@@ -38,8 +42,8 @@ public class AacConfig {
     }
 
 
-    public void setLoginEnable(Boolean enable) {
-        aacProperties.getLogin().setEnabled(enable);
+    public void setEnableLogin(Boolean enable) {
+        aacProperties.getLoginSetting().setEnabled(enable);
     }
 }
 

@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>dows-aac</artifactId>
-        <groupId>org.dows.cloud</groupId>
-        <version>1.0.0-SNAPSHOT</version>
-    </parent>
-
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>aac-repository</artifactId>
+    <parent>
+        <groupId>org.dows.cloud</groupId>
+        <artifactId>dows-aac</artifactId>
+        <version>${revision}</version>
+    </parent>
+    <artifactId>aac-service</artifactId>
 
     <dependencies>
         <dependency>
@@ -16,9 +15,5 @@
             <artifactId>aac-api</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.dows.framework</groupId>
-            <artifactId>crud-mybatis</artifactId>
-        </dependency>
     </dependencies>
 </project>

@@ -1,5 +1,6 @@
 package org.dows.aac.security.filter;
 
+import cn.hutool.jwt.JWTUtil;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -7,14 +8,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.dows.aac.api.utils.JWTUtil;
 import org.dows.aac.config.AacConfig;
 import org.dows.aac.config.AacProperties;
-import org.dows.aac.handler.AacCache;
+import org.dows.aac.security.AacCache;
 import org.dows.aac.security.UserDetailsServiceHandler;
-import org.dows.framework.cache.caffeine.CaffeineTemplate;
-import org.dows.rbac.api.RbacApi;
-import org.dows.rbac.api.constant.UserInfoEnum;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -40,10 +37,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 
     private final AacConfig aacConfig;
-    
+
     private final AacCache aacCache;
 
     List<String> whiteList;
+
     @PostConstruct
     public void init() {
         whiteList = Arrays.stream(aacConfig.getWhitelist()).toList();
@@ -62,7 +60,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        if(whiteList.contains(request.getRequestURI())){
+        if (whiteList.contains(request.getRequestURI())) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -89,7 +87,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         //注意Bearer后面还有一个空格
         if (!StringUtils.hasLength(header) || !StringUtils.startsWithIgnoreCase(header, "Bearer ")) {
             // 不需要登录验证
-            if(!aacConfig.isEnableLogin()){
+            if (!aacConfig.isEnableLogin()) {
                 filterChain.doFilter(request, response);
                 return;
             }

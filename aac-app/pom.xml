@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>dows-aac</artifactId>
-        <groupId>org.dows.cloud</groupId>
-        <version>1.0.0-SNAPSHOT</version>
-    </parent>
-
     <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.dows.cloud</groupId>
+        <artifactId>dows-aac</artifactId>
+        <version>${revision}</version>
+    </parent>
     <artifactId>aac-app</artifactId>
 
     <properties>
@@ -17,36 +16,7 @@
     <dependencies>
         <dependency>
             <groupId>org.dows.cloud</groupId>
-            <artifactId>aac-rest</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.dows.cloud</groupId>
-            <artifactId>aac-config</artifactId>
-        </dependency>
-        <!--       <dependency>
-                   <groupId>org.dows.cloud</groupId>
-                   <artifactId>aac-oauth</artifactId>
-               </dependency>-->
-
-
-        <dependency>
-            <groupId>org.dows.cloud</groupId>
-            <artifactId>uat-boot</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.dows.cloud</groupId>
-            <artifactId>rbac-boot</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.dows.cloud</groupId>
-            <artifactId>app-boot</artifactId>
-        </dependency>
-
-
-        <dependency>
-            <groupId>org.dows.framework</groupId>
-            <artifactId>crud-mybatis</artifactId>
+            <artifactId>aac-boot</artifactId>
         </dependency>
 
         <dependency>
@@ -57,7 +27,10 @@
             <groupId>org.mariadb.jdbc</groupId>
             <artifactId>mariadb-java-client</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
@@ -79,19 +52,19 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-tomcat</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-undertow</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
-        <!--        <dependency>
-                    <groupId>org.springframework.security</groupId>
-                    <artifactId>spring-security-web</artifactId>
-                </dependency>-->
+
+
     </dependencies>
 
     <build>

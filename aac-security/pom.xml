@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.dows.cloud</groupId>
         <artifactId>dows-aac</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>${revision}</version>
     </parent>
     <artifactId>aac-security</artifactId>
 
@@ -15,16 +15,17 @@
         </dependency>
         <dependency>
             <groupId>org.dows.cloud</groupId>
-            <artifactId>aac-config</artifactId>
+            <artifactId>aac-handler</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.dows.cloud</groupId>
+            <artifactId>aac-yml</artifactId>
         </dependency>
 
+
         <dependency>
-            <groupId>org.dows.cloud</groupId>
-            <artifactId>uat-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.dows.cloud</groupId>
-            <artifactId>rbac-api</artifactId>
+            <groupId>org.dows.framework</groupId>
+            <artifactId>rade-core</artifactId>
         </dependency>
 
         <dependency>
@@ -32,19 +33,11 @@
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
 
-
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-oauth2-resource-server</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.dows.cloud</groupId>
-            <artifactId>aac-handler</artifactId>
-        </dependency>
-        <!--        <dependency>
-                    <groupId>org.springframework.security</groupId>
-                    <artifactId>spring-security-oauth2-jose</artifactId>
-                </dependency>-->
+
 
     </dependencies>
 </project>

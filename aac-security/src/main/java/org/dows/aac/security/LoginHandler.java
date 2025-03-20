@@ -7,11 +7,9 @@ import org.dows.aac.api.AacUser;
 import org.dows.aac.api.AuthKey;
 import org.dows.aac.api.LoginApi;
 import org.dows.aac.api.request.LoginRequest;
-import org.dows.aac.api.utils.JWTUtil;
-import org.dows.aac.config.AacProperties;
-import org.dows.aac.handler.AacCache;
-import org.dows.framework.api.Response;
-import org.dows.rbac.api.constant.UserInfoEnum;
+import org.dows.aac.api.response.LoginResponse;
+import org.dows.aac.yml.AacProperties;
+import org.dows.rade.web.Response;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,7 +20,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -46,7 +43,7 @@ public class LoginHandler implements LoginApi {
      * @return
      */
     @Override
-    public Response login(LoginRequest loginRequest, HttpServletRequest request) {
+    public LoginResponse login(LoginRequest loginRequest, HttpServletRequest request) {
         //根据账号和密码 创建 认证令牌对象
         UsernamePasswordAuthenticationToken upt =
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword());
@@ -55,10 +52,10 @@ public class LoginHandler implements LoginApi {
         if (authenticate == null) {
             throw new UsernameNotFoundException("登录失败");
         }
-        if (aacProperties.getLogin().getType().equalsIgnoreCase("single")) {
+        if (aacProperties.getLoginSetting().getType().equalsIgnoreCase("single")) {
             return singleToken(loginRequest, authenticate);
         }
-        if (aacProperties.getLogin().getType().equalsIgnoreCase("oauth")) {
+        if (aacProperties.getLoginSetting().getType().equalsIgnoreCase("oauth")) {
             return oauthToken(loginRequest, authenticate);
         }
         throw new AuthenticationServiceException("登录失败");
@@ -71,26 +68,26 @@ public class LoginHandler implements LoginApi {
      * @param loginRequest
      * @return
      */
-    public Response singleToken(LoginRequest loginRequest, Authentication authenticate) {
+    public LoginResponse singleToken(LoginRequest loginRequest, Authentication authenticate) {
         //创建安全上下文
         SecurityContext securityContext = SecurityContextHolder.getContext();
         //把用户认证信息放到 安全上下文中
         securityContext.setAuthentication(authenticate);
         //把上下文放到 持有人手中
         SecurityContextHolder.setContext(securityContext);
-        AacUser aacUser = (AacUser)authenticate.getPrincipal();
-        if(null == aacUser){
+        AacUser aacUser = (AacUser) authenticate.getPrincipal();
+        if (null == aacUser) {
             throw new UsernameNotFoundException("登录失败");
         }
 //        aacCache.putCache(UserInfoEnum.USER_INFO.getKey(),aacUser.getAccountId().toString(),aacUser);
         Map<String, String> map = new HashMap<>();
         map.put("accountId", aacUser.getAccountId().toString());
-        String token =  JWTUtil.getToken(map, aacProperties.getJwtSetting().getSecretKey());
-        aacCache.putCache(UserInfoEnum.SECURITY_CONTEXT.getKey(), token,securityContext);
+        String token = JWTUtil.getToken(map, aacProperties.getJwtSetting().getSecretKey());
+        aacCache.putCache(UserInfoEnum.SECURITY_CONTEXT.getKey(), token, securityContext);
         Map<String, Object> result = new HashMap<>();
         result.put("token", token);
         //第二个参数是盐值
-        log.info("账号： " + loginRequest.getUsername() + "token: "+token);
+        log.info("账号： " + loginRequest.getUsername() + "token: " + token);
         return Response.ok(result);
     }
 
@@ -100,7 +97,7 @@ public class LoginHandler implements LoginApi {
      * @param loginRequest
      * @return
      */
-    public Response oauthToken(LoginRequest loginRequest, Authentication authenticate) {
+    public LoginResponse oauthToken(LoginRequest loginRequest, Authentication authenticate) {
         //认证Id
         String id = UUID.randomUUID().toString();
         String key = AuthKey.CACHE_KEY_PREFIX.buildKey(id);

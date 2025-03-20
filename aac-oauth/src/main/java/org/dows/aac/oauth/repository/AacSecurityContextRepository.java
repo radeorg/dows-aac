@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dows.aac.api.AuthKey;
 import org.dows.aac.oauth.SupplierDeferredSecurityContext;
-import org.dows.framework.cache.caffeine.CaffeineTemplate;
 import org.springframework.security.core.context.DeferredSecurityContext;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;

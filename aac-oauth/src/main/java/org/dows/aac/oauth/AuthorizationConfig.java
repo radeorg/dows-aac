@@ -71,7 +71,8 @@ public class AuthorizationConfig {
     public SecurityFilterChain authFilterChain(HttpSecurity http) throws Exception {
         log.info("第一个过滤器");
         //授权服务配置 应用默认安全性 简化配置,在源码给你都配置好了
-        OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
+        //OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
+        OAuth2AuthorizationServerConfigurer.authorizationServer().configure(http);
         //禁用session,前后端分离不需要, cookie中就不会显示JSESSIONID
         http.sessionManagement(x -> x.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         //配置上下文 从缓存中[redis|caffeine]读取

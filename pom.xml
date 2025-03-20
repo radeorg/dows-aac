@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
     <parent>
-        <artifactId>dows-parent</artifactId>
         <groupId>org.dows.framework</groupId>
-        <version>20240120-SNAPSHOT</version>
+        <artifactId>rade-parent</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>dows-aac</artifactId>
     <groupId>org.dows.cloud</groupId>
-    <version>1.0.0-SNAPSHOT</version>
+    <artifactId>dows-aac</artifactId>
+    <version>${revision}</version>
     <packaging>pom</packaging>
 
     <properties>
-        <aac.version>${project.version}</aac.version>
-        <uat.version>1.0.0-SNAPSHOT</uat.version>
+        <revision>1.0.0-SNAPSHOT</revision>
+        
+        <uim.version>1.0.0-SNAPSHOT</uim.version>
         <rbac.version>1.0.0-SNAPSHOT</rbac.version>
-        <app.version>1.0.0-SNAPSHOT</app.version>
-        <log.version>1.0.0-SNAPSHOT</log.version>
     </properties>
 
     <modules>
@@ -30,133 +30,108 @@
         <module>aac-feign</module>
         <module>aac-handler</module>
         <module>aac-pojo</module>
-        <module>aac-repository</module>
+        <module>aac-service</module>
         <module>aac-rest</module>
         <module>aac-oauth</module>
         <module>aac-util</module>
         <module>aac-security</module>
+        <module>aac-yml</module>
     </modules>
 
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>org.dows.cloud</groupId>
                 <artifactId>aac-api</artifactId>
-                <groupId>org.dows.cloud</groupId>
-                <version>${aac.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
+                <groupId>org.dows.cloud</groupId>
                 <artifactId>aac-app</artifactId>
-                <groupId>org.dows.cloud</groupId>
-                <version>${aac.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
+                <groupId>org.dows.cloud</groupId>
                 <artifactId>aac-biz</artifactId>
-                <groupId>org.dows.cloud</groupId>
-                <version>${aac.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
+                <groupId>org.dows.cloud</groupId>
                 <artifactId>aac-boot</artifactId>
-                <groupId>org.dows.cloud</groupId>
-                <version>${aac.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
+                <groupId>org.dows.cloud</groupId>
                 <artifactId>aac-config</artifactId>
-                <groupId>org.dows.cloud</groupId>
-                <version>${aac.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
+                <groupId>org.dows.cloud</groupId>
                 <artifactId>aac-feign</artifactId>
-                <groupId>org.dows.cloud</groupId>
-                <version>${aac.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
+                <groupId>org.dows.cloud</groupId>
+                <artifactId>aac-yml</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.dows.cloud</groupId>
                 <artifactId>aac-handler</artifactId>
-                <groupId>org.dows.cloud</groupId>
-                <version>${aac.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
+                <groupId>org.dows.cloud</groupId>
                 <artifactId>aac-pojo</artifactId>
-                <groupId>org.dows.cloud</groupId>
-                <version>${aac.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
-                <artifactId>aac-repository</artifactId>
                 <groupId>org.dows.cloud</groupId>
-                <version>${aac.version}</version>
+                <artifactId>aac-service</artifactId>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
+                <groupId>org.dows.cloud</groupId>
                 <artifactId>aac-rest</artifactId>
-                <groupId>org.dows.cloud</groupId>
-                <version>${aac.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.dows.cloud</groupId>
                 <artifactId>aac-oauth</artifactId>
-                <groupId>org.dows.cloud</groupId>
-                <version>${aac.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.dows.cloud</groupId>
                 <artifactId>aac-security</artifactId>
-                <groupId>org.dows.cloud</groupId>
-                <version>${aac.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.dows.cloud</groupId>
                 <artifactId>aac-util</artifactId>
-                <groupId>org.dows.cloud</groupId>
-                <version>${aac.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
 
-            <dependency>
+            <!--<dependency>
                 <groupId>org.dows.cloud</groupId>
-                <artifactId>uat-api</artifactId>
-                <version>${uat.version}</version>
+                <artifactId>uim-api</artifactId>
+                <version>${uim.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.dows.cloud</groupId>
                 <artifactId>rbac-api</artifactId>
                 <version>${rbac.version}</version>
-            </dependency>
-
-            <dependency>
-                <artifactId>log-api</artifactId>
-                <groupId>org.dows.cloud</groupId>
-                <version>${log.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.dows.cloud</groupId>
-                <artifactId>uat-boot</artifactId>
-                <version>${uat.version}</version>
-            </dependency>
-
-
-            <dependency>
-                <groupId>org.dows.cloud</groupId>
-                <artifactId>rbac-boot</artifactId>
-                <version>${rbac.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.dows.cloud</groupId>
-                <artifactId>app-boot</artifactId>
-                <version>${app.version}</version>
-            </dependency>
-
-
-            <dependency>
-                <groupId>com.auth0</groupId>
-                <artifactId>java-jwt</artifactId>
-                <version>3.8.2</version>
-            </dependency>
+            </dependency>-->
 
         </dependencies>
     </dependencyManagement>
