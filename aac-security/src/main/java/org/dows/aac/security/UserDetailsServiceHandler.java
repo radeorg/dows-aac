@@ -3,18 +3,17 @@ package org.dows.aac.security;
 import cn.hutool.core.collection.CollectionUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.dows.aac.api.AacUser;
-import org.dows.app.api.AppApi;
-import org.dows.app.api.AppContext;
-import org.dows.app.api.StateEnum;
-import org.dows.rbac.api.RbacApi;
-import org.dows.rbac.api.admin.response.RbacPermissionResponse;
-import org.dows.uat.api.AccountApi;
-import org.dows.uat.api.admin.request.FindAccountIdentifierRequest;
-import org.dows.uat.api.admin.response.AccountIdentifierResponse;
-import org.dows.uat.api.admin.response.AccountInstanceResponse;
-import org.dows.uat.api.admin.response.AccountOrgIdsResponse;
-import org.dows.uat.api.admin.response.AccountRoleRelationResponse;
+import org.dows.aac.api.AppApi;
+import org.dows.aac.api.RbacApi;
+import org.dows.aac.api.constant.StateEnum;
+import org.dows.aac.api.request.AppContext;
+import org.dows.aac.api.response.RbacPermissionResponse;
+import org.dows.uim.api.AccountApi;
+import org.dows.uim.api.request.FindAccountIdentifierRequest;
+import org.dows.uim.api.response.AccountIdentifierResponse;
+import org.dows.uim.api.response.AccountInstanceResponse;
+import org.dows.uim.api.response.AccountOrgIdsResponse;
+import org.dows.uim.api.response.AccountRoleRelationResponse;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -38,9 +37,7 @@ import java.util.*;
 @Slf4j
 @Component
 public class UserDetailsServiceHandler implements UserDetailsService {
-
     private final AccountApi accountApi;
-
     private final RbacApi rbacApi;
     private final AppApi appApi;
 
@@ -77,7 +74,7 @@ public class UserDetailsServiceHandler implements UserDetailsService {
             // 超级管理员角色Id默认1L
             Long roleId = 1L;
             roleIds = Collections.singletonList(roleId);
-            List<String> authority = appApi.getAllUri(appId);
+            List<String> authority = rbacApi.getAllUri(appId);
             Map<String,Object> roleInfo = new HashMap<>();
             roleInfo.put(String.valueOf(roleId),authority);
             list.add(new OAuth2UserAuthority(String.valueOf(roleId),roleInfo));
@@ -96,7 +93,7 @@ public class UserDetailsServiceHandler implements UserDetailsService {
 
         //把权限放入用户对象中
         //accountInstanceResponse.setMenu(auths);
-        return new AacUser(accountInstanceId,accountInstanceResponse.getAccountName(),
+        return new DefaultAacUser(accountInstanceId,accountInstanceResponse.getAccountName(),
                 accountInstanceResponse.getPassword(),
                 list,roleIds,accountInstanceResponse.isSuperAccount());
     }
@@ -127,7 +124,7 @@ public class UserDetailsServiceHandler implements UserDetailsService {
     private List<Long> getAuthList(Long accountInstanceId, String accountName) {
         String appId = AppContext.getAppId();
         // 获取组织
-        AccountOrgIdsResponse orgIdsByAccountId = accountApi.getOrgIdsByAccountId(accountInstanceId, false,appId);
+        AccountOrgIdsResponse orgIdsByAccountId = accountApi.getOrgIdsByAccountId(accountInstanceId, false, appId);
         List<Long> orgIds = orgIdsByAccountId.getAccountOrgId();
         List<Long> principals = new ArrayList<>();
         if (!CollectionUtils.isEmpty(orgIds)) {

@@ -7,12 +7,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.dows.aac.api.LoginApi;
 import org.dows.aac.api.request.LoginRequest;
 import org.dows.aac.api.response.LoginResponse;
-import org.dows.aac.config.AacConfig;
-import org.dows.aac.config.AacProperties;
-import org.dows.framework.api.Response;
-import org.dows.log.api.annotation.Actlog;
-import org.dows.rbac.api.annotation.Menu;
+import org.dows.aac.yml.AacConfig;
+import org.dows.aac.yml.AacProperties;
+import org.dows.rade.web.Response;
 import org.springframework.web.bind.annotation.*;
+
 
 @RequiredArgsConstructor
 @Slf4j
@@ -27,7 +26,7 @@ public class LoginRest {
     @Operation(summary = "是否开启登录")
     @GetMapping("/v1/api/aac/login/enable")
     public Boolean enableLogin(@RequestParam Boolean enable) {
-        aacConfig.setLoginEnable(enable);
+        //aacConfig.setLoginEnable(enable);
         return Boolean.TRUE;
     }
 
@@ -36,17 +35,17 @@ public class LoginRest {
      * @param httpServletRequest
      * @return
      */
-    @Actlog
+    //@Actlog
     @Operation(summary = "登录")
     @PostMapping("/v1/api/aac/login")
     public Response<LoginResponse> login(@RequestBody LoginRequest loginRequest, HttpServletRequest httpServletRequest) {
-        return loginApi.login(loginRequest, httpServletRequest);
+        return Response.ok(loginApi.login(loginRequest, httpServletRequest));
     }
 
     /**
      * 退出登陆
      */
-    @Actlog
+    //@Actlog
     @Operation(summary = "登出")
     @PostMapping("/v1/api/aac/logout")
     public Response logout(HttpServletRequest request) {

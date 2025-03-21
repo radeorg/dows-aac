@@ -40,6 +40,13 @@
 
     <dependencyManagement>
         <dependencies>
+
+            <dependency>
+                <groupId>org.dows.cloud</groupId>
+                <artifactId>uim-api</artifactId>
+                <version>${uim.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>org.dows.cloud</groupId>
                 <artifactId>aac-api</artifactId>

@@ -22,7 +22,7 @@ public enum AuthKey {
     }
 
     public String buildKey(String key) {
-        if (key.isBlank()) {
+        if (key.isEmpty()) {
             throw new RuntimeException("key不能为空");
         }
         return keyPrefix + key;

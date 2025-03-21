@@ -8,6 +8,7 @@ import org.dows.aac.api.AuthKey;
 import org.dows.aac.api.LoginApi;
 import org.dows.aac.api.request.LoginRequest;
 import org.dows.aac.api.response.LoginResponse;
+import org.dows.aac.security.utils.JWTUtil;
 import org.dows.aac.yml.AacProperties;
 import org.dows.rade.web.Response;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -84,11 +85,14 @@ public class LoginHandler implements LoginApi {
         map.put("accountId", aacUser.getAccountId().toString());
         String token = JWTUtil.getToken(map, aacProperties.getJwtSetting().getSecretKey());
         aacCache.putCache(UserInfoEnum.SECURITY_CONTEXT.getKey(), token, securityContext);
-        Map<String, Object> result = new HashMap<>();
-        result.put("token", token);
+        /*Map<String, Object> result = new HashMap<>();
+        result.put("token", token);*/
         //第二个参数是盐值
         log.info("账号： " + loginRequest.getUsername() + "token: " + token);
-        return Response.ok(result);
+        LoginResponse loginResponse = new LoginResponse();
+        loginResponse.setToken(token);
+        return loginResponse;
+        //return Response.ok(result);
     }
 
     /**
@@ -111,7 +115,8 @@ public class LoginHandler implements LoginApi {
         // 保存认证信息 过期时间1个小时 保持和access_token的过期时间一致
         //redisTemplate.opsForValue().set(key, securityContext, 1, TimeUnit.HOURS);
         aacCache.putCache("aac", key, securityContext);
-        return Response.ok(id);
+        LoginResponse loginResponse = new LoginResponse();
+        return loginResponse;
     }
 
     /**
