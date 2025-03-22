@@ -6,4 +6,6 @@ public interface AacConfig {
     String[] getWhitelist();
 
     JwtSetting getJwtSetting();
+
+    boolean isEnableLogin();
 }

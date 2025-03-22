@@ -6,11 +6,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.dows.aac.api.AacUser;
 import org.dows.aac.api.AuthKey;
 import org.dows.aac.api.LoginApi;
+import org.dows.aac.api.constant.UserInfoEnum;
 import org.dows.aac.api.request.LoginRequest;
 import org.dows.aac.api.response.LoginResponse;
 import org.dows.aac.security.utils.JWTUtil;
 import org.dows.aac.yml.AacProperties;
-import org.dows.rade.web.Response;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -41,7 +41,7 @@ public class LoginHandler implements LoginApi {
      *
      * @param loginRequest
      * @param request
-     * @return
+     * @return LoginResponse
      */
     @Override
     public LoginResponse login(LoginRequest loginRequest, HttpServletRequest request) {
@@ -91,6 +91,7 @@ public class LoginHandler implements LoginApi {
         log.info("账号： " + loginRequest.getUsername() + "token: " + token);
         LoginResponse loginResponse = new LoginResponse();
         loginResponse.setToken(token);
+
         return loginResponse;
         //return Response.ok(result);
     }
@@ -112,17 +113,30 @@ public class LoginHandler implements LoginApi {
         //把上下文放到 持有人手中
         SecurityContextHolder.setContext(securityContext);
 
+        AacUser aacUser = (AacUser) authenticate.getPrincipal();
+        if (null == aacUser) {
+            throw new UsernameNotFoundException("登录失败");
+        }
+        Map<String, String> map = new HashMap<>();
+        map.put("accountId", aacUser.getAccountId().toString());
+        String token = JWTUtil.getToken(map, aacProperties.getJwtSetting().getSecretKey());
+        aacCache.putCache(UserInfoEnum.SECURITY_CONTEXT.getKey(), token, securityContext);
+        log.info("账号： " + loginRequest.getUsername() + "token: " + token);
+
         // 保存认证信息 过期时间1个小时 保持和access_token的过期时间一致
         //redisTemplate.opsForValue().set(key, securityContext, 1, TimeUnit.HOURS);
         aacCache.putCache("aac", key, securityContext);
-        LoginResponse loginResponse = new LoginResponse();
-        return loginResponse;
+
+        LoginResponse response = new LoginResponse();
+        response.setToken(token);
+
+        return response;
     }
 
     /**
      * 退出
      *
-     * @param id
+     * @param token
      */
     @Override
     public void logout(String token) {

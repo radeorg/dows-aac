@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dows.aac.api.AacUser;
 import org.dows.aac.api.AacVerifyConfig;
+import org.dows.aac.api.RbacApi;
+import org.dows.aac.api.response.RbacUriRoleResponse;
 import org.dows.aac.security.AacAccessDeniedHandler;
 import org.dows.aac.security.AacLogoutHandler;
 import org.dows.aac.security.endpoint.AacAuthenticationEntryPoint;
@@ -65,7 +67,7 @@ public class AuthenticationConfig {
 
     private final AacVerifyConfig aacVerifyConfig;
 
-//    private final RbacApi rbacApi;
+    private final RbacApi rbacApi;
 
     //密码加密
     @Bean

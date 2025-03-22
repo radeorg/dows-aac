@@ -1,6 +1,5 @@
 package org.dows.aac.security.filter;
 
-import cn.hutool.jwt.JWTUtil;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -8,8 +7,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.dows.aac.api.constant.UserInfoEnum;
 import org.dows.aac.security.AacCache;
 import org.dows.aac.security.UserDetailsServiceHandler;
+import org.dows.aac.security.utils.JWTUtil;
 import org.dows.aac.yml.AacConfig;
 import org.dows.aac.yml.AacProperties;
 import org.springframework.http.HttpMethod;
