@@ -3,7 +3,7 @@ package org.dows.aac.security;
 import cn.hutool.core.collection.CollectionUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.dows.aac.api.AppApi;
+//import org.dows.aac.api.AppApi;
 import org.dows.aac.api.RbacApi;
 import org.dows.aac.api.constant.StateEnum;
 import org.dows.aac.api.request.AppContext;
@@ -39,7 +39,7 @@ import java.util.*;
 public class UserDetailsServiceHandler implements UserDetailsService {
     private final AccountApi accountApi;
     private final RbacApi rbacApi;
-    private final AppApi appApi;
+//    private final AppApi appApi;
 
 
     @Override
