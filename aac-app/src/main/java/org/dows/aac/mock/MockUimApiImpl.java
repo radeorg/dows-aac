@@ -1,4 +1,4 @@
-package org.dows.aac;
+package org.dows.aac.mock;
 
 import lombok.extern.slf4j.Slf4j;
 import org.dows.uim.api.AccountApi;
@@ -14,7 +14,7 @@ import java.util.List;
 
 @Slf4j
 @Component
-public class TestUimApi implements AccountApi {
+public class MockUimApiImpl implements AccountApi {
 
     @Override
     public Long setAccountInstance(AccountInstanceRequest accountInstance) {

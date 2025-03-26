@@ -1,4 +1,4 @@
-package org.dows.aac;
+package org.dows.aac.mock;
 
 import lombok.extern.slf4j.Slf4j;
 import org.dows.rbac.api.InitResources;

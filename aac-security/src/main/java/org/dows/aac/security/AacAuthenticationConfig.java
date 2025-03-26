@@ -1,4 +1,4 @@
-package org.dows.aac.security.config;
+package org.dows.aac.security;
 
 import cn.hutool.core.collection.CollectionUtil;
 import lombok.RequiredArgsConstructor;
@@ -49,7 +49,7 @@ import java.util.Set;
 @EnableWebSecurity
 @Slf4j
 @Configuration
-public class AuthenticationConfig {
+public class AacAuthenticationConfig {
     // token 过滤
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     // exception 过滤

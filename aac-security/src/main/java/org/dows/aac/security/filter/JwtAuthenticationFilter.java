@@ -1,7 +1,6 @@
 package org.dows.aac.security.filter;
 
 import cn.hutool.jwt.JWT;
-import jakarta.annotation.PostConstruct;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,8 +19,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  *  Token过滤器,只登陆1次
@@ -33,18 +30,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final UserDetailsServiceHandler userDetailsServiceHandler;
 
-//    private final AacProperties aacProperties;
-
     private final AacSettings aacSettings;
 
     private final Cacheable cacheable;
 
-    private List<String> whiteList;
-
+    /*private List<String> whiteList;
     @PostConstruct
     public void init() {
         whiteList = Arrays.stream(aacSettings.getWhitelist()).toList();
-    }
+    }*/
 
     /**
      * 所有请求的过滤器
@@ -58,11 +52,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-
+        /*Arrays.stream(aacSettings.getWhitelist()).toList()
         if (whiteList.contains(request.getRequestURI())) {
             filterChain.doFilter(request, response);
             return;
-        }
+        }*/
 
         //origin：指定可以访问本项目的IP
         String origin = request.getHeader("Origin");

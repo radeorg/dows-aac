@@ -1,4 +1,4 @@
-package org.dows.aac.security.handler;
+package org.dows.aac.security;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;

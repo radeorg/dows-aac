@@ -16,9 +16,7 @@ spring:
     appId: 1
   profiles:
     include: |
-      mysql,apidoc,mybatis,app,
-      aac-root,aac-caffeine,aac-jwt,aac-captcha,aac-uri,aac-menu,aac-role,rbac-caffeine,
-      rbac-root,rbac-uri,rbac-menu,rbac-role
+      mysql,apidoc,aac,captcha,caffeine
     active: dev
 
 

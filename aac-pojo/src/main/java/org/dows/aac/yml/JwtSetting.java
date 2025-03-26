@@ -9,7 +9,7 @@ import lombok.Data;
         // 令牌密钥
         private String secretKey;
         // token的过期时间
-        private String expiration;
+        private long expiration;
         // 刷新令牌的过期时间
-        private String refreshExpiration;
+        private long refreshExpiration;
     }
