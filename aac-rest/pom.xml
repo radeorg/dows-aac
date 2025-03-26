@@ -12,7 +12,7 @@
     <dependencies>
         <dependency>
             <groupId>org.dows.cloud</groupId>
-            <artifactId>aac-biz</artifactId>
+            <artifactId>aac-handler</artifactId>
         </dependency>
         <dependency>
             <groupId>org.dows.cloud</groupId>

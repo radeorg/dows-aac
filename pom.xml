@@ -24,7 +24,6 @@
     <modules>
         <module>aac-api</module>
         <module>aac-app</module>
-        <module>aac-biz</module>
         <module>aac-boot</module>
         <module>aac-config</module>
         <module>aac-feign</module>
@@ -33,7 +32,6 @@
         <module>aac-service</module>
         <module>aac-rest</module>
         <module>aac-oauth</module>
-        <module>aac-util</module>
         <module>aac-security</module>
     </modules>
 
