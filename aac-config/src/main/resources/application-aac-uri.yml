@@ -1,9 +1,0 @@
-dows:
-  uri:
-    items:
-      - appId: aac
-        name: '授权管理'
-        code: aac
-        roles: manager
-        scanPackages: org.dows.aac.rest.admin
-

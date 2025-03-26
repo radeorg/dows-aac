@@ -2,7 +2,7 @@ package org.dows.aac.security.filter;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.dows.aac.security.provider.PhoneCodeAuthenticationToken;
+import org.dows.aac.security.token.PhoneCodeAuthenticationToken;
 import org.springframework.lang.Nullable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;

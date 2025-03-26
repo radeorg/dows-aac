@@ -35,7 +35,6 @@
         <module>aac-oauth</module>
         <module>aac-util</module>
         <module>aac-security</module>
-        <module>aac-yml</module>
     </modules>
 
     <dependencyManagement>
@@ -45,6 +44,12 @@
                 <groupId>org.dows.cloud</groupId>
                 <artifactId>uim-api</artifactId>
                 <version>${uim.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.dows.cloud</groupId>
+                <artifactId>rbac-api</artifactId>
+                <version>${rbac.version}</version>
             </dependency>
 
             <dependency>

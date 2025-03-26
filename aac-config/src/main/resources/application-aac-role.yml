@@ -1,6 +1,0 @@
-dows:
-  role:
-    items:
-      - appId: aac
-        name: '管理员'
-        code: manager

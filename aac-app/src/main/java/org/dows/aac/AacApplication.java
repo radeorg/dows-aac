@@ -8,7 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @description
  * @date 2024年2月26日 下午12:06:05
  */
-@SpringBootApplication(scanBasePackages = {"org.dows.framework", "org.dows.aac", "com.shdy.admin"})
+@SpringBootApplication
 public class AacApplication {
     public static void main(String[] args) {
         SpringApplication.run(AacApplication.class, args);

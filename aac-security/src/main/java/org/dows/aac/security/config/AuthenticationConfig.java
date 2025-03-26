@@ -3,16 +3,16 @@ package org.dows.aac.security.config;
 import cn.hutool.core.collection.CollectionUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.dows.aac.AacSettings;
 import org.dows.aac.api.AacUser;
-import org.dows.aac.api.AacVerifyConfig;
-import org.dows.aac.api.RbacApi;
-import org.dows.aac.api.response.RbacUriRoleResponse;
-import org.dows.aac.security.AacAccessDeniedHandler;
-import org.dows.aac.security.AacLogoutHandler;
-import org.dows.aac.security.endpoint.AacAuthenticationEntryPoint;
+import org.dows.aac.api.constant.AuthStatusCode;
+import org.dows.aac.security.endpoint.AacUnauthorizedEntryPoint;
 import org.dows.aac.security.filter.HandlerExceptionResolverFilter;
 import org.dows.aac.security.filter.JwtAuthenticationFilter;
-import org.dows.rade.status.AuthStatusCode;
+import org.dows.aac.security.handler.AacAccessDeniedHandler;
+import org.dows.aac.security.handler.AacLogoutHandler;
+import org.dows.rbac.api.RbacApi;
+import org.dows.rbac.api.admin.response.RbacUriRoleResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -50,22 +50,23 @@ import java.util.Set;
 @Slf4j
 @Configuration
 public class AuthenticationConfig {
-
+    // token 过滤
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-
-    private final AacAuthenticationEntryPoint aacAuthenticationEntryPoint;
+    // exception 过滤
+    private final HandlerExceptionResolverFilter handlerExceptionResolverFilter;
+    // 未授权
+    private final AacUnauthorizedEntryPoint aacUnauthorizedEntryPoint;
     // 拒绝
     private final AacAccessDeniedHandler aacAccessDeniedHandler;
     // 登出
     private final AacLogoutHandler aacLogoutHandler;
-    // filter 异常处理
-    private final HandlerExceptionResolverFilter handlerExceptionResolverFilter;
-
-//    private final AacUsernamePasswordAuthenticationProvider aacUsernamePasswordAuthenticationProvider;
 
     private final UserDetailsService userDetailsServiceHandler;
 
-    private final AacVerifyConfig aacVerifyConfig;
+    //private final AacUsernamePasswordAuthenticationProvider aacUsernamePasswordAuthenticationProvider;
+
+    private final AacSettings aacSettings;
+
 
     private final RbacApi rbacApi;
 
@@ -89,14 +90,14 @@ public class AuthenticationConfig {
                 //先进行jwt 校验 在进行账号密码登录
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 //动态拦截所有请求 如果没有匹配上的 那么就拦截(白名单放行)
-                .authorizeHttpRequests(x -> x.requestMatchers(aacVerifyConfig.getWhitelist())
+                .authorizeHttpRequests(x -> x.requestMatchers(aacSettings.getWhitelist())
                                 .permitAll()
                                 .requestMatchers(HttpMethod.OPTIONS)
                                 .permitAll()
                                 .anyRequest()
 //                        .authenticated()
                                 .access((authentication, object) -> {
-                                    if (!aacVerifyConfig.isEnableLogin()) {
+                                    if (!aacSettings.isEnableLogin()) {
                                         return new AuthorizationDecision(true);
                                     } else {
                                         Authentication ac = authentication.get();
@@ -153,7 +154,7 @@ public class AuthenticationConfig {
                 .formLogin(AbstractHttpConfigurer::disable)
                 .addFilterBefore(handlerExceptionResolverFilter, CorsFilter.class)
                 //没有登录 直接返回异常信息
-                .exceptionHandling(x -> x.authenticationEntryPoint(aacAuthenticationEntryPoint)
+                .exceptionHandling(x -> x.authenticationEntryPoint(aacUnauthorizedEntryPoint)
                         .accessDeniedHandler(aacAccessDeniedHandler))
 //                .authenticationProvider(aacUsernamePasswordAuthenticationProvider)
                 //关闭csrf
@@ -171,7 +172,7 @@ public class AuthenticationConfig {
      */
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
-        String[] whitelist = aacVerifyConfig.getWhitelist();
+        String[] whitelist = aacSettings.getWhitelist();
         //放行登录接口 这样才能登录成功
         return x -> x.ignoring().requestMatchers(whitelist);
     }

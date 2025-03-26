@@ -2,9 +2,9 @@ package org.dows.aac.security;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.dows.aac.AacSettings;
 import org.dows.aac.api.AacApi;
 import org.dows.aac.api.AacUser;
-import org.dows.aac.api.AacVerifyConfig;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,7 +17,7 @@ import java.util.*;
 @Component
 @RequiredArgsConstructor
 public class AacHandler implements AacApi {
-    private final AacVerifyConfig aacVerifyConfig;
+    private final AacSettings aacSettings;
 
     @Override
     public AacUser getCurrentAccUser() {
@@ -25,7 +25,7 @@ public class AacHandler implements AacApi {
         if (principal instanceof AacUser) {
             return (AacUser) principal;
         }
-        if (!aacVerifyConfig.isEnableLogin()) {
+        if (!aacSettings.isEnableLogin()) {
             SecurityContext securityContext = new SecurityContextImpl();
             Map<String, Object> credits = new HashMap<>();
             credits.put("roleId", 1L);

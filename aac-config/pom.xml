@@ -20,21 +20,11 @@
             <groupId>org.dows.cloud</groupId>
             <artifactId>aac-pojo</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.dows.cloud</groupId>
-            <artifactId>aac-yml</artifactId>
-        </dependency>
   <!--      <dependency>
             <groupId>org.dows.cloud</groupId>
             <artifactId>rbac-api</artifactId>
         </dependency>-->
 
-
-        <!--        <dependency>
-                    <groupId>com.github.ben-manes.caffeine</groupId>
-                    <artifactId>caffeine</artifactId>
-                    <version>3.1.8</version>
-                </dependency>-->
     </dependencies>
 
     <build>

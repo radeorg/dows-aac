@@ -1,5 +1,6 @@
 package org.dows.aac.security.filter;
 
+import cn.hutool.jwt.JWT;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -7,12 +8,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.dows.aac.AacSettings;
+import org.dows.aac.api.Cacheable;
 import org.dows.aac.api.constant.UserInfoEnum;
-import org.dows.aac.security.AacCache;
 import org.dows.aac.security.UserDetailsServiceHandler;
-import org.dows.aac.security.utils.JWTUtil;
-import org.dows.aac.yml.AacConfig;
-import org.dows.aac.yml.AacProperties;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,7 +24,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * 只登陆1次
+ *  Token过滤器,只登陆1次
  */
 @RequiredArgsConstructor
 @Slf4j
@@ -34,18 +33,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final UserDetailsServiceHandler userDetailsServiceHandler;
 
-    private final AacProperties aacProperties;
+//    private final AacProperties aacProperties;
 
+    private final AacSettings aacSettings;
 
-    private final AacConfig aacConfig;
+    private final Cacheable cacheable;
 
-    private final AacCache aacCache;
-
-    List<String> whiteList;
+    private List<String> whiteList;
 
     @PostConstruct
     public void init() {
-        whiteList = Arrays.stream(aacConfig.getWhitelist()).toList();
+        whiteList = Arrays.stream(aacSettings.getWhitelist()).toList();
     }
 
     /**
@@ -82,13 +80,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
+
+
         //获取token信息
-        String header = request.getHeader(aacProperties.getJwtSetting().getHeader());
+        String header = request.getHeader(aacSettings.getJwtSetting().getHeader());
         log.info("header:{}", header);
         //注意Bearer后面还有一个空格
         if (!StringUtils.hasLength(header) || !StringUtils.startsWithIgnoreCase(header, "Bearer ")) {
             // 不需要登录验证
-            if (!aacConfig.isEnableLogin()) {
+            if (!aacSettings.isEnableLogin()) {
                 filterChain.doFilter(request, response);
                 return;
             }
@@ -97,9 +97,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
         String token = header.substring(7);
-        JWTUtil.verify(token, aacProperties.getJwtSetting().getSecretKey());
+        //JWTUtil.verify(token, aacProperties.getJwtSetting().getSecretKey());
 
-        Object o = aacCache.getCacheValue(UserInfoEnum.SECURITY_CONTEXT.getKey(), token);
+        Object o = cacheable.getCacheValue(UserInfoEnum.SECURITY_CONTEXT.getKey(), token);
 
         if (o == null) {
             //如果缓存没有 那么放行
@@ -127,10 +127,57 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 //                SecurityContextHolder.setContext(securityContext);
 //            }
 //        }
-
         //放行
         filterChain.doFilter(request, response);
     }
 
+
+
+    /**
+     * 处理app请求
+     */
+    private void handlerAppRequest(HttpServletRequest request, JWT jwt, String authToken) {
+        /*String userId = jwt.getPayload("userId").toString();
+        if (ObjectUtil.isNotEmpty(userId)
+                && SecurityContextHolder.getContext().getAuthentication() == null) {
+            UserDetails userDetails = radeCache.get("app:userDetails:" + userId,
+                    JwtUser.class);
+            if (jwtTokenUtil.validateToken(authToken) && userDetails != null) {
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                        userDetails, null, userDetails.getAuthorities());
+                authentication.setDetails(
+                        new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+                request.setAttribute("userId", jwt.getPayload("userId"));
+                request.setAttribute("tokenInfo", jwt);
+            }
+        }*/
+    }
+
+    /**
+     * 处理后台请求
+     */
+    private void handlerAdminRequest(HttpServletRequest request, JWT jwt, String authToken) {
+        /*String username = jwt.getPayload("username").toString();
+        if (username != null
+                && SecurityContextHolder.getContext().getAuthentication() == null) {
+            UserDetails userDetails = radeCache.get("admin:userDetails:" + username,
+                    JwtUser.class);
+            Integer passwordV = Convert.toInt(jwt.getPayload("passwordVersion"));
+            Integer rv = radeCache.get("admin:passwordVersion:" + jwt.getPayload("userId"),
+                    Integer.class);
+            if (jwtTokenUtil.validateToken(authToken, username) && Objects.equals(passwordV, rv)
+                    && userDetails != null) {
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                        userDetails, null, userDetails.getAuthorities());
+                authentication.setDetails(
+                        new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+                request.setAttribute("adminUsername", jwt.getPayload("username"));
+                request.setAttribute("adminUserId", jwt.getPayload("userId"));
+                request.setAttribute("tokenInfo", jwt);
+            }
+        }*/
+    }
 
 }

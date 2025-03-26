@@ -3,11 +3,10 @@ package org.dows.aac.security;
 import cn.hutool.core.collection.CollectionUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-//import org.dows.aac.api.AppApi;
-import org.dows.aac.api.RbacApi;
 import org.dows.aac.api.constant.StateEnum;
 import org.dows.aac.api.request.AppContext;
 import org.dows.aac.api.response.RbacPermissionResponse;
+import org.dows.rbac.api.RbacApi;
 import org.dows.uim.api.AccountApi;
 import org.dows.uim.api.request.FindAccountIdentifierRequest;
 import org.dows.uim.api.response.AccountIdentifierResponse;
@@ -37,9 +36,9 @@ import java.util.*;
 @Slf4j
 @Component
 public class UserDetailsServiceHandler implements UserDetailsService {
+
     private final AccountApi accountApi;
     private final RbacApi rbacApi;
-//    private final AppApi appApi;
 
 
     @Override
@@ -74,7 +73,7 @@ public class UserDetailsServiceHandler implements UserDetailsService {
             // 超级管理员角色Id默认1L
             Long roleId = 1L;
             roleIds = Collections.singletonList(roleId);
-            List<String> authority = rbacApi.getAllUri(appId);
+            List<String> authority = null;//rbacApi.getAllUri(appId);
             Map<String,Object> roleInfo = new HashMap<>();
             roleInfo.put(String.valueOf(roleId),authority);
             list.add(new OAuth2UserAuthority(String.valueOf(roleId),roleInfo));
