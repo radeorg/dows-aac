@@ -16,7 +16,7 @@ spring:
     appId: 1
   profiles:
     include: |
-      mysql,apidoc,aac,captcha,caffeine
+      mysql,apidoc,aac,captcha,cache
     active: dev
 
 

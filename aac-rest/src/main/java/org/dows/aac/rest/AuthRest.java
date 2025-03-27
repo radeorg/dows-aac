@@ -33,6 +33,7 @@ public class AuthRest {
     }
 
     /**
+     * 登录即注册，注册即登录
      * @param loginRequest
      * @param httpServletRequest
      * @return

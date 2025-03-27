@@ -1,6 +1,6 @@
 dows:
   aac:
-    login:
+    loginSetting:
       type: single
       url: /v1/api/aac/login
     whitelist:
@@ -15,7 +15,7 @@ dows:
       - /api-docs/**
       - /favicon.ico
       - /ws
-    jwt-setting:
+    jwtSetting:
       # 令牌自定义标识
       header: Authorization
       # 令牌密钥

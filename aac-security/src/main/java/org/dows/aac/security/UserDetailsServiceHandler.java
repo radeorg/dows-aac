@@ -3,8 +3,8 @@ package org.dows.aac.security;
 import cn.hutool.core.collection.CollectionUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.dows.aac.api.AacContext;
 import org.dows.aac.api.constant.StateEnum;
-import org.dows.aac.api.request.AppContext;
 import org.dows.aac.api.response.RbacPermissionResponse;
 import org.dows.rbac.api.RbacApi;
 import org.dows.uim.api.AccountApi;
@@ -39,12 +39,13 @@ public class UserDetailsServiceHandler implements UserDetailsService {
 
     private final AccountApi accountApi;
     private final RbacApi rbacApi;
-
-
+    private final AacContext aacContext;
+//    @Value("${spring.application.appId}")
+//    private String appId;
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
         log.info("根据账号标识查询账号信息");
-        String appId = AppContext.getAppId();
+        String appId = aacContext.getAppId();
         AccountInstanceResponse accountInstanceResponse = accountApi.getAccountInstanceByAccountName(s,appId );
         Long accountInstanceId = null;
         if(null == accountInstanceResponse){
@@ -121,7 +122,7 @@ public class UserDetailsServiceHandler implements UserDetailsService {
      * @return
      */
     private List<Long> getAuthList(Long accountInstanceId, String accountName) {
-        String appId = AppContext.getAppId();
+        String appId = aacContext.getAppId();
         // 获取组织
         AccountOrgIdsResponse orgIdsByAccountId = accountApi.getOrgIdsByAccountId(accountInstanceId, false, appId);
         List<Long> orgIds = orgIdsByAccountId.getAccountOrgId();
