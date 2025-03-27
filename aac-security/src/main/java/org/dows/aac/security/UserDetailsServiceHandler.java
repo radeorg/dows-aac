@@ -4,9 +4,11 @@ import cn.hutool.core.collection.CollectionUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dows.aac.api.AacContext;
+import org.dows.aac.api.request.LoginRequest;
 import org.dows.rbac.api.RbacApi;
 import org.dows.rbac.api.admin.response.RbacUriResponse;
 import org.dows.uim.api.AccountApi;
+import org.dows.uim.api.request.AccountInstanceRequest;
 import org.dows.uim.api.response.AccountInstanceResponse;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -95,8 +97,19 @@ public class UserDetailsServiceHandler implements UserDetailsService {
         return defaultAacUser;
     }
 
-    public void newRegister(String name, String encode) {
+    public void newRegister(String name, String encode, LoginRequest loginRequest) {
+        AccountInstanceRequest accountInstanceRequest = new AccountInstanceRequest();
+        accountInstanceRequest.setPassword(encode);
+        accountInstanceRequest.setIdentifier(name);
+        accountInstanceRequest.setIdentifierType(loginRequest.getIdentifierType());
+        accountInstanceRequest.setAppId(loginRequest.getAppId());
+        accountInstanceRequest.setZoneNo("+86");
+        accountInstanceRequest.setCellphone(name);
+        accountInstanceRequest.setAvator("https://avatars.githubusercontent.com/u/1020407?v=4");
+        accountInstanceRequest.setSource(loginRequest.getSource());
+        accountInstanceRequest.setReferralsNo(loginRequest.getReferralsNo());
 
+        mockUimApiImpl.setAccountInstance(accountInstanceRequest);
     }
 }
 

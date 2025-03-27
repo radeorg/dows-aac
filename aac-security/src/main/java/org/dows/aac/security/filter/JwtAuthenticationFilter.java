@@ -8,6 +8,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dows.aac.AacSettings;
+import org.dows.aac.api.AacContext;
+import org.dows.aac.api.AacException;
 import org.dows.aac.api.Cacheable;
 import org.dows.aac.api.constant.UserInfoEnum;
 import org.dows.aac.security.UserDetailsServiceHandler;
@@ -19,6 +21,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  *  Token过滤器,只登陆1次
@@ -34,7 +37,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final Cacheable cacheable;
 
-    /*private List<String> whiteList;
+    private final AacContext aacContext;
+
+    /*private List<String> whiteList;AacContext
     @PostConstruct
     public void init() {
         whiteList = Arrays.stream(aacSettings.getWhitelist()).toList();
@@ -52,12 +57,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        /*Arrays.stream(aacSettings.getWhitelist()).toList()
-        if (whiteList.contains(request.getRequestURI())) {
+        long count = Arrays.stream(aacSettings.getWhitelist())
+                .filter(w -> w.equalsIgnoreCase(request.getRequestURI()))
+                .count();
+        if (count > 0) {
             filterChain.doFilter(request, response);
             return;
-        }*/
-
+        }
         //origin：指定可以访问本项目的IP
         String origin = request.getHeader("Origin");
         response.setContentType("application/json;charset=UTF-8");
@@ -74,13 +80,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-
-
         //获取token信息
-        String header = request.getHeader(aacSettings.getJwtSetting().getHeader());
-        log.info("header:{}", header);
+        String token = request.getHeader(aacSettings.getJwtSetting().getHeader());
+        String appId = request.getHeader("AppId");
+        if (appId != null && appId.isBlank()) {
+            throw new AacException("appId不能为空");
+        }
+        // 设置appId
+        aacContext.setAppId(appId);
+        log.debug("Bearer token :{}", token);
         //注意Bearer后面还有一个空格
-        if (!StringUtils.hasLength(header) || !StringUtils.startsWithIgnoreCase(header, "Bearer ")) {
+        if (!StringUtils.hasLength(token) || !StringUtils.startsWithIgnoreCase(token, "Bearer ")) {
             // 不需要登录验证
             if (!aacSettings.isEnableLogin()) {
                 filterChain.doFilter(request, response);
@@ -90,7 +100,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
-        String token = header.substring(7);
+        token = token.substring(7);
         //JWTUtil.verify(token, aacProperties.getJwtSetting().getSecretKey());
 
         Object o = cacheable.getCacheValue(UserInfoEnum.SECURITY_CONTEXT.getKey(), token);

@@ -3,6 +3,7 @@ package org.dows.aac.security;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.dows.aac.api.AacException;
 import org.dows.aac.api.AacUser;
 import org.dows.aac.api.Cacheable;
 import org.dows.aac.api.LoginApi;
@@ -47,7 +48,13 @@ public class AacLoginHandler implements LoginApi {
     public LoginResponse login(LoginRequest loginRequest, HttpServletRequest request) {
         //根据账号和密码 创建 认证令牌对象
         UsernamePasswordAuthenticationToken upt =
-                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword());
+                new UsernamePasswordAuthenticationToken(loginRequest.getIdentifier(), loginRequest.getPassword());
+        String appId = request.getHeader("AppId");
+        if (appId != null && appId.isBlank()) {
+            throw new AacException("appId不能为空");
+        }
+        loginRequest.setAppId(appId);
+        upt.setDetails(loginRequest);
         //进行登录 获取认证信息
         Authentication authenticate = authenticationManager.authenticate(upt);
         if (authenticate == null) {
@@ -88,7 +95,7 @@ public class AacLoginHandler implements LoginApi {
         /*Map<String, Object> result = new HashMap<>();
         result.put("token", token);*/
         //第二个参数是盐值
-        log.info("账号： " + loginRequest.getUsername() + "token: " + token);
+        log.info("账号： " + loginRequest.getIdentifier() + "token: " + token);
         LoginResponse loginResponse = new LoginResponse();
         loginResponse.setToken(token);
 
@@ -121,7 +128,7 @@ public class AacLoginHandler implements LoginApi {
         map.put("accountId", aacUser.getAccountId().toString());
         String token = null;//JWTUtil.getToken(map, aacProperties.getJwtSetting().getSecretKey());
         cacheable.putCache(UserInfoEnum.SECURITY_CONTEXT.getKey(), token, securityContext);
-        log.info("账号： " + loginRequest.getUsername() + "token: " + token);
+        log.info("账号： " + loginRequest.getIdentifier() + "token: " + token);
 
         // 保存认证信息 过期时间1个小时 保持和access_token的过期时间一致
         //redisTemplate.opsForValue().set(key, securityContext, 1, TimeUnit.HOURS);

@@ -1,6 +1,7 @@
 package org.dows.aac.security.provider;
 
 import lombok.RequiredArgsConstructor;
+import org.dows.aac.api.request.LoginRequest;
 import org.dows.aac.security.UserDetailsServiceHandler;
 import org.dows.uim.api.AccountApi;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -45,7 +46,9 @@ public class UsernamePasswordAuthenticationProvider implements AuthenticationPro
         UserDetails userDetails = userDetailsServiceHandler.loadUserByUsername(username);
         // 如果为空则注册
         if (userDetails == null) {
-            userDetailsServiceHandler.newRegister(authentication.getName(),passwordEncoder.encode(password));
+            userDetailsServiceHandler.newRegister(authentication.getName()
+                    ,passwordEncoder.encode(password)
+                    ,(LoginRequest)authentication.getDetails());
 //            List<GrantedAuthority> grantedAuthorities = List.of();
             userDetails = userDetailsServiceHandler.loadUserByUsername(username);
             return new UsernamePasswordAuthenticationToken(username, password, userDetails.getAuthorities());

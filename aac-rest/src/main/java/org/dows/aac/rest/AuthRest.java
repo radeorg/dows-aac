@@ -1,6 +1,7 @@
 package org.dows.aac.rest;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 //@Namespace(module = "aac", name = "用户信息", code = "aac.info", path = "/")
 @RequiredArgsConstructor
 @RestController
+@Tag(name="登录认证中心",description="登录认证中心")
 public class AuthRest {
 
     private final LoginApi loginApi;
