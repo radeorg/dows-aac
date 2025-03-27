@@ -9,6 +9,6 @@ import org.springframework.stereotype.Component;
 public class DefaultAacContext implements AacContext {
     @Override
     public String getAppId() {
-        return "";
+        return "1";
     }
 }

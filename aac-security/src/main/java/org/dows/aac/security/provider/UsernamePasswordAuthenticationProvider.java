@@ -1,8 +1,8 @@
 package org.dows.aac.security.provider;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.dows.aac.security.UserDetailsServiceHandler;
+import org.dows.uim.api.AccountApi;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -10,7 +10,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
 
 /**
  * 实现身份验证提供程序
@@ -19,11 +18,13 @@ import org.springframework.stereotype.Component;
  * @return
  * @throws Exception
  */
-@Slf4j
+/*@Slf4j
 @Component
+@RequiredArgsConstructor*/
 @RequiredArgsConstructor
 public class UsernamePasswordAuthenticationProvider implements AuthenticationProvider {
 
+    private final AccountApi accountApi;
     private final UserDetailsServiceHandler userDetailsServiceHandler;
     private final PasswordEncoder passwordEncoder;
 
@@ -42,6 +43,11 @@ public class UsernamePasswordAuthenticationProvider implements AuthenticationPro
         String username = authentication.getName();
         String password = authentication.getCredentials().toString();
         UserDetails userDetails = userDetailsServiceHandler.loadUserByUsername(username);
+        // 如果为空则注册
+        if (userDetails == null) {
+            //userDetailsServiceHandler.newRegister();
+        }
+        //Long accountInstanceId = accountApi.getAccountIdWithRegister(appId, s);
         if (passwordEncoder.matches(password, userDetails.getPassword())) {
             //因为UsernamePasswordAuthenticationToken的上级父类的父类是Authentication 所以可以直接返回
             return new UsernamePasswordAuthenticationToken(username, password, userDetails.getAuthorities());

@@ -11,8 +11,10 @@ import org.dows.aac.security.filter.HandlerExceptionResolverFilter;
 import org.dows.aac.security.filter.JwtAuthenticationFilter;
 import org.dows.aac.security.handler.AacAccessDeniedHandler;
 import org.dows.aac.security.handler.AacLogoutHandler;
+import org.dows.aac.security.provider.UsernamePasswordAuthenticationProvider;
 import org.dows.rbac.api.RbacApi;
 import org.dows.rbac.api.admin.response.RbacUriRoleResponse;
+import org.dows.uim.api.AccountApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -20,7 +22,6 @@ import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.CredentialsExpiredException;
 import org.springframework.security.authentication.ProviderManager;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -30,7 +31,6 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -60,10 +60,10 @@ public class AacAuthenticationConfig {
     private final AacAccessDeniedHandler aacAccessDeniedHandler;
     // 登出
     private final AacLogoutHandler aacLogoutHandler;
+    // 认证提供者
+    //private final UsernamePasswordAuthenticationProvider usernamePasswordAuthenticationProvider;
 
-    private final UserDetailsService userDetailsServiceHandler;
-
-    //private final AacUsernamePasswordAuthenticationProvider aacUsernamePasswordAuthenticationProvider;
+    private final UserDetailsServiceHandler userDetailsServiceHandler;
 
     private final AacSettings aacSettings;
 
@@ -187,17 +187,20 @@ public class AacAuthenticationConfig {
      *
      * @return
      * @throws Exception
+     * UsernamePasswordAuthenticationProvider
      */
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config, AccountApi accountApi) throws Exception {
         //return config.getAuthenticationManager();
-        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
+        /*DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
         //设置securityUserDetailService，告知security框架，按照指定的类进行身份校验
         daoAuthenticationProvider.setUserDetailsService(userDetailsServiceHandler);
-        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
+        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());*/
         //AacCellphoneCodeAuthenticationProvider mobilePhoneVerificationCodeProvider = new AacCellphoneCodeAuthenticationProvider();
         //mobilePhoneVerificationCodeProvider.setUserDetailsService(userDetailsServiceHandler);
-        ProviderManager pm = new ProviderManager(daoAuthenticationProvider/*, mobilePhoneVerificationCodeProvider*/);
+        UsernamePasswordAuthenticationProvider usernamePasswordAuthenticationProvider =
+                new UsernamePasswordAuthenticationProvider(accountApi, userDetailsServiceHandler, passwordEncoder());
+        ProviderManager pm = new ProviderManager(usernamePasswordAuthenticationProvider/*, mobilePhoneVerificationCodeProvider*/);
         return pm;
     }
 
