@@ -17,6 +17,38 @@ import java.util.List;
 public class MockUimApiImpl implements AccountApi {
 
     @Override
+    public Long getAccountWithRegister(String appId, AccountInstanceRequest accountInstanceRequest) {
+        return 1L;
+    }
+
+    @Override
+    public AccountInstanceResponse getAccountInstanceId(String appId, String identifier) {
+        AccountInstanceResponse accountInstanceResponse = new AccountInstanceResponse();
+        accountInstanceResponse.setAccountName("lait");
+        accountInstanceResponse.setAccountInstanceId(1L);
+        accountInstanceResponse.setSuperAccount(true);
+        accountInstanceResponse.setPassword("");
+
+        return accountInstanceResponse;
+    }
+
+    @Override
+    public List<Long> getRoleIdsByAccountId(String appId, Long accountId) {
+        return List.of(1L, 2L, 3L);
+    }
+
+    @Override
+    public List<Long> getAllRoleIds(String appId, Long accountId) {
+        return List.of(1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L, 10L);
+    }
+
+    @Override
+    public List<Long> getOrgIdsByAccountId(String appId, Long accountId, boolean check) {
+        return List.of(1L, 2L);
+    }
+
+
+    @Override
     public Long setAccountInstance(AccountInstanceRequest accountInstance) {
         return 0L;
     }

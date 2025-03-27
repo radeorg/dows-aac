@@ -4,13 +4,11 @@ import cn.hutool.core.collection.CollectionUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dows.aac.api.AacContext;
-import org.dows.aac.api.response.RbacPermissionResponse;
 import org.dows.rbac.api.RbacApi;
 import org.dows.rbac.api.admin.response.RbacUriResponse;
 import org.dows.uim.api.AccountApi;
 import org.dows.uim.api.response.AccountInstanceResponse;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -88,58 +86,17 @@ public class UserDetailsServiceHandler implements UserDetailsService {
                 }
             }
         }
-
         //把权限放入用户对象中
-        //accountInstanceResponse.setMenu(auths);
-        return new DefaultAacUser(accountInstanceResponse.getAccountInstanceId(),
+        DefaultAacUser defaultAacUser = new DefaultAacUser(accountInstanceResponse.getAccountInstanceId(),
                 accountInstanceResponse.getAccountName(),
                 accountInstanceResponse.getPassword(),
-                list,roleIds,accountInstanceResponse.isSuperAccount());
+                list, roleIds, accountInstanceResponse.isSuperAccount());
+        log.debug("{}", defaultAacUser);
+        return defaultAacUser;
     }
 
+    public void newRegister(String name, String encode) {
 
-    /**
-     * 组装权限信息 放入 SimpleGrantedAuthority
-     *
-     * @return
-     */
-    private List<GrantedAuthority> getGrantedAuthority(List<RbacPermissionResponse> auths) {
-        List<GrantedAuthority> list = new ArrayList<>();
-        for (RbacPermissionResponse x : auths) {
-            GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(x.getAuthority());
-            list.add(grantedAuthority);
-        }
-        return list;
     }
-
-
-//    /**
-//     * 根据账号id获取所有权限
-//     * 在分配权限的时候 如果只选择了按,那么也会把他的父级菜单给查询出,只有按钮都不选择的时候 菜单才不展示
-//     *
-//     * @param appId
-//     * @param accountInstanceId
-//     * @return
-//     */
-//    private List<Long> getAuthList(String appId, Long accountInstanceId) {
-//        // 获取账号组织所有角色ID
-//        List<Long> allRoleIds = mockUimApiImpl.getAllRoleIds(appId, accountInstanceId);
-//
-//        List<Long> orgIds = orgIdsByAccountId.getAccountOrgId();
-//        List<Long> principals = new ArrayList<>();
-//        if (!CollectionUtils.isEmpty(orgIds)) {
-//            principals.addAll(orgIds);
-//        }
-//        principals.add(accountInstanceId);
-//        // 获取账号当前角色ID
-//        List<AccountRoleRelationResponse> accountRoleRelationResponses = mockUimApiImpl
-//                .getRoleByAccountInstanceId(principals,appId);
-//        if (CollectionUtil.isNotEmpty(accountRoleRelationResponses)) {
-//            return accountRoleRelationResponses.stream().map(AccountRoleRelationResponse::getRbacRoleId).toList();
-//        }
-//        // 取他们的并集返回
-//        return list;
-//        //return CollectionUtil.newArrayList(new SimpleGrantedAuthority(String.valueOf(accountInstanceId)));
-//    }
 }
 

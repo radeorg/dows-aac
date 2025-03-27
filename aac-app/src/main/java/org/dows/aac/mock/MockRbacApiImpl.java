@@ -9,15 +9,36 @@ import org.dows.rbac.api.admin.request.SaveRbacRoleRequest;
 import org.dows.rbac.api.admin.response.*;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 @Slf4j
 @Component
 public class MockRbacApiImpl implements RbacApi {
+
+
     @Override
     public List<RbacRoleResponse> getRole(List<Long> roleIds) {
         return List.of();
+    }
+
+    @Override
+    public List<RbacUriResponse> getAllUri(String appId) {
+        List<RbacUriResponse> rbacUriResponses = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            RbacUriResponse rbacUriResponse = new RbacUriResponse();
+            rbacUriResponse.setAppId("1");
+            rbacUriResponse.setCode("rbac:read");
+            rbacUriResponse.setName("rbac:read");
+            rbacUriResponse.setUrl("/rbac/read");
+            rbacUriResponse.setDescr("rbac:read");
+            rbacUriResponse.setState(1);
+            rbacUriResponse.setShared(1);
+            rbacUriResponses.add(rbacUriResponse);
+        }
+        return rbacUriResponses;
+        //return RbacApi.super.getAllUri(appId);
     }
 
     @Override
@@ -37,7 +58,7 @@ public class MockRbacApiImpl implements RbacApi {
 
     @Override
     public List<String> getUriCode(List<Long> roleIds) {
-        return List.of();
+        return List.of("rbac:read", "rbac:write", "rbac:get", "rbac:query");
     }
 
     @Override

@@ -45,7 +45,10 @@ public class UsernamePasswordAuthenticationProvider implements AuthenticationPro
         UserDetails userDetails = userDetailsServiceHandler.loadUserByUsername(username);
         // 如果为空则注册
         if (userDetails == null) {
-            //userDetailsServiceHandler.newRegister();
+            userDetailsServiceHandler.newRegister(authentication.getName(),passwordEncoder.encode(password));
+//            List<GrantedAuthority> grantedAuthorities = List.of();
+            userDetails = userDetailsServiceHandler.loadUserByUsername(username);
+            return new UsernamePasswordAuthenticationToken(username, password, userDetails.getAuthorities());
         }
         //Long accountInstanceId = accountApi.getAccountIdWithRegister(appId, s);
         if (passwordEncoder.matches(password, userDetails.getPassword())) {
