@@ -60,8 +60,6 @@ public class AacAuthenticationConfig {
     private final AacAccessDeniedHandler aacAccessDeniedHandler;
     // 登出
     private final AacLogoutHandler aacLogoutHandler;
-    // 认证提供者
-    //private final UsernamePasswordAuthenticationProvider usernamePasswordAuthenticationProvider;
 
     private final UserDetailsServiceHandler userDetailsServiceHandler;
 
@@ -184,7 +182,7 @@ public class AacAuthenticationConfig {
      * public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
      * return config.getAuthenticationManager();
      * }
-     *
+     * 认证提供者
      * @return
      * @throws Exception
      * UsernamePasswordAuthenticationProvider

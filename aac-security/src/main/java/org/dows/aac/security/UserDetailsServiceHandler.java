@@ -32,8 +32,8 @@ import java.util.*;
 @Component
 public class UserDetailsServiceHandler implements UserDetailsService {
 
-    private final AccountApi mockUimApiImpl;
-    private final RbacApi mockRbacApiImpl;
+    private final AccountApi accountApi;
+    private final RbacApi rbacApi;
     private final AacContext aacContext;
 
     @Override
@@ -59,7 +59,7 @@ public class UserDetailsServiceHandler implements UserDetailsService {
          *                 throw new UsernameNotFoundException("账号不存在");
          *             }
          */
-        AccountInstanceResponse accountInstanceResponse = mockUimApiImpl.getAccountInstanceId(appId, s);
+        AccountInstanceResponse accountInstanceResponse = accountApi.getAccountInstanceId(appId, s);
         if (null == accountInstanceResponse) {
             log.info("账号不存在");
             return null;
@@ -72,16 +72,16 @@ public class UserDetailsServiceHandler implements UserDetailsService {
             Long roleId = 1L;
             roleIds = Collections.singletonList(roleId);
             // 获取所有资源
-            List<RbacUriResponse> authority = mockRbacApiImpl.getAllUri(appId);
+            List<RbacUriResponse> authority = rbacApi.getAllUri(appId);
             Map<String,Object> roleInfo = new HashMap<>();
             roleInfo.put(String.valueOf(roleId),authority);
             list.add(new OAuth2UserAuthority(String.valueOf(roleId),roleInfo));
         }else{
             // 获取账号及在所在组织的所有角色ID->根据角色ID获取对应的菜单&资源信息 组装权限信息 放入 GrantedAuthority,
-            roleIds = mockUimApiImpl.getAllRoleIds(appId, accountInstanceResponse.getAccountInstanceId());
+            roleIds = accountApi.getAllRoleIds(appId, accountInstanceResponse.getAccountInstanceId());
             if(CollectionUtil.isNotEmpty(roleIds)){
                 for (Long roleId : roleIds) {
-                    List<String> authority = mockRbacApiImpl.getUriCode(Collections.singletonList(roleId));
+                    List<String> authority = rbacApi.getUriCode(Collections.singletonList(roleId));
                     Map<String,Object> roleInfo = new HashMap<>();
                     roleInfo.put(String.valueOf(roleId),authority);
                     list.add(new OAuth2UserAuthority(String.valueOf(roleId),roleInfo));
@@ -103,13 +103,13 @@ public class UserDetailsServiceHandler implements UserDetailsService {
         accountInstanceRequest.setIdentifier(name);
         accountInstanceRequest.setIdentifierType(loginRequest.getIdentifierType());
         accountInstanceRequest.setAppId(loginRequest.getAppId());
-        accountInstanceRequest.setZoneNo("+86");
+        accountInstanceRequest.setZoneNo(loginRequest.getZoneNo());
         accountInstanceRequest.setCellphone(name);
-        accountInstanceRequest.setAvator("https://avatars.githubusercontent.com/u/1020407?v=4");
+        accountInstanceRequest.setAvator(loginRequest.getAvator());
         accountInstanceRequest.setSource(loginRequest.getSource());
         accountInstanceRequest.setReferralsNo(loginRequest.getReferralsNo());
 
-        mockUimApiImpl.setAccountInstance(accountInstanceRequest);
+        accountApi.setAccountInstance(accountInstanceRequest);
     }
 }
 

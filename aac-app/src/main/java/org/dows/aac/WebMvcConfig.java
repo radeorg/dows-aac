@@ -1,6 +1,5 @@
 package org.dows.aac;
 
-import com.github.xiaoymin.knife4j.spring.annotations.EnableKnife4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
@@ -10,7 +9,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 //
-@EnableKnife4j
+//@EnableKnife4j
 @EnableWebMvc
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
