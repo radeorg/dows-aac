@@ -113,6 +113,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         SecurityContext securityContext = (SecurityContext) o;
         //把上下文信息放入持有人手中 这样别的请求在进来 就有认证的权限了 就不需要再登陆了
         SecurityContextHolder.setContext(securityContext);
+        //SecurityContextHolder.getContext().setAuthentication(authentication);
         //获取认证信息是否存在
 //        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 //        if (!StringUtils.isEmpty(accountName) && auth == null) {
