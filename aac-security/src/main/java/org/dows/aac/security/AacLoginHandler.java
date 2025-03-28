@@ -1,17 +1,18 @@
 package org.dows.aac.security;
 
+import cn.hutool.jwt.JWTUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dows.aac.api.AacException;
 import org.dows.aac.api.AacUser;
-import org.dows.aac.api.Cacheable;
 import org.dows.aac.api.LoginApi;
 import org.dows.aac.api.constant.AuthKey;
-import org.dows.aac.api.constant.UserInfoEnum;
 import org.dows.aac.api.request.LoginRequest;
 import org.dows.aac.api.response.LoginResponse;
 import org.dows.aac.yml.AacProperties;
+import org.dows.rade.cache.RadeCache;
+import org.dows.rbac.api.constant.CacheKeyEnum;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,6 +22,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -33,7 +35,8 @@ public class AacLoginHandler implements LoginApi {
     //认证管理器
     private final AuthenticationManager authenticationManager;
 
-    private final Cacheable cacheable;
+    private final RadeCache radeCache;
+//    private final AacSettings aacSettings;
 
     private final AacProperties aacProperties;
 
@@ -85,22 +88,20 @@ public class AacLoginHandler implements LoginApi {
         SecurityContextHolder.setContext(securityContext);
         AacUser aacUser = (AacUser) authenticate.getPrincipal();
         if (null == aacUser) {
-            throw new UsernameNotFoundException("登录失败");
+            throw new UsernameNotFoundException("not exits account!");
         }
-//        aacCache.putCache(UserInfoEnum.USER_INFO.getKey(),aacUser.getAccountId().toString(),aacUser);
-        Map<String, String> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
         map.put("accountId", aacUser.getAccountId().toString());
-        String token = null;//JWTUtil.getToken(map, aacProperties.getJwtSetting().getSecretKey());
-        cacheable.putCache(UserInfoEnum.SECURITY_CONTEXT.getKey(), token, securityContext);
-        /*Map<String, Object> result = new HashMap<>();
-        result.put("token", token);*/
-        //第二个参数是盐值
-        log.info("账号： " + loginRequest.getIdentifier() + "token: " + token);
+        map.put("roleIds", aacUser.getRoleIds());
+        map.put("superAccount", aacUser.isSuperAccount());
+        String token = JWTUtil.createToken(map,
+                aacProperties.getJwtSetting().getSecretKey().getBytes(StandardCharsets.UTF_8));
+        // 缓存
+        radeCache.set(CacheKeyEnum.SECURITY_CONTEXT.getCacheKey(token), securityContext);
+        log.info("account:{},token:{}", loginRequest.getIdentifier(), token);
         LoginResponse loginResponse = new LoginResponse();
         loginResponse.setToken(token);
-
         return loginResponse;
-        //return Response.ok(result);
     }
 
     /**
@@ -127,12 +128,12 @@ public class AacLoginHandler implements LoginApi {
         Map<String, String> map = new HashMap<>();
         map.put("accountId", aacUser.getAccountId().toString());
         String token = null;//JWTUtil.getToken(map, aacProperties.getJwtSetting().getSecretKey());
-        cacheable.putCache(UserInfoEnum.SECURITY_CONTEXT.getKey(), token, securityContext);
+        //radeCache.putCache(UserInfoEnum.SECURITY_CONTEXT.getKey(), token, securityContext);
         log.info("账号： " + loginRequest.getIdentifier() + "token: " + token);
 
         // 保存认证信息 过期时间1个小时 保持和access_token的过期时间一致
         //redisTemplate.opsForValue().set(key, securityContext, 1, TimeUnit.HOURS);
-        cacheable.putCache("aac", key, securityContext);
+        //radeCache.putCache("aac", key, securityContext);
 
         LoginResponse response = new LoginResponse();
         response.setToken(token);
@@ -150,7 +151,7 @@ public class AacLoginHandler implements LoginApi {
 //        String key = AuthKey.CACHE_KEY_PREFIX.buildKey(token);
         //清空上下文
         SecurityContextHolder.clearContext();
-        cacheable.evictCache(UserInfoEnum.SECURITY_CONTEXT.getKey(), token);
+        radeCache.del(CacheKeyEnum.SECURITY_CONTEXT.getCacheKey(token));
         //删除缓存
 //        redisTemplate.delete(key);
     }
