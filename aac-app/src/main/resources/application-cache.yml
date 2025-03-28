@@ -1,8 +1,11 @@
-##spring:
-##  cache:
-##    type: CAFFEINE
-##    caffeine:
-##      spec: maximumSize=500,expireAfterAccess=600s
+spring:
+  cache:
+    type: CAFFEINE
+    file: assets/cache
+    caffeine:
+      spec: maximumSize=500,expireAfterAccess=600s
+rade:
+  cacheName: aac
 #
 #dows:
 #  cache:

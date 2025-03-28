@@ -1,6 +1,7 @@
 package org.dows.aac.security.filter;
 
 import cn.hutool.jwt.JWT;
+import cn.hutool.jwt.JWTUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,17 +11,18 @@ import lombok.extern.slf4j.Slf4j;
 import org.dows.aac.AacSettings;
 import org.dows.aac.api.AacContext;
 import org.dows.aac.api.AacException;
-import org.dows.aac.api.Cacheable;
-import org.dows.aac.api.constant.UserInfoEnum;
 import org.dows.aac.security.UserDetailsServiceHandler;
+import org.dows.rade.cache.RadeCache;
+import org.dows.rbac.api.constant.CacheKeyEnum;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 /**
@@ -34,8 +36,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final UserDetailsServiceHandler userDetailsServiceHandler;
 
     private final AacSettings aacSettings;
-
-    private final Cacheable cacheable;
+    //private final Cacheable cacheable;
+    private final RadeCache radeCache;
 
     private final AacContext aacContext;
 
@@ -101,16 +103,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
         token = token.substring(7);
-        //JWTUtil.verify(token, aacProperties.getJwtSetting().getSecretKey());
-
-        Object o = cacheable.getCacheValue(UserInfoEnum.SECURITY_CONTEXT.getKey(), token);
-
-        if (o == null) {
+        // token 验证
+        boolean verify = JWTUtil.verify(token, aacSettings.getJwtSetting().getSecretKey().getBytes(StandardCharsets.UTF_8));
+        if (!verify) {
+            //如果token验证失败,重新登录
+            throw new AacException("token验证失败");
+        }
+        // todo 缓存中获取认证信息，CacheKeyEnum.SECURITY_CONTEXT.getKey()
+        SecurityContextImpl securityContext = radeCache
+                .get(CacheKeyEnum.SECURITY_CONTEXT.getCacheKey(token), SecurityContextImpl.class);
+        if (securityContext == null) {
             //如果缓存没有 那么放行
             filterChain.doFilter(request, response);
             return;
         }
-        SecurityContext securityContext = (SecurityContext) o;
+        //SecurityContext securityContext = (SecurityContext) o;
         //把上下文信息放入持有人手中 这样别的请求在进来 就有认证的权限了 就不需要再登陆了
         SecurityContextHolder.setContext(securityContext);
         //SecurityContextHolder.getContext().setAuthentication(authentication);
