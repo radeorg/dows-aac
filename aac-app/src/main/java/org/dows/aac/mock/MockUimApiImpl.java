@@ -8,11 +8,12 @@ import org.dows.uim.api.response.AccountIdentifierResponse;
 import org.dows.uim.api.response.AccountInstanceResponse;
 import org.dows.uim.api.response.AccountOrgIdsResponse;
 import org.dows.uim.api.response.AccountRoleRelationResponse;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Slf4j
-//@Component
+@Component
 public class MockUimApiImpl implements AccountApi {
 
     @Override

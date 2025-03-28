@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.dows.aac.AacSettings;
 import org.dows.aac.api.AacContext;
 import org.dows.aac.api.AacException;
+import org.dows.aac.api.constant.AuthStatusCode;
 import org.dows.aac.security.UserDetailsServiceHandler;
 import org.dows.rade.cache.RadeCache;
 import org.dows.rbac.api.constant.CacheKeyEnum;
@@ -106,8 +107,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // token 验证
         boolean verify = JWTUtil.verify(token, aacSettings.getJwtSetting().getSecretKey().getBytes(StandardCharsets.UTF_8));
         if (!verify) {
-            //如果token验证失败,重新登录
-            throw new AacException("token验证失败");
+            //如果token验证失败（过期）,后面的拦截器重定向到登录页
+            throw new AacException(AuthStatusCode.TOKEN_EXPIRED);
         }
         // todo 缓存中获取认证信息，CacheKeyEnum.SECURITY_CONTEXT.getKey()
         SecurityContextImpl securityContext = radeCache
