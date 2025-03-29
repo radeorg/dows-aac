@@ -3,7 +3,6 @@ package org.dows.aac.security.provider;
 import lombok.RequiredArgsConstructor;
 import org.dows.aac.api.request.LoginRequest;
 import org.dows.aac.security.UserDetailsServiceHandler;
-import org.dows.uim.api.AccountApi;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,7 +24,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @RequiredArgsConstructor
 public class UsernamePasswordAuthenticationProvider implements AuthenticationProvider {
 
-    private final AccountApi accountApi;
+//    private final AccountApi accountApi;
     private final UserDetailsServiceHandler userDetailsServiceHandler;
     private final PasswordEncoder passwordEncoder;
 

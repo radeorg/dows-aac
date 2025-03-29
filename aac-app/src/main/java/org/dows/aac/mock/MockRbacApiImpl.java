@@ -18,12 +18,14 @@ import java.util.Map;
 public class MockRbacApiImpl implements RbacApi {
 
 
-    @Override
     public List<RbacRoleResponse> getRole(List<Long> roleIds) {
         return List.of();
     }
 
-    @Override
+    public List<RbacRoleResponse> getRoleInstance(String appId, List<Long> roleIds) {
+        return List.of();
+    }
+
     public List<RbacUriResponse> getAllUri(String appId) {
         List<RbacUriResponse> rbacUriResponses = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
@@ -86,7 +88,6 @@ public class MockRbacApiImpl implements RbacApi {
 
     }
 
-    @Override
     public Map<String, List<RbacUriRoleResponse>> getRoleUri() {
         return Map.of();
     }

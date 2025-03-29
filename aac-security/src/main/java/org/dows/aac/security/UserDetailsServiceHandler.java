@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.dows.aac.api.AacContext;
 import org.dows.aac.api.request.LoginRequest;
 import org.dows.rbac.api.RbacApi;
+import org.dows.rbac.api.RoleResourceResponse;
 import org.dows.rbac.api.admin.response.RbacUriResponse;
 import org.dows.uim.api.AccountApi;
 import org.dows.uim.api.request.AccountInstanceRequest;
@@ -64,7 +65,7 @@ public class UserDetailsServiceHandler implements UserDetailsService {
             log.info("账号不存在");
             return null;
         }
-        List<GrantedAuthority> list = new ArrayList<>();
+        List<GrantedAuthority> grantedAuthorityList = new ArrayList<>();
         List<Long> roleIds = null;
         // 超管
         if(accountInstanceResponse.isSuperAccount()){
@@ -72,27 +73,33 @@ public class UserDetailsServiceHandler implements UserDetailsService {
             Long roleId = 1L;
             roleIds = Collections.singletonList(roleId);
             // 获取所有资源
-            List<RbacUriResponse> authority = rbacApi.getAllUri(appId);
+            List<RbacUriResponse> authority = rbacApi.getAllUrisByAppId(appId);
             Map<String,Object> roleInfo = new HashMap<>();
             roleInfo.put(String.valueOf(roleId),authority);
-            list.add(new OAuth2UserAuthority(String.valueOf(roleId),roleInfo));
+            grantedAuthorityList.add(new OAuth2UserAuthority(String.valueOf(roleId),roleInfo));
         }else{
             // 获取账号及在所在组织的所有角色ID->根据角色ID获取对应的菜单&资源信息 组装权限信息 放入 GrantedAuthority,
             roleIds = accountApi.getAllRoleIds(appId, accountInstanceResponse.getAccountInstanceId());
+
             if(CollectionUtil.isNotEmpty(roleIds)){
-                for (Long roleId : roleIds) {
-                    List<String> authority = rbacApi.getUriCode(Collections.singletonList(roleId));
+                //for (Long roleId : roleIds) {
+                List<RoleResourceResponse> roleResourceResponses= rbacApi.getUrisByRoleIds(appId, roleIds);
+                    //List<String> authority = rbacApi.getUriCode(Collections.singletonList(roleId));
+                    //Map<String,Object> roleInfo = new HashMap<>();
+                    //roleInfo.put(String.valueOf(roleId),authority);
+                for (RoleResourceResponse rr : roleResourceResponses) {
                     Map<String,Object> roleInfo = new HashMap<>();
-                    roleInfo.put(String.valueOf(roleId),authority);
-                    list.add(new OAuth2UserAuthority(String.valueOf(roleId),roleInfo));
+                    roleInfo.put(String.valueOf(rr.getRoleId()),rr.getAuthority());
+                    grantedAuthorityList.add(new OAuth2UserAuthority(String.valueOf(rr.getRoleId()),roleInfo));
                 }
+                //}
             }
         }
         //把权限放入用户对象中
         DefaultAacUser defaultAacUser = new DefaultAacUser(accountInstanceResponse.getAccountInstanceId(),
                 accountInstanceResponse.getAccountName(),
                 accountInstanceResponse.getPassword(),
-                list, roleIds, accountInstanceResponse.isSuperAccount());
+                grantedAuthorityList, roleIds, accountInstanceResponse.isSuperAccount());
         log.debug("{}", defaultAacUser);
         return defaultAacUser;
     }
@@ -108,8 +115,7 @@ public class UserDetailsServiceHandler implements UserDetailsService {
         accountInstanceRequest.setAvator(loginRequest.getAvator());
         accountInstanceRequest.setSource(loginRequest.getSource());
         accountInstanceRequest.setReferralsNo(loginRequest.getReferralsNo());
-
-        accountApi.setAccountInstance(accountInstanceRequest);
+        accountApi.setAccountInstance(loginRequest.getAppId(),accountInstanceRequest);
     }
 }
 

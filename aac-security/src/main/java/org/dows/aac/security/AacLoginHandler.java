@@ -49,14 +49,15 @@ public class AacLoginHandler implements LoginApi {
      */
     @Override
     public LoginResponse login(LoginRequest loginRequest, HttpServletRequest request) {
-        //根据账号和密码 创建 认证令牌对象
-        UsernamePasswordAuthenticationToken upt =
-                new UsernamePasswordAuthenticationToken(loginRequest.getIdentifier(), loginRequest.getPassword());
+
         String appId = request.getHeader("AppId");
         if (appId != null && appId.isBlank()) {
             throw new AacException("appId不能为空");
         }
         loginRequest.setAppId(appId);
+        //根据账号和密码 创建 认证令牌对象
+        UsernamePasswordAuthenticationToken upt =
+                new UsernamePasswordAuthenticationToken(loginRequest.getIdentifier(), loginRequest.getPassword());
         upt.setDetails(loginRequest);
         //进行登录 获取认证信息
         Authentication authenticate = authenticationManager.authenticate(upt);
