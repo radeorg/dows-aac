@@ -1,0 +1,175 @@
+name: cicd
+
+on:
+  push:
+    branches:
+      #   - dev-*
+      - sit-*
+      - uat-*
+      - prd-*
+  pull_request:
+    branches:
+      - '*'
+env:
+  BRANCH_NAME: ${{ github.ref_name }}
+  PR_NUMBER: ${{ github.event.pull_request.number || 'NOT_A_PR' }}
+  COMMIT_EMAIL: ${{ github.event.head_commit.author.email || 'unknown' }}
+jobs:
+  CI:
+    #配置权限
+    permissions: write-all
+    runs-on: ubuntu-latest
+    steps:
+      # 下载代码
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: ${{ github.event_name == 'pull_request' && 2 || 0 }}
+
+      - name: get commit and changed file list
+        id: cfl
+        # app_branch=dows-uim:dev-1.0.250330:
+        run: |
+          echo "commit=$(git log -1 --pretty=%B)" >> $GITHUB_OUTPUT
+          if ${{ github.event_name == 'pull_request' }}; then
+            echo "changed_files=$(git diff --name-only -r HEAD^1 HEAD | xargs)" >> $GITHUB_OUTPUT
+          else
+            echo "changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }} | xargs)" >> $GITHUB_OUTPUT
+          fi
+          echo "app_branch=${{ env.MODULE_NAME }}:${{ env.BRANCH_NAME }}" >> $GITHUB_OUTPUT
+          echo "commit_id=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+          echo "trigger_env=${{ github.event.client_payload.env }}" >> $GITHUB_OUTPUT
+
+      - name: get branch-version:tag
+        id: btv
+        uses: jungwinter/split@master
+        with:
+          msg: ${{ github.ref_name }}
+          separator: "-"
+          maxsplit: -1
+
+      - name: print branch-version and changed file list
+        run: |
+          echo "=====分支版本：${{ steps.btv.outputs._0 }},${{ steps.btv.outputs._1 }}====="
+          echo "=====触发环境：${{ steps.cfl.outputs.trigger_env }}"
+          echo "=====变化文件:"
+          for file in ${{ steps.cfl.outputs.changed_files }}; do
+              echo "$file was changed"
+          done
+          
+#
+#      - name: Set up JDK 21
+#        # 安装 JDK
+#        uses: actions/setup-java@v3
+#        with:
+#          java-version: '21'
+#          distribution: 'oracle'
+#          cache: maven
+
+      - name: Cache JDK
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.jdk/cache
+            ~/.jdk/temurin-jdk-21*
+          key: ${{ runner.os }}-jdk-21-temurin
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+
+
+      # 本地仓库缓存
+      - name: Cache local Maven repository
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.m2/repository
+            ~/.m2/**/plugin
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+            ${{ runner.os }}-
+
+      # 配置settings.xml用于Maven私库验证
+      - name: maven-settings-xml-action
+        uses: whelk-io/maven-settings-xml-action@v20
+        with:
+          repositories: '[{"id":"2290151-snapshot-aLhHBl","url":"${{ secrets.MVN_REPOSITORY }}","releases":{"enabled":"false"},"snapshots":{"enabled":"true","updatePolicy":"always"}}]'
+          servers: '[{ "id": "2290151-snapshot-aLhHBl", "username": "${{ secrets.MVN_ACCOUNT }}", "password": "${{ secrets.MVN_PASS }}" }]'
+
+      - name: deploy with Maven
+        id: deploy_with_maven
+        #run: mvn -B deploy --file pom.xml
+        run: mvn deploy --file pom.xml
+
+
+      - name: gen deploy args
+        id: deploy_args
+        #run: echo "deploy_args=${{ env.PROJECT_NAME }}:${{ env.BRANCH_NAME }}:${{ steps.cfl.outputs.trigger_env }}:${{ steps.cfl.outputs.commit_id }}:${{ steps.cfl.outputs.changed_files }}:${{ steps.cfl.outputs.commit }}" >> $GITHUB_OUTPUT
+        run: |
+          {
+            echo "PROJECT_URL='${{ github.repository }}'"
+            echo "BRANCH_NAME='${{ env.BRANCH_NAME }}'"
+            echo "ACTOR_NAME='${{ github.actor }}'"
+            echo "ACTOR_MAIL='${{ env.COMMIT_EMAIL }}'"
+            echo "CHANGED_FILES='${{ steps.cfl.outputs.changed_files }}'"
+            echo "COMMIT_MSG='${{ steps.cfl.outputs.commit }}'"
+            echo "COMMIT_SHA='${{ steps.cfl.outputs.commit_id }}'"
+            echo "TRIGGER_ENV='${{ steps.cfl.outputs.trigger_env }}'"
+            
+            if [ "${{ steps.deploy_with_maven.outcome }}" == "success" ]; then
+              echo "ACTIONS_STATUS=success"
+            else
+              echo "ACTIONS_STATUS=failure"
+            fi
+          } > ./cicd/deploy.env
+
+      # if: ${{ steps.btv.outputs._0 == 'sit' || steps.cfl.outputs.trigger_env == 'release'}}
+      - name: deploy
+        uses: cross-the-world/ssh-scp-ssh-pipelines@latest
+        with:
+          host: ${{  secrets.AS_HOST_BOLE }}
+          user: ${{ secrets.AS_ACCOUNT_BOLE }}
+          pass: ${{ secrets.AS_PASS_BOLE }}
+          connect_timeout: 6000s
+          first_ssh:
+            mkdir -p ${{ vars.AS_WORKDIR_BOLE }}
+          scp: |
+            ./cicd/cicd.env => ${{ vars.AS_WORKDIR_BOLE }}/
+            ./cicd/deploy.env => ${{ vars.AS_WORKDIR_BOLE }}/
+            ./cicd/webhook.sh => ${{ vars.AS_WORKDIR_BOLE }}/
+          #项目地址 分支 触发人 触发邮箱 变更文件 提交信息 提交SHA 状态
+          last_ssh: |
+            echo "脚本路径: ${{ vars.AS_SCRIPT_BOLE }}"
+            echo "仓库: ${{ github.repository }}"
+            echo "分支: ${{ github.ref }}"
+            echo "操作者: ${{ github.actor }}"
+            echo "邮箱: ${{ env.COMMIT_EMAIL }}"
+            echo "变更文件: ${{ steps.cfl.outputs.changed_files }}"
+            echo "提交信息: ${{ steps.cfl.outputs.commit }}"
+            echo "提交SHA: ${{ steps.cfl.outputs.commit_id }}"
+            echo "工作路径: $GITHUB_WORKSPACE"
+            echo "当前路径: $(pwd)"
+            echo "--------------------------------"
+            cd ${{ vars.AS_WORKDIR_BOLE }}
+            sh ./webhook.sh
+#      - name: failure notification
+#        if: ${{ failure() }}
+#        #sshpass -p ${{secrets.AS_PASS_BOLE}} ssh -o StrictHostKeyChecking=no ${{ secrets.AS_ACCOUNT_BOLE }}@${{secrets.AS_HOST_BOLE}} "sh ${{ vars.AS_SCRIPT_BOLE }} $GITHUB_REF $GITHUB_ACTOR '$APP_NAME-prd' '部署失败' '${{ steps.cfl.outputs.changed_files }}' '${{ steps.cfl.outputs.commit }}' 'red'"
+#        run: |
+#          echo "RUNNER路径: $RUNNER_WORKSPACE"
+#          echo "WORKSPACE路径: $GITHUB_WORKSPACE"
+#          sh "$RUNNER_WORKSPACE/cicd/webhook.sh" '$GITHUB_REF' '$GITHUB_ACTOR' '$COMMIT_EMAIL' '${{ steps.cfl.outputs.changed_files }}' '${{ steps.cfl.outputs.commit }}' '${{ steps.cfl.outputs.commit_id }}' 'red'
+#
+#      - name: success notification
+#        if: ${{ success() }}
+#        #cd ${{ vars.AS_WORKDIR_BOLE }}
+#        run: |
+#          echo "RUNNER路径: $RUNNER_WORKSPACE"
+#          echo "WORKSPACE路径: $GITHUB_WORKSPACE"
+#          echo "当前路径: $(pwd)"
+#          sshpass -p ${{secrets.AS_PASS_BOLE}} ssh -o StrictHostKeyChecking=no ${{ secrets.AS_ACCOUNT_BOLE }}@${{secrets.AS_HOST_BOLE}} "sh ${{ vars.AS_WORKDIR_BOLE }}/webhook.sh" '$GITHUB_REF' '$GITHUB_ACTOR' '$COMMIT_EMAIL' '${{ steps.cfl.outputs.changed_files }}' '${{ steps.cfl.outputs.commit }}' '${{ steps.cfl.outputs.commit_id }}' 'green'"
+
