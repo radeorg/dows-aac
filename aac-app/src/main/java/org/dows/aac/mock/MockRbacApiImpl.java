@@ -31,10 +31,10 @@ public class MockRbacApiImpl implements RbacApi {
         for (int i = 0; i < 10; i++) {
             RbacUriResponse rbacUriResponse = new RbacUriResponse();
             rbacUriResponse.setAppId("1");
-            rbacUriResponse.setCode("rbac:read");
-            rbacUriResponse.setName("rbac:read");
-            rbacUriResponse.setUrl("/rbac/read");
-            rbacUriResponse.setDescr("rbac:read");
+//            rbacUriResponse.setCode("rbac:read");
+//            rbacUriResponse.setName("rbac:read");
+//            rbacUriResponse.setUrl("/rbac/read");
+//            rbacUriResponse.setDescr("rbac:read");
             rbacUriResponse.setState(1);
             rbacUriResponse.setShared(1);
             rbacUriResponses.add(rbacUriResponse);
