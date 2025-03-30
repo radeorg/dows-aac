@@ -145,5 +145,14 @@
 
         </dependencies>
     </dependencyManagement>
-
+    <distributionManagement>
+        <repository>
+            <id>2290151-snapshot-aLhHBl</id>
+            <url>https://packages.aliyun.com/634f4de0327f73640e96c28d/maven/2290151-snapshot-alhhbl</url>
+        </repository>
+        <snapshotRepository>
+            <id>2290151-snapshot-aLhHBl</id>
+            <url>https://packages.aliyun.com/634f4de0327f73640e96c28d/maven/2290151-snapshot-alhhbl</url>
+        </snapshotRepository>
+    </distributionManagement>
 </project>

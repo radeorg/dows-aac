@@ -1,9 +1,9 @@
-name: cicd
+name: dows-hrm
 
 on:
   push:
     branches:
-      #   - dev-*
+      - dev-*
       - sit-*
       - uat-*
       - prd-*
@@ -55,15 +55,7 @@ jobs:
           for file in ${{ steps.cfl.outputs.changed_files }}; do
               echo "$file was changed"
           done
-          
-#
-#      - name: Set up JDK 21
-#        # 安装 JDK
-#        uses: actions/setup-java@v3
-#        with:
-#          java-version: '21'
-#          distribution: 'oracle'
-#          cache: maven
+
 
       - name: Cache JDK
         uses: actions/cache@v3
@@ -102,6 +94,7 @@ jobs:
 
       - name: deploy with Maven
         id: deploy_with_maven
+        if: ${{ contains(env.BRANCH_NAME, 'sit') || contains(env.BRANCH_NAME, 'prd') }}
         #run: mvn -B deploy --file pom.xml
         run: mvn deploy --file pom.xml
 
@@ -119,7 +112,7 @@ jobs:
             echo "COMMIT_MSG='${{ steps.cfl.outputs.commit }}'"
             echo "COMMIT_SHA='${{ steps.cfl.outputs.commit_id }}'"
             echo "TRIGGER_ENV='${{ steps.cfl.outputs.trigger_env }}'"
-            
+          
             if [ "${{ steps.deploy_with_maven.outcome }}" == "success" ]; then
               echo "ACTIONS_STATUS=success"
             else
@@ -128,7 +121,7 @@ jobs:
           } > ./cicd/deploy.env
 
       # if: ${{ steps.btv.outputs._0 == 'sit' || steps.cfl.outputs.trigger_env == 'release'}}
-      - name: deploy
+      - name: deploy and notice
         uses: cross-the-world/ssh-scp-ssh-pipelines@latest
         with:
           host: ${{  secrets.AS_HOST_BOLE }}
