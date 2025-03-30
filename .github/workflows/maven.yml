@@ -129,11 +129,11 @@ jobs:
           pass: ${{ secrets.AS_PASS_BOLE }}
           connect_timeout: 6000s
           first_ssh:
-            mkdir -p ${{ vars.AS_WORKDIR_BOLE }}
+            mkdir -p ${{ vars.AS_WORKDIR_BOLE }}/aac
           scp: |
-            ./cicd/cicd.env => ${{ vars.AS_WORKDIR_BOLE }}/
-            ./cicd/deploy.env => ${{ vars.AS_WORKDIR_BOLE }}/
-            ./cicd/webhook.sh => ${{ vars.AS_WORKDIR_BOLE }}/
+            ./cicd/cicd.env => ${{ vars.AS_WORKDIR_BOLE }}/aac/
+            ./cicd/deploy.env => ${{ vars.AS_WORKDIR_BOLE }}/aac/
+            ./cicd/webhook.sh => ${{ vars.AS_WORKDIR_BOLE }}/aac/
           #项目地址 分支 触发人 触发邮箱 变更文件 提交信息 提交SHA 状态
           last_ssh: |
             echo "脚本路径: ${{ vars.AS_SCRIPT_BOLE }}"
