@@ -35,10 +35,10 @@ source ./cicd.env && source ./deploy.env || { echo "加载环境变量失败"; e
 # 状态颜色和文字设置
 if [ "$ACTIONS_STATUS" = "success" ]; then
     COLOR="green"
-    STATE="部署成功 ✅"
+    STATE="成功 ✅"
 else
     COLOR="red"
-    STATE="部署失败 ❌"
+    STATE="失败 ❌"
 fi
 
 #变更文件换行处理
@@ -52,21 +52,49 @@ echo "代码检测: ${SONARQUBE_HOST}/dashboard?branch=${BRANCH_NAME}&id=${SONAR
 echo "参数列表: ${PROJECT_URL} ,${BRANCH_NAME}, ${ACTOR_NAME},${ACTOR_MAIL},${CHANGED_FILES},${COMMIT_MSG},${COMMIT_SHA},${ACTIONS_STATUS}"
 
 #组装URL
-project_commit_url="${PROJECT_URL}/-/commit/${COMMIT_SHA}"
+COMMIT_URL="${PROJECT_URL}/-/commit/${COMMIT_SHA}"
 #sonarqube
-sonarqube_branch_url="${SONARQUBE_HOST}/dashboard?branch=${BRANCH_NAME}&id=${SONARQUBE_KEY}"
+SONARQUBE_URL="${SONARQUBE_HOST}/dashboard?branch=${BRANCH_NAME}&id=${SONARQUBE_KEY}"
 
-time="$(date "+%Y-%m-%d")"
-times="$(date "+%H:%M:%S")"
-xingqi="$(date "+%A")"
-public_ip=$(curl -s https://api.ipify.org)
-#runner 中需要apt-get install -y ifconfig
-ip=$(ifconfig | grep inet | awk 'NR==3{print $2}')
-lsblk=$(df -h / | awk '{print $4"/"$2 , $5}' | tail -n 1 )
-mem_info=$(free -h) # 运行 free -h 命令并将结果保存到变量 mem_info 中
-total_memory=$(echo "$mem_info" | grep "Mem:" | awk '{print $2}') # 从输出结果中提取第二列（Total）的值作为总内存大小
-mem=$(free | grep Mem | awk '{print $3/$2 * 100.0}')
-cpu=$(top -b -n1 | grep "Cpu(s)" | awk '{print $2}')
+HOST="$(curl -s https://api.ipify.org || echo "N/A") ($(hostname -I | awk '{print $1}'))"
+DISK="$(df -h / | awk 'NR==2{print $4"/"$2 "("$5")"}')"
+MEM="$(free -m | awk 'NR==2{printf "%.1fG/%.1fG (%.0f%%)", $3/1024, $2/1024, $3/$2*100}')"
+CPU="$(top -b -n1 | grep "Cpu(s)" | awk '{print $2}')"
+
+# 构造消息
+MARKDOWN_MSG="### $PROJECT_NAME $STATE\n
+---
+**📅 发布时间**\n$(date "+%Y-%m-%d %H:%M:%S %A")\n\n
+**🔧 项目信息**\n
+- 仓库：$PROJECT_URL\n
+- 分支：\`$BRANCH_NAME\`\n
+- 触发者：$ACTOR_NAME ($ACTOR_MAIL)\n\n
+**🖥️ 系统状态**\n
+- 主机：$HOST\n
+- 磁盘：$DISK\n
+- 内存：$MEM\n
+- CPU：$CPU\n
+**📌 提交信息**\n
+- COMMIT-ID：$COMMIT_SHA\n
+- 说明：$COMMIT_MSG\n
+- [查看提交详情]($COMMIT_URL)\n
+- [查看代码检测报告]($SONARQUBE_URL)\n\n
+**📂 变更文件**\n
+$changedFileList\n
+---"
+
+# 发送通知
+curl -sS -X POST \
+  -H "Content-Type: application/json" \
+  -d '{
+    "msgtype": "markdown",
+    "markdown": {
+      "title": "'"$PROJECT_NAME 构建通知"'",
+      "text": "'"$MARKDOWN_MSG"'"
+    }
+  }' \
+  "$WEBHOOK_DING_TALK"
+
 
 # 系统信息采集
 #time="$(date "+%Y-%m-%d")"
@@ -81,31 +109,31 @@ cpu=$(top -b -n1 | grep "Cpu(s)" | awk '{print $2}')
 
 #sh /radeorg/bole/webhook.sh && 'radeorg/dows-uim.git' 'refs/heads/sit-1.0.250313' 'geeker-lait' 'lait.zhang@gmail.com' '.github/workflows/maven.yml' 'test' 'd65f755ad2a524194e6b8fc41f6cb52f13d3d0f6' 'green'
 
-curl $WEBHOOK_DING_TALK \
--H 'Content-Type: application/json' \
--d '{
-     "msgtype": "markdown",
-     "markdown": {
-         "title":"项目名",
-         "text": "应用发布<font color='"$COLOR"'>'"$STATE"'</font>\n
-           发布时间: <font color=\"comment\">'"$time $times $xingqi"'</font>
-           项目名称: <font color=\"comment\">'"$PROJECT_NAME"'</font>
-           项目仓库: <font color=\"comment\">'"$PROJECT_URL"'</font>
-           项目分支: <font color=\"comment\">'"$BRANCH_NAME"'</font>
-           触发账号: <font color=\"comment\">'"$ACTOR_NAME"'</font>
-           触发邮箱: <font color=\"comment\">'"$ACTOR_MAIL"'</font>
-           HOST: <font color=\"comment\">'"$public_ip:$ip"'</font>
-           DISK: <font color=\"comment\">'"$lsblk"'</font>
-           MEM: <font color=\"comment\">'"$total_memory,$mem%"'</font>
-           CPU: <font color=\"comment\">'"$cpu%"'</font>
-           COMMIT-ID: <font color=\"comment\">'"$COMMIT_SHA"'</font>
-           提交说明: <font color=\"comment\">'"$COMMIT_MSG"'</font>
-           提交链接: [点击查看提交]('"$project_commit_url"')\n
-           代码检测: [检测报告]('"$sonarqube_branch_url"')\n
-           变更文件:
-           <font color=\"comment\">'"$changedFileList"'</font>"
-     }
- }'
+#curl $WEBHOOK_DING_TALK \
+#-H 'Content-Type: application/json' \
+#-d '{
+#     "msgtype": "markdown",
+#     "markdown": {
+#         "title":"项目名",
+#         "text": "应用发布<font color='"$COLOR"'>'"$STATE"'</font>\n
+#           发布时间: <font color=\"comment\">'"$time $times $xingqi"'</font>
+#           项目名称: <font color=\"comment\">'"$PROJECT_NAME"'</font>
+#           项目仓库: <font color=\"comment\">'"$PROJECT_URL"'</font>
+#           项目分支: <font color=\"comment\">'"$BRANCH_NAME"'</font>
+#           触发账号: <font color=\"comment\">'"$ACTOR_NAME"'</font>
+#           触发邮箱: <font color=\"comment\">'"$ACTOR_MAIL"'</font>
+#           HOST: <font color=\"comment\">'"$public_ip:$ip"'</font>
+#           DISK: <font color=\"comment\">'"$lsblk"'</font>
+#           MEM: <font color=\"comment\">'"$total_memory,$mem%"'</font>
+#           CPU: <font color=\"comment\">'"$cpu%"'</font>
+#           COMMIT-ID: <font color=\"comment\">'"$COMMIT_SHA"'</font>
+#           提交说明: <font color=\"comment\">'"$COMMIT_MSG"'</font>
+#           提交链接: [点击查看提交]('"$project_commit_url"')\n
+#           代码检测: [检测报告]('"$sonarqube_branch_url"')\n
+#           变更文件:
+#           <font color=\"comment\">'"$changedFileList"'</font>"
+#     }
+# }'
 
 
 
