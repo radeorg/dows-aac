@@ -60,7 +60,7 @@ public class UserDetailsServiceHandler implements UserDetailsService {
          *                 throw new UsernameNotFoundException("账号不存在");
          *             }
          */
-        AccountInstanceResponse accountInstanceResponse = accountApi.getAccountInstanceId(appId, s);
+        AccountInstanceResponse accountInstanceResponse = accountApi.getAccountInstanceByIdentifier(appId, s);
         if (null == accountInstanceResponse) {
             log.info("账号不存在");
             return null;
@@ -97,7 +97,7 @@ public class UserDetailsServiceHandler implements UserDetailsService {
         }
         //把权限放入用户对象中
         DefaultAacUser defaultAacUser = new DefaultAacUser(accountInstanceResponse.getAccountInstanceId(),
-                accountInstanceResponse.getAccountName(),
+                accountInstanceResponse.getIdentifier(),
                 accountInstanceResponse.getPassword(),
                 grantedAuthorityList, roleIds, accountInstanceResponse.isSuperAccount());
         log.debug("{}", defaultAacUser);

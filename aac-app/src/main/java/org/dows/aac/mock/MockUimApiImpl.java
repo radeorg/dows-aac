@@ -21,8 +21,7 @@ public class MockUimApiImpl implements AccountApi {
         return 1L;
     }
 
-    @Override
-    public AccountInstanceResponse getAccountInstanceId(String appId, String identifier) {
+    public AccountInstanceResponse getAccountInstanceByIdentifier(String appId, String identifier) {
         /*AccountInstanceResponse accountInstanceResponse = new AccountInstanceResponse();
         accountInstanceResponse.setAccountName("lait");
         accountInstanceResponse.setAccountInstanceId(1L);
@@ -53,7 +52,6 @@ public class MockUimApiImpl implements AccountApi {
         return 1L;
     }
 
-    @Override
     public AccountInstanceResponse getAccountInstanceByAccountName(String accountName, String appId) {
         return null;
     }
