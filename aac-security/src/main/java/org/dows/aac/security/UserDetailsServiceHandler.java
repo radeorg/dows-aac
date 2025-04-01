@@ -115,7 +115,7 @@ public class UserDetailsServiceHandler implements UserDetailsService {
         accountInstanceRequest.setAvator(loginRequest.getAvator());
         accountInstanceRequest.setSource(loginRequest.getSource());
         accountInstanceRequest.setReferralsNo(loginRequest.getReferralsNo());
-        accountApi.setAccountInstance(loginRequest.getAppId(),accountInstanceRequest);
+        accountApi.getAccountWithRegister(loginRequest.getAppId(),accountInstanceRequest);
     }
 }
 
