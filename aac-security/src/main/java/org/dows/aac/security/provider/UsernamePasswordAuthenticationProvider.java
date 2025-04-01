@@ -46,16 +46,15 @@ public class UsernamePasswordAuthenticationProvider implements AuthenticationPro
         // 如果为空则注册
         if (userDetails == null) {
             userDetailsServiceHandler.newRegister(authentication.getName()
-                    ,passwordEncoder.encode(password)
-                    ,(LoginRequest)authentication.getDetails());
-//            List<GrantedAuthority> grantedAuthorities = List.of();
+                    ,passwordEncoder.encode(password),(LoginRequest)authentication.getDetails());
+            // todo 从新查询一次，此时查询不到
             userDetails = userDetailsServiceHandler.loadUserByUsername(username);
-            return new UsernamePasswordAuthenticationToken(username, password, userDetails.getAuthorities());
+            return new UsernamePasswordAuthenticationToken(userDetails, password, userDetails.getAuthorities());
         }
         //Long accountInstanceId = accountApi.getAccountIdWithRegister(appId, s);
         if (passwordEncoder.matches(password, userDetails.getPassword())) {
             //因为UsernamePasswordAuthenticationToken的上级父类的父类是Authentication 所以可以直接返回
-            return new UsernamePasswordAuthenticationToken(username, password, userDetails.getAuthorities());
+            return new UsernamePasswordAuthenticationToken(userDetails, password, userDetails.getAuthorities());
         } else {
             throw new BadCredentialsException("用户名或者密码错误");
         }

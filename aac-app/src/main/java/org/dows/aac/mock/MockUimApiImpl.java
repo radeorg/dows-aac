@@ -16,7 +16,6 @@ import java.util.List;
 @Component
 public class MockUimApiImpl implements AccountApi {
 
-    @Override
     public Long getAccountWithRegister(String appId, AccountInstanceRequest accountInstanceRequest) {
         return 1L;
     }

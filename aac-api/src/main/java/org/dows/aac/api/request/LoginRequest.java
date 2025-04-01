@@ -3,8 +3,10 @@ package org.dows.aac.api.request;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
-public class LoginRequest {
+public class LoginRequest implements Serializable {
     // 标识类型[账号，手机，邮箱]
     private int identifierType;
     //账号标识[账号，手机，邮箱]

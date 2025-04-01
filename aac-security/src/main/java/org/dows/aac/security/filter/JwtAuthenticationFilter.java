@@ -60,6 +60,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
+        String appId = request.getHeader("AppId");
+        if (appId != null && appId.isBlank()) {
+            throw new AacException("appId不能为空");
+        }
+        // 设置appId
+        aacContext.setAppId(appId);
         long count = Arrays.stream(aacSettings.getWhitelist())
                 .filter(w -> w.equalsIgnoreCase(request.getRequestURI()))
                 .count();
@@ -85,12 +91,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         //获取token信息
         String token = request.getHeader(aacSettings.getJwtSetting().getHeader());
-        String appId = request.getHeader("AppId");
-        if (appId != null && appId.isBlank()) {
-            throw new AacException("appId不能为空");
-        }
-        // 设置appId
-        aacContext.setAppId(appId);
         log.debug("Bearer token :{}", token);
         //注意Bearer后面还有一个空格
         if (!StringUtils.hasLength(token) || !StringUtils.startsWithIgnoreCase(token, "Bearer ")) {
