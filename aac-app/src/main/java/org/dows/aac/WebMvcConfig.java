@@ -1,5 +1,9 @@
 package org.dows.aac;
 
+import lombok.RequiredArgsConstructor;
+import org.dows.rade.web.ResponseWrapperHandler;
+import org.dows.rade.web.UnifiedMessageSource;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
@@ -12,7 +16,22 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 //@EnableKnife4j
 @EnableWebMvc
 @Configuration
+@RequiredArgsConstructor
 public class WebMvcConfig implements WebMvcConfigurer {
+
+
+    private final MessageSource messageSource;
+
+
+    @Bean
+    UnifiedMessageSource unifiedMessageSource() {
+        return new UnifiedMessageSource(messageSource);
+    }
+    @Bean
+    ResponseWrapperHandler responseWrapperHandler() {
+        return new ResponseWrapperHandler();
+    }
+
 
 /*    @Bean
     public ResponseWrapperHandler responseWrapperHandler() {

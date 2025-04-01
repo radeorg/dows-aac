@@ -1,13 +1,3 @@
-server:
-  port: 18002
-  undertow:
-    buffer-size: 1024
-    direct-buffers: true
-    threads:
-      io: 4
-      worker: 32
-  #  servlet:
-  #    context-path: /${spring.application.name}
 spring:
   main:
     allow-circular-references: true
@@ -16,7 +6,7 @@ spring:
     appId: 1
   profiles:
     include: |
-      mysql,apidoc,aac,captcha,cache
+      mysql,apidoc,aac,captcha,cache,rade,server
     active: dev
 
   web:
