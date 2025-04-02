@@ -9,14 +9,17 @@ import org.dows.aac.api.AacUser;
 import org.dows.aac.api.ApiHandler;
 import org.dows.aac.api.LoginApi;
 import org.dows.aac.api.constant.AuthKey;
+import org.dows.aac.api.constant.IdentifierType;
 import org.dows.aac.api.constant.OpenApiEnum;
 import org.dows.aac.api.request.LoginRequest;
 import org.dows.aac.api.response.LoginResponse;
 import org.dows.aac.handler.HandlerDispatcher;
+import org.dows.aac.security.token.PhoneCodeAuthenticationToken;
 import org.dows.aac.weixin.OpenidResponse;
 import org.dows.aac.yml.AacProperties;
 import org.dows.rade.cache.RadeCache;
 import org.dows.rbac.api.constant.CacheKeyEnum;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -38,12 +41,9 @@ public class AacLoginHandler implements LoginApi {
 
     //认证管理器
     private final AuthenticationManager authenticationManager;
-
     private final RadeCache radeCache;
 //    private final AacSettings aacSettings;
-
     private final HandlerDispatcher handlerDispatcher;
-    //private final Map<String, ApiChannel> apiChannelMap;
     private final AacProperties aacProperties;
 
 
@@ -62,17 +62,23 @@ public class AacLoginHandler implements LoginApi {
             throw new AacException("appId不能为空");
         }
         loginRequest.setAppId(appId);
+        AbstractAuthenticationToken authenticationToken = null;
 
-        ApiHandler handler = handlerDispatcher.getHandler(loginRequest.getIdentifierType(), OpenApiEnum.GET_OPENID);
-        OpenidResponse openidResponse = handler.execute(loginRequest.getVerifyCode(), OpenidResponse.class);
-        // 填充openid 为identifier
-        loginRequest.setIdentifier(openidResponse.getOpenid());
-        //根据账号和密码 创建 认证令牌对象
-        UsernamePasswordAuthenticationToken upt =
-                new UsernamePasswordAuthenticationToken(loginRequest.getIdentifier(), loginRequest.getPassword());
-        upt.setDetails(loginRequest);
+        if (loginRequest.getIdentifierType() == IdentifierType.ACCOUNT) {// account
+            //根据账号和密码 创建 认证令牌对象
+            authenticationToken = new UsernamePasswordAuthenticationToken(loginRequest.getIdentifier(), loginRequest.getPassword());
+        } else if (loginRequest.getIdentifierType() == IdentifierType.PHONE) {// phone
+            authenticationToken = new PhoneCodeAuthenticationToken(loginRequest.getIdentifier(), loginRequest.getPassword());
+        } else { // openid
+            ApiHandler handler = handlerDispatcher.getHandler(loginRequest.getIdentifierType(), OpenApiEnum.GET_OPENID);
+            OpenidResponse openidResponse = handler.execute(loginRequest.getVerifyCode(), OpenidResponse.class);
+            // 填充openid 为identifier
+            loginRequest.setIdentifier(openidResponse.getOpenid());
+            authenticationToken = new UsernamePasswordAuthenticationToken(loginRequest.getIdentifier(), loginRequest.getPassword());
+        }
+        authenticationToken.setDetails(loginRequest);
         //进行登录 获取认证信息
-        Authentication authenticate = authenticationManager.authenticate(upt);
+        Authentication authenticate = authenticationManager.authenticate(authenticationToken);
         if (authenticate == null) {
             throw new UsernameNotFoundException("登录失败");
         }

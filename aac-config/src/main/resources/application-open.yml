@@ -1,7 +1,7 @@
 dows:
-  open:
-    - appId: 1
-      thirdAppId: wxd0f0a0d0f0a0d0f0
-      channel: weixin
-      secret: 1234567890
-      token: 1234567890
+  channel:
+    opens:
+      - appId: 1
+        channel: weixin
+        thirdAppId: wx33a03e8c98247aef
+        secret: a3971e411625777c4f3f4cace881a43a

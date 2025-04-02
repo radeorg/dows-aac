@@ -2,11 +2,11 @@ package org.dows.aac.config;
 
 import lombok.RequiredArgsConstructor;
 import org.dows.aac.AacSettings;
-import org.dows.aac.yml.AacProperties;
-import org.dows.aac.yml.JwtSetting;
-import org.dows.aac.yml.LoginSetting;
+import org.dows.aac.yml.*;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.List;
 
 /**
  * @description: </br>
@@ -18,11 +18,18 @@ import org.springframework.context.annotation.Configuration;
  */
 @RequiredArgsConstructor
 @Configuration
-@EnableConfigurationProperties({AacProperties.class})
+@EnableConfigurationProperties({AacProperties.class, OpenProperties.class})
 //@ConditionalOnProperty(name = "aac.enabled", havingValue = "true", matchIfMissing = true)
 public class AacConfig implements AacSettings {
     private final AacProperties aacProperties;
 
+    private final OpenProperties openProperties;
+
+
+    @Override
+    public List<OpenSetting> getOpens() {
+        return openProperties.getOpens();
+    }
 
     @Override
     public LoginSetting getLoginSetting() {
