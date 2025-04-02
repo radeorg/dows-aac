@@ -6,10 +6,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dows.aac.api.AacException;
 import org.dows.aac.api.AacUser;
+import org.dows.aac.api.ApiHandler;
 import org.dows.aac.api.LoginApi;
 import org.dows.aac.api.constant.AuthKey;
+import org.dows.aac.api.constant.OpenApiEnum;
 import org.dows.aac.api.request.LoginRequest;
 import org.dows.aac.api.response.LoginResponse;
+import org.dows.aac.handler.HandlerDispatcher;
+import org.dows.aac.weixin.OpenidResponse;
 import org.dows.aac.yml.AacProperties;
 import org.dows.rade.cache.RadeCache;
 import org.dows.rbac.api.constant.CacheKeyEnum;
@@ -38,7 +42,10 @@ public class AacLoginHandler implements LoginApi {
     private final RadeCache radeCache;
 //    private final AacSettings aacSettings;
 
+    private final HandlerDispatcher handlerDispatcher;
+    //private final Map<String, ApiChannel> apiChannelMap;
     private final AacProperties aacProperties;
+
 
     /**
      * 登陆
@@ -55,6 +62,11 @@ public class AacLoginHandler implements LoginApi {
             throw new AacException("appId不能为空");
         }
         loginRequest.setAppId(appId);
+
+        ApiHandler handler = handlerDispatcher.getHandler(loginRequest.getIdentifierType(), OpenApiEnum.GET_OPENID);
+        OpenidResponse openidResponse = handler.execute(loginRequest, OpenidResponse.class);
+        // 填充openid 为identifier
+        loginRequest.setIdentifier(openidResponse.getOpenid());
         //根据账号和密码 创建 认证令牌对象
         UsernamePasswordAuthenticationToken upt =
                 new UsernamePasswordAuthenticationToken(loginRequest.getIdentifier(), loginRequest.getPassword());

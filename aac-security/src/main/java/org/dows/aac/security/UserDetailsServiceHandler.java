@@ -108,7 +108,7 @@ public class UserDetailsServiceHandler implements UserDetailsService {
         AccountInstanceRequest accountInstanceRequest = new AccountInstanceRequest();
         accountInstanceRequest.setPassword(encode);
         accountInstanceRequest.setIdentifier(name);
-        accountInstanceRequest.setIdentifierType(loginRequest.getIdentifierType());
+        accountInstanceRequest.setIdentifierType(loginRequest.getIdentifierType().getType());
         accountInstanceRequest.setAppId(loginRequest.getAppId());
         accountInstanceRequest.setZoneNo(loginRequest.getZoneNo());
         accountInstanceRequest.setCellphone(name);
