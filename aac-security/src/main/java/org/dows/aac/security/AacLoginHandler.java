@@ -64,7 +64,7 @@ public class AacLoginHandler implements LoginApi {
         loginRequest.setAppId(appId);
 
         ApiHandler handler = handlerDispatcher.getHandler(loginRequest.getIdentifierType(), OpenApiEnum.GET_OPENID);
-        OpenidResponse openidResponse = handler.execute(loginRequest, OpenidResponse.class);
+        OpenidResponse openidResponse = handler.execute(loginRequest.getVerifyCode(), OpenidResponse.class);
         // 填充openid 为identifier
         loginRequest.setIdentifier(openidResponse.getOpenid());
         //根据账号和密码 创建 认证令牌对象

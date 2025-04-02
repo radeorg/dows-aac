@@ -1,5 +1,7 @@
 package org.dows.aac.api;
 
+import cn.hutool.core.bean.BeanUtil;
+
 public interface ApiHandler {
 /*
     default <T> T buildParam(Object object) {
@@ -33,12 +35,14 @@ public interface ApiHandler {
 //        String post = HttpUtil.post(uri, stringObjectMap);
 //        //return BeanUtil.toBean(post, outputClass);
 //        return ApiHandler.super.processInputs(inputs);
-        throw new UnsupportedOperationException("暂不支持");
+        //throw new UnsupportedOperationException("暂不支持");
+        return inputs;
     }
 
 
     default <T> T processOutput(Object result, Class<T> outputClass) {
-        throw new UnsupportedOperationException("暂不支持");
+        //throw new UnsupportedOperationException("暂不支持");
+        return BeanUtil.toBean(result, outputClass);
     }
 
     default <T> T execute(Object inputs, Class<T> outputClass) {
