@@ -9,12 +9,6 @@ import org.dows.aac.api.constant.OpenChannel;
 @Slf4j
 @ApiMapping(channel = OpenChannel.ALIPAY, func = OpenApiEnum.GET_OPENID)
 public class AlipayOpenidHandler implements ApiHandler {
-    private String extractOpenidFromResponseBody(String responseBody) {
-        int startIndex = responseBody.indexOf("\"openid\":\"") + "\"openid\":\"".length();
-        int endIndex = responseBody.indexOf("\"", startIndex);
-        return responseBody.substring(startIndex, endIndex);
-    }
-
     @Override
     public Object processInputs(Object inputs) {
 

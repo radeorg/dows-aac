@@ -41,18 +41,6 @@ public class WeixinOpenidHandler implements ApiHandler {
         List<OpenSetting> opens = aacSettings.getOpens();
         openSettingMap = opens.stream().collect(Collectors
                 .toMap(OpenSetting::getAppId, Function.identity()));
-        /*OpenProperties openProperties1 = openProperties.stream()
-                .filter(o -> o.getAppId().equals(aacContext.getAppId())).findFirst()
-                .orElse(null);
-        if (openProperties1 == null) {
-            log.info("初始化微信登录处理器");
-        }*/
-    }
-
-    private String extractOpenidFromResponseBody(String responseBody) {
-        int startIndex = responseBody.indexOf("\"openid\":\"") + "\"openid\":\"".length();
-        int endIndex = responseBody.indexOf("\"", startIndex);
-        return responseBody.substring(startIndex, endIndex);
     }
 
     @Override
