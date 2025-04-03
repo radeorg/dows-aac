@@ -3,24 +3,7 @@ package org.dows.aac.api;
 import cn.hutool.core.bean.BeanUtil;
 
 public interface ApiHandler {
-/*
-    default <T> T buildParam(Object object) {
-        throw new UnsupportedOperationException("暂不支持");
-    }*/
 
-//    OpenChannel getChannel();
-//
-//    String getNamespace();
-//
-//    String getUrl();
-//
-//    String getDescription();
-//
-//    String getName();
-//
-//    List<String> getInputs();
-//
-//    List<String> getOutput();
 
 
     default Object processInputs(Object inputs) {
