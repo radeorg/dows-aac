@@ -21,6 +21,21 @@ public class DefaultAacUser extends User implements AacUser, UserDetails {
     @Getter
     @Setter
     private boolean superAccount;
+    @Getter
+    @Setter
+    private Long userId;
+    @Getter
+    @Setter
+    private String avatar;
+    @Getter
+    @Setter
+    private String phone;
+    @Getter
+    @Setter
+    private String email;
+    @Getter
+    @Setter
+    private String accountName;
 
     public DefaultAacUser(Long accountId, String username, String password,
                           Collection<? extends GrantedAuthority> authorities,
