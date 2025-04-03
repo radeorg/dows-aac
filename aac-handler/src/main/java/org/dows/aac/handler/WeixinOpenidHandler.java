@@ -16,6 +16,7 @@ import org.dows.aac.api.constant.OpenApiEnum;
 import org.dows.aac.api.constant.OpenChannel;
 import org.dows.aac.weixin.WxUserInfo;
 import org.dows.aac.yml.OpenSetting;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.List;
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Slf4j
+@Component
 @ApiMapping(channel = OpenChannel.WEIXIN, func = OpenApiEnum.GET_OPENID)
 public class WeixinOpenidHandler implements ApiHandler {
 

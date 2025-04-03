@@ -5,8 +5,10 @@ import org.dows.aac.api.ApiHandler;
 import org.dows.aac.api.ApiMapping;
 import org.dows.aac.api.constant.OpenApiEnum;
 import org.dows.aac.api.constant.OpenChannel;
+import org.springframework.stereotype.Component;
 
 @Slf4j
+@Component
 @ApiMapping(channel = OpenChannel.ALIPAY, func = OpenApiEnum.GET_OPENID)
 public class AlipayOpenidHandler implements ApiHandler {
     @Override
