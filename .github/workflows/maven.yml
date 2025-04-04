@@ -14,6 +14,7 @@ env:
   BRANCH_NAME: ${{ github.ref_name }}
   PR_NUMBER: ${{ github.event.pull_request.number || 'NOT_A_PR' }}
   COMMIT_EMAIL: ${{ github.event.head_commit.author.email || 'unknown' }}
+  WORK_FOLDER: aac
 jobs:
   CI:
     #配置权限
@@ -94,9 +95,9 @@ jobs:
 
       - name: deploy with Maven
         id: deploy_with_maven
-        if: ${{ contains(env.BRANCH_NAME, 'sit') || contains(env.BRANCH_NAME, 'prd') }}
+        #if: ${{ contains(env.BRANCH_NAME, 'sit') || contains(env.BRANCH_NAME, 'prd') }}
         #run: mvn -B deploy --file pom.xml
-        run: mvn deploy --file pom.xml
+        run: mvn -B deploy --file pom.xml
 
 
       - name: gen deploy args
@@ -112,13 +113,14 @@ jobs:
             echo "COMMIT_MSG='${{ steps.cfl.outputs.commit }}'"
             echo "COMMIT_SHA='${{ steps.cfl.outputs.commit_id }}'"
             echo "TRIGGER_ENV='${{ steps.cfl.outputs.trigger_env }}'"
+            echo "GH_TOKEN='${{ secrets.GH_TOKEN }}'"
           
             if [ "${{ steps.deploy_with_maven.outcome }}" == "success" ]; then
               echo "ACTIONS_STATUS=success"
             else
               echo "ACTIONS_STATUS=failure"
             fi
-          } > ./cicd/deploy.env
+          } > ./cicd/${{ steps.btv.outputs._0 }}/webhook.env
 
       # if: ${{ steps.btv.outputs._0 == 'sit' || steps.cfl.outputs.trigger_env == 'release'}}
       - name: deploy and notice
@@ -129,11 +131,10 @@ jobs:
           pass: ${{ secrets.AS_PASS_BOLE }}
           connect_timeout: 6000s
           first_ssh:
-            mkdir -p ${{ vars.AS_WORKDIR_BOLE }}/aac
+            mkdir -p ${{ vars.AS_WORKDIR_BOLE }}/${{env.WORK_FOLDER}}/${{ steps.btv.outputs._0 }}
           scp: |
-            ./cicd/cicd.env => ${{ vars.AS_WORKDIR_BOLE }}/aac/
-            ./cicd/deploy.env => ${{ vars.AS_WORKDIR_BOLE }}/aac/
-            ./cicd/webhook.sh => ${{ vars.AS_WORKDIR_BOLE }}/aac/
+            ./cicd/${{ steps.btv.outputs._0 }}/* => ${{ vars.AS_WORKDIR_BOLE }}/${{env.WORK_FOLDER}}/${{ steps.btv.outputs._0 }}/
+            ./cicd/${{ steps.btv.outputs._0 }}/.env => ${{ vars.AS_WORKDIR_BOLE }}/${{env.WORK_FOLDER}}/${{ steps.btv.outputs._0 }}/
           #项目地址 分支 触发人 触发邮箱 变更文件 提交信息 提交SHA 状态
           last_ssh: |
             echo "脚本路径: ${{ vars.AS_SCRIPT_BOLE }}"
@@ -147,22 +148,5 @@ jobs:
             echo "工作路径: $GITHUB_WORKSPACE"
             echo "当前路径: $(pwd)"
             echo "--------------------------------"
-            cd ${{ vars.AS_WORKDIR_BOLE }}/aac
+            cd ${{ vars.AS_WORKDIR_BOLE }}/${{env.WORK_FOLDER}}/${{ steps.btv.outputs._0 }}/
             sh ./webhook.sh
-#      - name: failure notification
-#        if: ${{ failure() }}
-#        #sshpass -p ${{secrets.AS_PASS_BOLE}} ssh -o StrictHostKeyChecking=no ${{ secrets.AS_ACCOUNT_BOLE }}@${{secrets.AS_HOST_BOLE}} "sh ${{ vars.AS_SCRIPT_BOLE }} $GITHUB_REF $GITHUB_ACTOR '$APP_NAME-prd' '部署失败' '${{ steps.cfl.outputs.changed_files }}' '${{ steps.cfl.outputs.commit }}' 'red'"
-#        run: |
-#          echo "RUNNER路径: $RUNNER_WORKSPACE"
-#          echo "WORKSPACE路径: $GITHUB_WORKSPACE"
-#          sh "$RUNNER_WORKSPACE/cicd/webhook.sh" '$GITHUB_REF' '$GITHUB_ACTOR' '$COMMIT_EMAIL' '${{ steps.cfl.outputs.changed_files }}' '${{ steps.cfl.outputs.commit }}' '${{ steps.cfl.outputs.commit_id }}' 'red'
-#
-#      - name: success notification
-#        if: ${{ success() }}
-#        #cd ${{ vars.AS_WORKDIR_BOLE }}
-#        run: |
-#          echo "RUNNER路径: $RUNNER_WORKSPACE"
-#          echo "WORKSPACE路径: $GITHUB_WORKSPACE"
-#          echo "当前路径: $(pwd)"
-#          sshpass -p ${{secrets.AS_PASS_BOLE}} ssh -o StrictHostKeyChecking=no ${{ secrets.AS_ACCOUNT_BOLE }}@${{secrets.AS_HOST_BOLE}} "sh ${{ vars.AS_WORKDIR_BOLE }}/webhook.sh" '$GITHUB_REF' '$GITHUB_ACTOR' '$COMMIT_EMAIL' '${{ steps.cfl.outputs.changed_files }}' '${{ steps.cfl.outputs.commit }}' '${{ steps.cfl.outputs.commit_id }}' 'green'"
-
