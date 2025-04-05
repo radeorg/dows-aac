@@ -1,4 +1,4 @@
-name: dows-aac
+name: dows-uim
 
 on:
   push:
@@ -95,15 +95,20 @@ jobs:
 
       - name: deploy with Maven
         id: deploy_with_maven
-        #if: ${{ contains(env.BRANCH_NAME, 'sit') || contains(env.BRANCH_NAME, 'prd') }}
+        if: ${{ contains(env.BRANCH_NAME, 'sit') || contains(env.BRANCH_NAME, 'prd') }}
         #run: mvn -B deploy --file pom.xml
         run: mvn -B deploy --file pom.xml
 
 
       - name: gen deploy args
         id: deploy_args
-        #run: echo "deploy_args=${{ env.PROJECT_NAME }}:${{ env.BRANCH_NAME }}:${{ steps.cfl.outputs.trigger_env }}:${{ steps.cfl.outputs.commit_id }}:${{ steps.cfl.outputs.changed_files }}:${{ steps.cfl.outputs.commit }}" >> $GITHUB_OUTPUT
+        #if: ${{ contains(env.BRANCH_NAME, 'sit') || contains(env.BRANCH_NAME, 'prd') }}
         run: |
+          IS_TRIGGER=0
+          if [[ "${{ env.BRANCH_NAME }}" == *"sit"* || "${{ env.BRANCH_NAME }}" == *"prd"* ]]; then
+            IS_TRIGGER=1            
+          fi
+          
           {
             echo "PROJECT_URL='${{ github.repository }}'"
             echo "BRANCH_NAME='${{ env.BRANCH_NAME }}'"
@@ -114,7 +119,7 @@ jobs:
             echo "COMMIT_SHA='${{ steps.cfl.outputs.commit_id }}'"
             echo "TRIGGER_ENV='${{ steps.cfl.outputs.trigger_env }}'"
             echo "GH_TOKEN='${{ secrets.GH_TOKEN }}'"
-          
+            echo "IS_TRIGGER='${IS_TRIGGER}'"
             if [ "${{ steps.deploy_with_maven.outcome }}" == "success" ]; then
               echo "ACTIONS_STATUS=success"
             else
@@ -135,7 +140,6 @@ jobs:
           scp: |
             ./cicd/${{ steps.btv.outputs._0 }}/* => ${{ vars.AS_WORKDIR_BOLE }}/${{env.WORK_FOLDER}}/${{ steps.btv.outputs._0 }}/
             ./cicd/${{ steps.btv.outputs._0 }}/.env => ${{ vars.AS_WORKDIR_BOLE }}/${{env.WORK_FOLDER}}/${{ steps.btv.outputs._0 }}/
-          #项目地址 分支 触发人 触发邮箱 变更文件 提交信息 提交SHA 状态
           last_ssh: |
             echo "脚本路径: ${{ vars.AS_SCRIPT_BOLE }}"
             echo "仓库: ${{ github.repository }}"
