@@ -51,17 +51,25 @@ MARKDOWN_MSG="### $PROJECT_NAME $STATE\n
 - 说明：$COMMIT_MSG\n
 - [查看提交详情]($COMMIT_URL)\n
 - [查看代码检测报告]($SONARQUBE_URL)\n\n
+**📌 触发信息**\n
+- 触发仓库：$TRIGGER_REPOSITORY\n
+- 触发分支：$TRIGGER_BRANCH\n
+- 是否触发：**$IS_TRIGGER**\n
 **📂 变更文件**\n
 $changedFileList\n
 ---"
 
-curl -L \
-  -X POST \
-  -H "Accept: application/vnd.github+json" \
-  -H "X-GitHub-Api-Version: 2022-11-28" \
-  -H "Authorization: Bearer $GH_TOKEN" \
-  -d '{"ref": "'$TRIGGER_BRANCH'"}' \
-  "$TRIGGER_URL"
+# 触发构建
+if [ "$IS_TRIGGER" = "1" ]; then
+  # 触发构建
+  curl -L \
+    -X POST \
+    -H "Accept: application/vnd.github+json" \
+    -H "X-GitHub-Api-Version: 2022-11-28" \
+    -H "Authorization: Bearer $GH_TOKEN" \
+    -d '{"ref": "'$TRIGGER_BRANCH'"}' \
+    "$TRIGGER_URL"
+fi
 
 # 发送通知
 curl -sS -X POST \
