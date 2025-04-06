@@ -12,6 +12,7 @@ import org.dows.aac.security.filter.JwtAuthenticationFilter;
 import org.dows.aac.security.handler.AacAccessDeniedHandler;
 import org.dows.aac.security.handler.AacLogoutHandler;
 import org.dows.aac.security.provider.CellphoneCodeAuthenticationProvider;
+import org.dows.aac.security.provider.OpenidAuthenticationProvider;
 import org.dows.aac.security.provider.UsernamePasswordAuthenticationProvider;
 import org.dows.rbac.api.RbacApi;
 import org.dows.rbac.api.admin.response.RbacUriRoleResponse;
@@ -201,7 +202,9 @@ public class AacAuthenticationConfig {
                 new UsernamePasswordAuthenticationProvider(userDetailsServiceHandler, passwordEncoder());
         CellphoneCodeAuthenticationProvider cellphoneCodeAuthenticationProvider =
                 new CellphoneCodeAuthenticationProvider(userDetailsServiceHandler);
-        return new ProviderManager(usernamePasswordAuthenticationProvider, cellphoneCodeAuthenticationProvider);
+        OpenidAuthenticationProvider openidAuthenticationProvider =
+                new OpenidAuthenticationProvider(userDetailsServiceHandler);
+        return new ProviderManager(usernamePasswordAuthenticationProvider, cellphoneCodeAuthenticationProvider, openidAuthenticationProvider);
     }
 
 

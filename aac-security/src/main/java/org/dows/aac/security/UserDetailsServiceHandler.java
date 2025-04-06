@@ -17,6 +17,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth2.core.user.OAuth2UserAuthority;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -104,6 +105,7 @@ public class UserDetailsServiceHandler implements UserDetailsService {
         return defaultAacUser;
     }
 
+    @Transactional
     public void newRegister(String name, String encode, LoginRequest loginRequest) {
         AccountInstanceRequest accountInstanceRequest = new AccountInstanceRequest();
         accountInstanceRequest.setPassword(encode);

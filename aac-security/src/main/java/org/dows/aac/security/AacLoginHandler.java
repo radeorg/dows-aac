@@ -14,6 +14,7 @@ import org.dows.aac.api.constant.OpenApiEnum;
 import org.dows.aac.api.request.LoginRequest;
 import org.dows.aac.api.response.LoginResponse;
 import org.dows.aac.handler.HandlerDispatcher;
+import org.dows.aac.security.token.OpenidAuthenticationToken;
 import org.dows.aac.security.token.PhoneCodeAuthenticationToken;
 import org.dows.aac.weixin.OpenidResponse;
 import org.dows.aac.yml.AacProperties;
@@ -74,7 +75,7 @@ public class AacLoginHandler implements LoginApi {
             OpenidResponse openidResponse = handler.execute(loginRequest.getVerifyCode(), OpenidResponse.class);
             // 填充openid 为identifier
             loginRequest.setIdentifier(openidResponse.getOpenid());
-            authenticationToken = new UsernamePasswordAuthenticationToken(loginRequest.getIdentifier(), loginRequest.getPassword());
+            authenticationToken = new OpenidAuthenticationToken(loginRequest.getIdentifier(), loginRequest.getPassword());
         }
         authenticationToken.setDetails(loginRequest);
         //进行登录 获取认证信息

@@ -20,10 +20,15 @@ public class MockUimApiImpl implements AccountApi {
         return 1L;
     }
 
+    @Override
+    public Long getAccountWithRegister(AccountInstanceRequest accountInstanceRequest) {
+        return 1L;
+    }
+
     public AccountInstanceResponse getAccountInstanceByIdentifier(String appId, String identifier) {
         /*AccountInstanceResponse accountInstanceResponse = new AccountInstanceResponse();
-        accountInstanceResponse.setAccountName("lait");
-        accountInstanceResponse.setAccountInstanceId(1L);
+        accountInstanceResponse.setIdentifier("oPU2l7TdiTOEPZ0lv6zCjaPARF3R");
+        accountInstanceResponse.setAccountInstanceId(266324342158831616L);
         accountInstanceResponse.setSuperAccount(true);
         accountInstanceResponse.setPassword("");
 
@@ -39,6 +44,11 @@ public class MockUimApiImpl implements AccountApi {
     @Override
     public List<Long> getAllRoleIds(String appId, Long accountId) {
         return List.of(1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L, 10L);
+    }
+
+    @Override
+    public List<Long> getOrgRoleIdsByOrgId(String appId, Long orgNodeId) {
+        return AccountApi.super.getOrgRoleIdsByOrgId(appId, orgNodeId);
     }
 
     @Override

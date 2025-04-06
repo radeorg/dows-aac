@@ -6,7 +6,7 @@
 .flattened-pom.xml
 # BlueJ files
 *.ctxt
-
+rebel.xml
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 

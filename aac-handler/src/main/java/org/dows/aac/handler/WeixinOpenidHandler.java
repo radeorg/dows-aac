@@ -66,6 +66,8 @@ public class WeixinOpenidHandler implements ApiHandler {
         String post = HttpUtil.get(uri);
         //DocumentContext jsonContext = JsonPath.parse(json);
         WxUserInfo bean = JSONUtil.toBean(post, WxUserInfo.class);
+        /*bean = new WxUserInfo();
+        bean.setOpenid("oPU2l7TdiTOEPZ0lv6zCjaPARF3E");*/
         if (StrUtil.isBlank(bean.getOpenid())) {
             //return null;
             throw new AacException("微信登录失败");

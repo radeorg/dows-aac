@@ -21,7 +21,7 @@ spring:
     activate:
       on-profile: dev
 server:
-  port: 18001
+  port: 10001
 
 
 
@@ -32,7 +32,7 @@ spring:
     activate:
       on-profile: sit
 server:
-  port: 28001
+  port: 20001
 
 
 ---
@@ -42,7 +42,7 @@ spring:
     activate:
       on-profile: uat
 server:
-  port: 38001
+  port: 30001
 
 ---
 #测试环境
@@ -51,4 +51,4 @@ spring:
     activate:
       on-profile: prd
 server:
-  port: 48001
+  port: 40001

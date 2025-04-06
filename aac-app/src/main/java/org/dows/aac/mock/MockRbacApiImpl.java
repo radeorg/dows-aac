@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.dows.rbac.api.InitResources;
 import org.dows.rbac.api.InitUriResources;
 import org.dows.rbac.api.RbacApi;
+import org.dows.rbac.api.RoleResourceResponse;
 import org.dows.rbac.api.admin.request.FindRbacResourcesRequest;
 import org.dows.rbac.api.admin.request.SaveRbacRoleRequest;
 import org.dows.rbac.api.admin.response.*;
@@ -41,6 +42,22 @@ public class MockRbacApiImpl implements RbacApi {
         }
         return rbacUriResponses;
         //return RbacApi.super.getAllUri(appId);
+    }
+
+    @Override
+    public List<RbacRoleResponse> getRoleInstanceByRoleIds(String appId, List<Long> roleIds) {
+        return List.of();
+    }
+
+    @Override
+    public List<RbacUriResponse> getAllUrisByAppId(String appId) {
+        //return RbacApi.super.getAllUrisByAppId(appId);
+        return List.of();
+    }
+
+    @Override
+    public List<RoleResourceResponse> getUrisByRoleIds(String appId, List<Long> roleIds) {
+        return List.of();
     }
 
     @Override
@@ -91,4 +108,6 @@ public class MockRbacApiImpl implements RbacApi {
     public Map<String, List<RbacUriRoleResponse>> getRoleUri() {
         return Map.of();
     }
+
+
 }
