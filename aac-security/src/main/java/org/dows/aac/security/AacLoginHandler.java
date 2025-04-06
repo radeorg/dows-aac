@@ -121,6 +121,7 @@ public class AacLoginHandler implements LoginApi {
         log.info("account:{},token:{}", loginRequest.getIdentifier(), token);
         LoginResponse loginResponse = new LoginResponse();
         loginResponse.setToken(token);
+        loginResponse.setOpenid(aacUser.getAccountName());
         return loginResponse;
     }
 

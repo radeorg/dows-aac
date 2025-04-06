@@ -44,6 +44,7 @@ public class DefaultAacUser extends User implements AacUser, UserDetails {
         this.accountId = accountId;
         this.roleIds = roleIds;
         this.superAccount = superAccount;
+        this.accountName = username;
     }
 
 
