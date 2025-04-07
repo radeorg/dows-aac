@@ -1,4 +1,4 @@
-package org.dows.aac.handler;
+package org.dows.aac.handler.weixin;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
