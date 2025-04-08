@@ -4,4 +4,5 @@ dows:
       - appId: 1
         channel: weixin
         thirdAppId: wx33a03e8c98247aef
-        secret: a3971e411625777c4f3f4cace881a43a
+#        secret: a3971e411625777c4f3f4cace881a43a
+        secret: 86c6398c40668010d53ec8e9130c3ec1

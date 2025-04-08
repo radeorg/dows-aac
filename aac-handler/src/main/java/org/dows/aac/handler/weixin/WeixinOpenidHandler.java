@@ -4,7 +4,6 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONUtil;
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dows.aac.AacSettings;
@@ -18,32 +17,25 @@ import org.dows.aac.weixin.WxUserInfo;
 import org.dows.aac.yml.OpenSetting;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
 @RequiredArgsConstructor
 @Slf4j
 @Component
 @ApiMapping(channel = OpenChannel.WEIXIN, func = OpenApiEnum.GET_OPENID)
-public class WeixinOpenidHandler implements ApiHandler {
+public class WeixinOpenidHandler extends AbstractWeixinHandler implements ApiHandler {
 
     private static String URL = "https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code";
 
     private final AacSettings aacSettings;
     private final AacContext aacContext;
 
-    private Map<String, OpenSetting> openSettingMap = new HashMap<>();
+//    private Map<String, OpenSetting> openSettingMap = new HashMap<>();
 
-
-    @PostConstruct
-    public void init() {
-        List<OpenSetting> opens = aacSettings.getOpens();
-        openSettingMap = opens.stream().collect(Collectors
-                .toMap(OpenSetting::getAppId, Function.identity()));
-    }
+//    @PostConstruct
+//    public void init() {
+//        List<OpenSetting> opens = aacSettings.getOpens();
+//        openSettingMap = opens.stream().collect(Collectors
+//                .toMap(OpenSetting::getAppId, Function.identity()));
+//    }
 
     @Override
     public Object processInputs(Object inputs) {
