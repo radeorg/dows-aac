@@ -118,28 +118,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
-        //SecurityContext securityContext = (SecurityContext) o;
         //把上下文信息放入持有人手中 这样别的请求在进来 就有认证的权限了 就不需要再登陆了
         SecurityContextHolder.setContext(securityContext);
-        //SecurityContextHolder.getContext().setAuthentication(authentication);
-        //获取认证信息是否存在
-//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-//        if (!StringUtils.isEmpty(accountName) && auth == null) {
-//            //如果账号不为空 并且 认证信息是空的,获取用户信息
-//            UserDetails userDetails = userDetailsServiceHandler.loadUserByUsername(accountName);
-//            if (accountName.equals(userDetails.getUsername())) {
-//                //如果用户信息不为空
-//                SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
-//                //创建用户 认证token 对象
-//                UsernamePasswordAuthenticationToken upt =
-//                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-//                //把web的请求信息 放到Details
-//                upt.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-//                //把用户信息放到 安全上下文中
-//                securityContext.setAuthentication(upt);
-//                SecurityContextHolder.setContext(securityContext);
-//            }
-//        }
         //放行
         filterChain.doFilter(request, response);
     }
