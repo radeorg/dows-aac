@@ -2,12 +2,12 @@ package org.dows.aac.mock;
 
 import lombok.extern.slf4j.Slf4j;
 import org.dows.rbac.api.InitResources;
-import org.dows.rbac.api.InitUriResources;
+import org.dows.rbac.model.InitUriResources;
 import org.dows.rbac.api.RbacApi;
-import org.dows.rbac.api.RoleResourceResponse;
-import org.dows.rbac.api.admin.request.FindRbacResourcesRequest;
-import org.dows.rbac.api.admin.request.SaveRbacRoleRequest;
-import org.dows.rbac.api.admin.response.*;
+import org.dows.rbac.model.RoleResourceResponse;
+import org.dows.rbac.request.FindRbacResourcesRequest;
+import org.dows.rbac.request.SaveRbacRoleRequest;
+import org.dows.rbac.response.*;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;

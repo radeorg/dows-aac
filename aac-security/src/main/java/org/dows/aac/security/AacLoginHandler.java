@@ -19,7 +19,7 @@ import org.dows.aac.security.token.PhoneCodeAuthenticationToken;
 import org.dows.aac.weixin.OpenidResponse;
 import org.dows.aac.yml.AacProperties;
 import org.dows.rade.cache.RadeCache;
-import org.dows.rbac.api.constant.CacheKeyEnum;
+import org.dows.rbac.constant.CacheKeyEnum;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;

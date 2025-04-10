@@ -13,7 +13,7 @@ import org.dows.aac.api.AacException;
 import org.dows.aac.api.constant.AuthStatusCode;
 import org.dows.aac.security.UserDetailsServiceHandler;
 import org.dows.rade.cache.RadeCache;
-import org.dows.rbac.api.constant.CacheKeyEnum;
+import org.dows.rbac.constant.CacheKeyEnum;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;

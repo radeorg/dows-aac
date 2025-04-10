@@ -15,7 +15,7 @@ import org.dows.aac.security.provider.CellphoneCodeAuthenticationProvider;
 import org.dows.aac.security.provider.OpenidAuthenticationProvider;
 import org.dows.aac.security.provider.UsernamePasswordAuthenticationProvider;
 import org.dows.rbac.api.RbacApi;
-import org.dows.rbac.api.admin.response.RbacUriRoleResponse;
+import org.dows.rbac.response.RbacUriRoleResponse;
 import org.dows.uim.api.AccountApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
