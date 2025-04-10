@@ -2,12 +2,12 @@ package org.dows.aac.mock;
 
 import lombok.extern.slf4j.Slf4j;
 import org.dows.uim.api.AccountApi;
-import org.dows.uim.api.request.AccountInstanceRequest;
-import org.dows.uim.api.request.FindAccountIdentifierRequest;
-import org.dows.uim.api.response.AccountIdentifierResponse;
-import org.dows.uim.api.response.AccountInstanceResponse;
-import org.dows.uim.api.response.AccountOrgIdsResponse;
-import org.dows.uim.api.response.AccountRoleRelationResponse;
+import org.dows.uim.request.AccountInstanceRequest;
+import org.dows.uim.request.FindAccountIdentifierRequest;
+import org.dows.uim.response.AccountIdentifierResponse;
+import org.dows.uim.response.AccountInstanceResponse;
+import org.dows.uim.response.AccountOrgIdsResponse;
+import org.dows.uim.response.AccountRoleRelationResponse;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
