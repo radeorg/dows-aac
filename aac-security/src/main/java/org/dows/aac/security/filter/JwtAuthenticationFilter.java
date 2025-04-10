@@ -9,7 +9,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dows.aac.AacSettings;
-import org.dows.aac.api.AacContext;
 import org.dows.aac.api.AacException;
 import org.dows.aac.api.constant.AuthStatusCode;
 import org.dows.aac.security.UserDetailsServiceHandler;
@@ -40,7 +39,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     //private final Cacheable cacheable;
     private final RadeCache radeCache;
 
-    private final AacContext aacContext;
+//    private final AacContext aacContext;
 
     /*private List<String> whiteList;AacContext
     @PostConstruct
@@ -60,12 +59,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        String appId = request.getHeader("AppId");
-        if (appId != null && appId.isBlank()) {
-            throw new AacException("appId不能为空");
-        }
-        // 设置appId
-        aacContext.setAppId(appId);
+
         long count = Arrays.stream(aacSettings.getWhitelist())
                 .filter(w -> w.equalsIgnoreCase(request.getRequestURI()))
                 .count();

@@ -12,6 +12,7 @@ import org.dows.aac.api.constant.OpenApiEnum;
 import org.dows.aac.api.constant.OpenChannel;
 import org.dows.aac.weixin.WxUserInfo;
 import org.dows.aac.yml.OpenSetting;
+import org.dows.rade.context.AppContext;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
@@ -70,7 +71,7 @@ public class WechatAccessTokenHandler extends AbstractWeixinHandler implements A
 
     @Override
     public <T> T execute(Object inputs, Class<T> outputClass) {
-        OpenSetting openSetting = openSettingMap.get(aacContext.getAppId());
+        OpenSetting openSetting = openSettingMap.get(AppContext.getAppId());
         if (openSetting == null) {
             throw new AacException("应用未配置");
         }

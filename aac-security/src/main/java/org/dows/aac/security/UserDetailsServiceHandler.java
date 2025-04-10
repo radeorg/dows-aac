@@ -3,8 +3,8 @@ package org.dows.aac.security;
 import cn.hutool.core.collection.CollectionUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.dows.aac.api.AacContext;
 import org.dows.aac.api.request.LoginRequest;
+import org.dows.rade.context.AppContext;
 import org.dows.rbac.api.RbacApi;
 import org.dows.rbac.api.RoleResourceResponse;
 import org.dows.rbac.api.admin.response.RbacUriResponse;
@@ -36,12 +36,12 @@ public class UserDetailsServiceHandler implements UserDetailsService {
 
     private final AccountApi accountApi;
     private final RbacApi rbacApi;
-    private final AacContext aacContext;
+//    private final AacContext aacContext;
 
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
         log.info("根据账号标识查询账号信息");
-        String appId = aacContext.getAppId();
+        String appId = AppContext.getAppId();
         /**
          * 根据账号标识查询账号信息,此时登录即注册，注册即登录,账号未查到信息可以通过其他账号标识[邮箱，电话]
          *             FindAccountIdentifierRequest findAccountIdentifierRequest = new FindAccountIdentifierRequest();

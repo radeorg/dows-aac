@@ -7,7 +7,6 @@ import cn.hutool.json.JSONUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dows.aac.AacSettings;
-import org.dows.aac.api.AacContext;
 import org.dows.aac.api.AacException;
 import org.dows.aac.api.ApiHandler;
 import org.dows.aac.api.ApiMapping;
@@ -15,6 +14,7 @@ import org.dows.aac.api.constant.OpenApiEnum;
 import org.dows.aac.api.constant.OpenChannel;
 import org.dows.aac.weixin.WxUserInfo;
 import org.dows.aac.yml.OpenSetting;
+import org.dows.rade.context.AppContext;
 import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
@@ -26,7 +26,7 @@ public class WeixinOpenidHandler extends AbstractWeixinHandler implements ApiHan
     private static String URL = "https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code";
 
     private final AacSettings aacSettings;
-    private final AacContext aacContext;
+//    private final AacContext aacContext;
 
 //    private Map<String, OpenSetting> openSettingMap = new HashMap<>();
 
@@ -50,7 +50,7 @@ public class WeixinOpenidHandler extends AbstractWeixinHandler implements ApiHan
     @Override
     public <T> T execute(Object input, Class<T> outputClass) {
         Object in = processInputs(input);
-        OpenSetting openSetting = openSettingMap.get(aacContext.getAppId());
+        OpenSetting openSetting = openSettingMap.get(AppContext.getAppId());
         if (openSetting == null) {
             throw new AacException("应用未配置");
         }
