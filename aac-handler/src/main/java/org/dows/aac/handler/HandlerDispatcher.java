@@ -5,8 +5,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dows.aac.api.ApiHandler;
 import org.dows.aac.api.ApiMapping;
-import org.dows.aac.constant.IdentifierType;
 import org.dows.aac.constant.OpenApiEnum;
+import org.dows.rade.constant.IdentifierType;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;

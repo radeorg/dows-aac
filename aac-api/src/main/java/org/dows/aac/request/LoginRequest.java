@@ -2,7 +2,7 @@ package org.dows.aac.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
-import org.dows.aac.constant.IdentifierType;
+import org.dows.rade.constant.IdentifierType;
 
 import java.io.Serializable;
 

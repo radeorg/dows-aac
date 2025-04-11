@@ -2,7 +2,7 @@ package org.dows.aac.api;
 
 
 import org.dows.aac.constant.OpenApiEnum;
-import org.dows.aac.constant.OpenChannel;
+import org.dows.rade.constant.OpenChannel;
 
 import java.lang.annotation.*;
 

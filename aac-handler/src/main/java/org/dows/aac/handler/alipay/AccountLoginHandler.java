@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dows.aac.api.ApiMapping;
 import org.dows.aac.constant.OpenApiEnum;
-import org.dows.aac.constant.OpenChannel;
+import org.dows.rade.constant.OpenChannel;
 
 @RequiredArgsConstructor
 @Slf4j
