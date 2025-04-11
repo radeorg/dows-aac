@@ -1,8 +1,8 @@
-package org.dows.aac.api.request;
+package org.dows.aac.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
-import org.dows.aac.api.constant.IdentifierType;
+import org.dows.aac.constant.IdentifierType;
 
 import java.io.Serializable;
 

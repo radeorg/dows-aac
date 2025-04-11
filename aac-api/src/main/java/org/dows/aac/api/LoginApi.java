@@ -1,8 +1,8 @@
 package org.dows.aac.api;
 
 import jakarta.servlet.http.HttpServletRequest;
-import org.dows.aac.api.request.LoginRequest;
-import org.dows.aac.api.response.LoginResponse;
+import org.dows.aac.request.LoginRequest;
+import org.dows.aac.response.LoginResponse;
 
 public interface LoginApi {
     /**

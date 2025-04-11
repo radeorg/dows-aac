@@ -1,9 +1,9 @@
-package org.dows.aac.api;
+package org.dows.aac.exception;
 
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.dows.aac.api.constant.AuthStatusCode;
+import org.dows.aac.constant.AuthStatusCode;
 
 @EqualsAndHashCode(callSuper = true)
 @Data

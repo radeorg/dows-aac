@@ -1,4 +1,4 @@
-package org.dows.aac.api.constant;
+package org.dows.aac.constant;
 
 public enum PrincipalTypeEnum {
     PERSONAL(0, "个人"),

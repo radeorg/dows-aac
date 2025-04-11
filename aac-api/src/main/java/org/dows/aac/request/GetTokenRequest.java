@@ -1,4 +1,4 @@
-package org.dows.aac.api.request;
+package org.dows.aac.request;
 
 import lombok.Data;
 

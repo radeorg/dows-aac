@@ -3,8 +3,8 @@ package org.dows.aac.handler.alipay;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dows.aac.api.ApiMapping;
-import org.dows.aac.api.constant.OpenApiEnum;
-import org.dows.aac.api.constant.OpenChannel;
+import org.dows.aac.constant.OpenApiEnum;
+import org.dows.aac.constant.OpenChannel;
 
 @RequiredArgsConstructor
 @Slf4j

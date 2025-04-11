@@ -1,7 +1,7 @@
 package org.dows.aac.security.provider;
 
 import lombok.RequiredArgsConstructor;
-import org.dows.aac.api.request.LoginRequest;
+import org.dows.aac.request.LoginRequest;
 import org.dows.aac.security.UserDetailsServiceHandler;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;

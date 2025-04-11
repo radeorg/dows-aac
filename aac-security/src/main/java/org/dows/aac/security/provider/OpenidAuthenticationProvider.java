@@ -2,7 +2,7 @@ package org.dows.aac.security.provider;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.dows.aac.api.request.LoginRequest;
+import org.dows.aac.request.LoginRequest;
 import org.dows.aac.security.UserDetailsServiceHandler;
 import org.dows.aac.security.token.OpenidAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationProvider;

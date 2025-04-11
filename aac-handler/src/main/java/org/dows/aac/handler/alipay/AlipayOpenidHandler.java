@@ -3,8 +3,8 @@ package org.dows.aac.handler.alipay;
 import lombok.extern.slf4j.Slf4j;
 import org.dows.aac.api.ApiHandler;
 import org.dows.aac.api.ApiMapping;
-import org.dows.aac.api.constant.OpenApiEnum;
-import org.dows.aac.api.constant.OpenChannel;
+import org.dows.aac.constant.OpenApiEnum;
+import org.dows.aac.constant.OpenChannel;
 import org.springframework.stereotype.Component;
 
 @Slf4j

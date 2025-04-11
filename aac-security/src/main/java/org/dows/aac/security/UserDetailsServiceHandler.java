@@ -3,7 +3,7 @@ package org.dows.aac.security;
 import cn.hutool.core.collection.CollectionUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.dows.aac.api.request.LoginRequest;
+import org.dows.aac.request.LoginRequest;
 import org.dows.rade.context.AppContext;
 import org.dows.rbac.api.RbacApi;
 import org.dows.rbac.model.RoleResourceResponse;

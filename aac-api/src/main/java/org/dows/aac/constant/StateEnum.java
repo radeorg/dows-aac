@@ -1,13 +1,13 @@
-package org.dows.aac.api.constant;
+package org.dows.aac.constant;
 
-public enum ResourceEnum {
-    INTERFACE(0, "接口"),
-    MENU(1, "菜单");
+public enum StateEnum {
+    AVAILABLE(0, "可用"),
+    NOAVAILABLE(1, "不可用");
 
     private final int code;
     private final String description;
 
-    ResourceEnum(int code, String description) {
+    StateEnum(int code, String description) {
         this.code = code;
         this.description = description;
     }
@@ -22,7 +22,7 @@ public enum ResourceEnum {
 
     public static ResourceEnum getByCode(int code) {
         for (ResourceEnum type : ResourceEnum.values()) {
-            if (type.code == code) {
+            if (type.getCode() == code) {
                 return type;
             }
         }

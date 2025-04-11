@@ -1,8 +1,8 @@
 package org.dows.aac.api;
 
 
-import org.dows.aac.api.constant.OpenApiEnum;
-import org.dows.aac.api.constant.OpenChannel;
+import org.dows.aac.constant.OpenApiEnum;
+import org.dows.aac.constant.OpenChannel;
 
 import java.lang.annotation.*;
 

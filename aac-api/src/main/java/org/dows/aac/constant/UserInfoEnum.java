@@ -1,23 +1,21 @@
-package org.dows.aac.api.constant;
+package org.dows.aac.constant;
 
-public enum StateEnum {
-    AVAILABLE(0, "可用"),
-    NOAVAILABLE(1, "不可用");
-
+public enum UserInfoEnum {
+    SECURITY_CONTEXT(0, "111");
     private final int code;
-    private final String description;
+    private final String key;
 
-    StateEnum(int code, String description) {
+    UserInfoEnum(int code, String key) {
         this.code = code;
-        this.description = description;
+        this.key = key;
     }
 
     public int getCode() {
         return code;
     }
 
-    public String getDescription() {
-        return description;
+    public String getKey() {
+        return key;
     }
 
     public static ResourceEnum getByCode(int code) {

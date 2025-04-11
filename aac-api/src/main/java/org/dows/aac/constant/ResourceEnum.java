@@ -1,26 +1,28 @@
-package org.dows.aac.api.constant;
+package org.dows.aac.constant;
 
-public enum UserInfoEnum {
-    SECURITY_CONTEXT(0, "111");
+public enum ResourceEnum {
+    INTERFACE(0, "接口"),
+    MENU(1, "菜单");
+
     private final int code;
-    private final String key;
+    private final String description;
 
-    UserInfoEnum(int code, String key) {
+    ResourceEnum(int code, String description) {
         this.code = code;
-        this.key = key;
+        this.description = description;
     }
 
     public int getCode() {
         return code;
     }
 
-    public String getKey() {
-        return key;
+    public String getDescription() {
+        return description;
     }
 
     public static ResourceEnum getByCode(int code) {
         for (ResourceEnum type : ResourceEnum.values()) {
-            if (type.getCode() == code) {
+            if (type.code == code) {
                 return type;
             }
         }

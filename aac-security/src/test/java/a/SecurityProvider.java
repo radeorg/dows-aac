@@ -2,7 +2,7 @@ package a;
 
 
 import cn.hutool.json.JSONObject;
-import org.dows.aac.api.constant.UserTypeEnum;
+import org.dows.aac.constant.UserTypeEnum;
 
 /**
  * @description: </br>
