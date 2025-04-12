@@ -1,7 +1,6 @@
 package org.dows.aac.handler.weixin;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONUtil;
 import lombok.RequiredArgsConstructor;
@@ -60,11 +59,6 @@ public class WeixinOpenidHandler extends AbstractWeixinHandler implements ApiHan
         WxUserInfo bean = JSONUtil.toBean(post, WxUserInfo.class);
         /*bean = new WxUserInfo();
         bean.setOpenid("oPU2l7TdiTOEPZ0lv6zCjaPARF3E");*/
-        if (StrUtil.isBlank(bean.getOpenid())) {
-            //return null;
-            log.info("微信登录失败:{}", bean.getErrmsg());
-            throw new AacException(String.format("微信登录失败:%s", bean.getErrmsg()));
-        }
         // 对结果进行处理
         return processOutput(bean, outputClass);
     }

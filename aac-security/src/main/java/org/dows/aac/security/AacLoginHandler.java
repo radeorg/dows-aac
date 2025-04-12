@@ -1,5 +1,6 @@
 package org.dows.aac.security;
 
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.jwt.JWTUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -73,6 +74,15 @@ public class AacLoginHandler implements LoginApi {
         } else { // openid
             ApiHandler handler = handlerDispatcher.getHandler(loginRequest.getIdentifierType(), OpenApiEnum.GET_OPENID);
             OpenidResponse openidResponse = handler.execute(loginRequest.getVerifyCode(), OpenidResponse.class);
+            if (StrUtil.isBlank(openidResponse.getOpenid())) {
+                //return null;
+                log.info("微信登录失败:{}", openidResponse.getErrmsg());
+                if (!aacProperties.getLoginSetting().isTest()) {
+                    openidResponse.setOpenid(loginRequest.getIdentifier());
+                } else {
+                    throw new AacException(String.format("微信登录失败:%s", openidResponse.getErrmsg()));
+                }
+            }
             // 填充openid 为identifier
             loginRequest.setIdentifier(openidResponse.getOpenid());
             authenticationToken = new OpenidAuthenticationToken(loginRequest.getIdentifier(), loginRequest.getPassword());
