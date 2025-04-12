@@ -1,6 +1,7 @@
 package org.dows.aac.security;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.StrUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dows.aac.request.LoginRequest;
@@ -40,7 +41,10 @@ public class UserDetailsServiceHandler implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-        log.info("根据账号标识查询账号信息");
+        if (StrUtil.isBlank(s)) {
+            throw new UsernameNotFoundException("不存在账号标识为空的账号");
+        }
+        log.info("根据账号标识:{}查询账号信息", s);
         String appId = AppContext.getAppId();
         /**
          * 根据账号标识查询账号信息,此时登录即注册，注册即登录,账号未查到信息可以通过其他账号标识[邮箱，电话]
@@ -69,29 +73,29 @@ public class UserDetailsServiceHandler implements UserDetailsService {
         List<GrantedAuthority> grantedAuthorityList = new ArrayList<>();
         List<Long> roleIds = null;
         // 超管
-        if(accountInstanceResponse.isSuperAccount()){
+        if (accountInstanceResponse.isSuperAccount()) {
             // 超级管理员角色Id默认1L
             Long roleId = 1L;
             roleIds = Collections.singletonList(roleId);
             // 获取所有资源
             List<RbacUriResponse> authority = rbacApi.getAllUrisByAppId(appId);
-            Map<String,Object> roleInfo = new HashMap<>();
-            roleInfo.put(String.valueOf(roleId),authority);
-            grantedAuthorityList.add(new OAuth2UserAuthority(String.valueOf(roleId),roleInfo));
-        }else{
+            Map<String, Object> roleInfo = new HashMap<>();
+            roleInfo.put(String.valueOf(roleId), authority);
+            grantedAuthorityList.add(new OAuth2UserAuthority(String.valueOf(roleId), roleInfo));
+        } else {
             // 获取账号及在所在组织的所有角色ID->根据角色ID获取对应的菜单&资源信息 组装权限信息 放入 GrantedAuthority,
             roleIds = accountApi.getAllRoleIds(appId, accountInstanceResponse.getAccountInstanceId());
 
-            if(CollectionUtil.isNotEmpty(roleIds)){
+            if (CollectionUtil.isNotEmpty(roleIds)) {
                 //for (Long roleId : roleIds) {
-                List<RoleResourceResponse> roleResourceResponses= rbacApi.getUrisByRoleIds(appId, roleIds);
-                    //List<String> authority = rbacApi.getUriCode(Collections.singletonList(roleId));
-                    //Map<String,Object> roleInfo = new HashMap<>();
-                    //roleInfo.put(String.valueOf(roleId),authority);
+                List<RoleResourceResponse> roleResourceResponses = rbacApi.getUrisByRoleIds(appId, roleIds);
+                //List<String> authority = rbacApi.getUriCode(Collections.singletonList(roleId));
+                //Map<String,Object> roleInfo = new HashMap<>();
+                //roleInfo.put(String.valueOf(roleId),authority);
                 for (RoleResourceResponse rr : roleResourceResponses) {
-                    Map<String,Object> roleInfo = new HashMap<>();
-                    roleInfo.put(String.valueOf(rr.getRoleId()),rr.getAuthority());
-                    grantedAuthorityList.add(new OAuth2UserAuthority(String.valueOf(rr.getRoleId()),roleInfo));
+                    Map<String, Object> roleInfo = new HashMap<>();
+                    roleInfo.put(String.valueOf(rr.getRoleId()), rr.getAuthority());
+                    grantedAuthorityList.add(new OAuth2UserAuthority(String.valueOf(rr.getRoleId()), roleInfo));
                 }
                 //}
             }

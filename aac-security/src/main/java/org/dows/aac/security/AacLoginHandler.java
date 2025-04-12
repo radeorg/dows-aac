@@ -77,7 +77,7 @@ public class AacLoginHandler implements LoginApi {
             if (StrUtil.isBlank(openidResponse.getOpenid())) {
                 //return null;
                 log.info("微信登录失败:{}", openidResponse.getErrmsg());
-                if (!aacProperties.getLoginSetting().isTest()) {
+                if (aacProperties.getLoginSetting().isTest()) {
                     openidResponse.setOpenid(loginRequest.getIdentifier());
                 } else {
                     throw new AacException(String.format("微信登录失败:%s", openidResponse.getErrmsg()));
@@ -131,7 +131,7 @@ public class AacLoginHandler implements LoginApi {
         log.info("account:{},token:{}", loginRequest.getIdentifier(), token);
         LoginResponse loginResponse = new LoginResponse();
         loginResponse.setToken(token);
-        loginResponse.setOpenid(aacUser.getAccountName());
+        //loginResponse.setOpenid(aacUser.getAccountName());
         return loginResponse;
     }
 
