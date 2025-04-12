@@ -62,7 +62,8 @@ public class WeixinOpenidHandler extends AbstractWeixinHandler implements ApiHan
         bean.setOpenid("oPU2l7TdiTOEPZ0lv6zCjaPARF3E");*/
         if (StrUtil.isBlank(bean.getOpenid())) {
             //return null;
-            throw new AacException("微信登录失败");
+            log.info("微信登录失败:{}", bean.getErrmsg());
+            throw new AacException(String.format("微信登录失败:%s", bean.getErrmsg()));
         }
         // 对结果进行处理
         return processOutput(bean, outputClass);
