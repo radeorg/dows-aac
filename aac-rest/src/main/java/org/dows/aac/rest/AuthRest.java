@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dows.aac.AacSettings;
+import org.dows.aac.api.AacApi;
 import org.dows.aac.api.AacUser;
 import org.dows.aac.api.LoginApi;
 import org.dows.aac.request.LoginRequest;
@@ -20,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RestController
 @Tag(name="登录认证中心",description="登录认证中心")
-public class AuthRest {
+public class AuthRest implements AacApi {
 
     private final LoginApi loginApi;
     private final AacProperties aacProperties;
@@ -81,10 +82,9 @@ public class AuthRest {
      *
      * @return
      */
-    //@Actlog
     @Operation(summary = "获取当前登录人信息")
-    @GetMapping("/v1/api/aac/getCurrentUser")
-    public AacUser getUserInfo() {
+    @Override
+    public AacUser getCurrentAccUser() {
         //从认证信息上下文中 获取用户权限
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Object principal = authentication.getPrincipal();
@@ -118,5 +118,6 @@ public class AuthRest {
 //        accountApi.updateInstancePassword(accountInstance.getAccountInstanceId(), new BCryptPasswordEncoder().encode(newPassword));
         return true;
     }
+
 
 }

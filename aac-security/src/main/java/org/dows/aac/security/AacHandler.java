@@ -3,7 +3,6 @@ package org.dows.aac.security;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dows.aac.AacSettings;
-import org.dows.aac.api.AacApi;
 import org.dows.aac.api.AacUser;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
@@ -16,10 +15,10 @@ import java.util.*;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class AacHandler implements AacApi {
+public class AacHandler  {
     private final AacSettings aacSettings;
 
-    @Override
+
     public AacUser getCurrentAccUser() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (principal instanceof AacUser) {
