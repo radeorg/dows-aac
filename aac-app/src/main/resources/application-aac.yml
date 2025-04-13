@@ -1,6 +1,7 @@
 dows:
   aac:
     loginSetting:
+      test: true
       type: single
       url: /v1/api/aac/login
     whitelist:
