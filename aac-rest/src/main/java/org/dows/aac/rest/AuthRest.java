@@ -86,7 +86,7 @@ public class AuthRest implements AacApi {
 //        HttpUtil.post(url, "");
 //        return Response.ok();
 //    }
-    @Operation(summary = "匹配当前登录人信息")
+    @Operation(summary = "绑定当前账号相关信息")
     @Override
     public AacUser bindingCurrentAacUser(@RequestBody BindingUserRequest bindingUserRequest) {
         // 获取access_token
