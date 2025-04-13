@@ -9,6 +9,8 @@ public class LoginSetting {
     // 登录类型
     private String type;
 
+    private boolean test;
+
 
     private String loginUrl;
     private String logoutUrl;
