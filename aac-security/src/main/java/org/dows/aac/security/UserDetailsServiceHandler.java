@@ -3,13 +3,12 @@ package org.dows.aac.security;
 import cn.hutool.core.collection.CollectionUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.dows.aac.handler.rbac.RbacApiHandler;
+import org.dows.aac.handler.uim.UimApiHandler;
 import org.dows.aac.request.LoginRequest;
 import org.dows.rade.context.AppContext;
-import org.dows.rbac.api.RbacApi;
 import org.dows.rbac.model.RoleResourceResponse;
 import org.dows.rbac.response.RbacUriResponse;
-import org.dows.uim.api.AccountApi;
-import org.dows.uim.request.AccountInstanceRequest;
 import org.dows.uim.response.AccountInstanceResponse;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -33,9 +32,10 @@ import java.util.*;
 @Slf4j
 @Component
 public class UserDetailsServiceHandler implements UserDetailsService {
-
-    private final AccountApi accountApi;
-    private final RbacApi rbacApi;
+    private final UimApiHandler uimApiHandler;
+    private final RbacApiHandler rbacApiHandler;
+//    private final AccountApi accountApi;
+//    private final RbacApi rbacApi;
 //    private final AacContext aacContext;
 
     @Override
@@ -61,7 +61,7 @@ public class UserDetailsServiceHandler implements UserDetailsService {
          *                 throw new UsernameNotFoundException("账号不存在");
          *             }
          */
-        AccountInstanceResponse accountInstanceResponse = accountApi.getAccountInstanceByIdentifier(appId, s);
+        AccountInstanceResponse accountInstanceResponse = uimApiHandler.getAccountInstanceByIdentifier(appId, s);
         if (null == accountInstanceResponse) {
             log.info("账号不存在");
             return null;
@@ -74,17 +74,17 @@ public class UserDetailsServiceHandler implements UserDetailsService {
             Long roleId = 1L;
             roleIds = Collections.singletonList(roleId);
             // 获取所有资源
-            List<RbacUriResponse> authority = rbacApi.getAllUrisByAppId(appId);
+            List<RbacUriResponse> authority = rbacApiHandler.getAllUrisByAppId(appId);
             Map<String,Object> roleInfo = new HashMap<>();
             roleInfo.put(String.valueOf(roleId),authority);
             grantedAuthorityList.add(new OAuth2UserAuthority(String.valueOf(roleId),roleInfo));
         }else{
             // 获取账号及在所在组织的所有角色ID->根据角色ID获取对应的菜单&资源信息 组装权限信息 放入 GrantedAuthority,
-            roleIds = accountApi.getAllRoleIds(appId, accountInstanceResponse.getAccountInstanceId());
+            roleIds = uimApiHandler.getAllRoleIds(appId, accountInstanceResponse.getAccountInstanceId());
 
             if(CollectionUtil.isNotEmpty(roleIds)){
                 //for (Long roleId : roleIds) {
-                List<RoleResourceResponse> roleResourceResponses= rbacApi.getUrisByRoleIds(appId, roleIds);
+                List<RoleResourceResponse> roleResourceResponses= rbacApiHandler.getUrisByRoleIds(appId, roleIds);
                     //List<String> authority = rbacApi.getUriCode(Collections.singletonList(roleId));
                     //Map<String,Object> roleInfo = new HashMap<>();
                     //roleInfo.put(String.valueOf(roleId),authority);
@@ -107,7 +107,8 @@ public class UserDetailsServiceHandler implements UserDetailsService {
 
     @Transactional
     public void newRegister(String name, String encode, LoginRequest loginRequest) {
-        AccountInstanceRequest accountInstanceRequest = new AccountInstanceRequest();
+        uimApiHandler.newRegister(name, encode, loginRequest);
+        /*AccountInstanceRequest accountInstanceRequest = new AccountInstanceRequest();
         accountInstanceRequest.setPassword(encode);
         accountInstanceRequest.setIdentifier(name);
         accountInstanceRequest.setIdentifierType(loginRequest.getIdentifierType().getType());
@@ -117,7 +118,7 @@ public class UserDetailsServiceHandler implements UserDetailsService {
         accountInstanceRequest.setAvator(loginRequest.getAvator());
         accountInstanceRequest.setSource(loginRequest.getSource());
         accountInstanceRequest.setReferralsNo(loginRequest.getReferralsNo());
-        accountApi.getAccountWithRegister(accountInstanceRequest);
+        accountApi.getAccountWithRegister(accountInstanceRequest);*/
     }
 }
 

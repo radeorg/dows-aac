@@ -24,6 +24,18 @@
             <groupId>com.jayway.jsonpath</groupId>
             <artifactId>json-path</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.dows.cloud</groupId>
+            <artifactId>uim-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-tx</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.dows.cloud</groupId>
+            <artifactId>rbac-api</artifactId>
+        </dependency>
         <!--<dependency>
             <groupId>org.dows.cloud</groupId>
             <artifactId>aac-config</artifactId>

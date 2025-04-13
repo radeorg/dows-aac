@@ -8,9 +8,18 @@ import lombok.extern.slf4j.Slf4j;
 import org.dows.aac.AacSettings;
 import org.dows.aac.api.AacApi;
 import org.dows.aac.api.AacUser;
+import org.dows.aac.api.ApiHandler;
 import org.dows.aac.api.LoginApi;
+import org.dows.aac.constant.OpenApiEnum;
+import org.dows.aac.exception.AacException;
+import org.dows.aac.handler.HandlerDispatcher;
+import org.dows.aac.handler.uim.UimApiHandler;
 import org.dows.aac.request.LoginRequest;
+import org.dows.aac.request.BindingUserRequest;
 import org.dows.aac.response.LoginResponse;
+import org.dows.aac.weixin.GetTelephoneRequest;
+import org.dows.aac.weixin.GetTelephoneResponse;
+import org.dows.aac.weixin.WeixinAccessToken;
 import org.dows.aac.yml.AacProperties;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,7 +35,8 @@ public class AuthRest implements AacApi {
     private final LoginApi loginApi;
     private final AacProperties aacProperties;
     private final AacSettings aacSettings;
-
+    private final HandlerDispatcher handlerDispatcher;
+    private final UimApiHandler uimApiHandler;
 
     @Operation(summary = "是否开启登录")
     @GetMapping("/v1/api/aac/login/enable")
@@ -76,6 +86,39 @@ public class AuthRest implements AacApi {
 //        HttpUtil.post(url, "");
 //        return Response.ok();
 //    }
+    @Operation(summary = "匹配当前登录人信息")
+    @Override
+    public AacUser bindingCurrentAacUser(@RequestBody BindingUserRequest bindingUserRequest) {
+        // 获取access_token
+        ApiHandler tokenHandler = handlerDispatcher
+                .getHandler(bindingUserRequest.getIdentifierType(), OpenApiEnum.GET_ACCESS_TOKEN);
+        WeixinAccessToken weixinAccessToken = tokenHandler.execute(null, WeixinAccessToken.class);
+        if (weixinAccessToken.getErrcode() != null) {
+            throw new AacException(weixinAccessToken.getErrmsg());
+        }
+        // 根据access_token 获取手机号
+        ApiHandler handler = handlerDispatcher
+                .getHandler(bindingUserRequest.getIdentifierType(), OpenApiEnum.GET_TELEPHONE);
+        GetTelephoneRequest getTelephoneRequest = new GetTelephoneRequest();
+        getTelephoneRequest.setCode(bindingUserRequest.getEncryptIdentifier());
+        getTelephoneRequest.setAccess_token(weixinAccessToken.getAccess_token());
+        GetTelephoneResponse getTelephoneResponse = handler.execute(getTelephoneRequest, GetTelephoneResponse.class);
+        if (getTelephoneResponse.getErrcode() != null) {
+            throw new AacException(getTelephoneResponse.getErrmsg());
+        }
+
+        //从认证信息上下文中 获取用户权限
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof String) {
+            throw new RuntimeException("请先登录");
+        }
+        AacUser aacUser = (AacUser) authentication.getPrincipal();
+        // 根据当前登录AacUser 的accountId 回填用户信息手机号，并返回用户信息
+        uimApiHandler.bindingCurrentAacUser(aacUser, getTelephoneResponse);
+        aacUser.setPhone(getTelephoneResponse.getPhone_info().getPhoneNumber());
+        return aacUser;
+    }
 
     /**
      * 获取当前登录人信息
@@ -84,7 +127,7 @@ public class AuthRest implements AacApi {
      */
     @Operation(summary = "获取当前登录人信息")
     @Override
-    public AacUser getCurrentAccUser() {
+    public AacUser getCurrentAacUser() {
         //从认证信息上下文中 获取用户权限
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Object principal = authentication.getPrincipal();

@@ -1,12 +1,10 @@
 package org.dows.aac.handler.weixin;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.dows.aac.AacSettings;
 import org.dows.aac.api.ApiHandler;
 import org.dows.aac.api.ApiMapping;
 import org.dows.aac.constant.OpenApiEnum;
@@ -25,7 +23,7 @@ public class WeixinOpenidHandler extends AbstractWeixinHandler implements ApiHan
 
     private static String URL = "https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code";
 
-    private final AacSettings aacSettings;
+//    private final AacSettings aacSettings;
 //    private final AacContext aacContext;
 
 //    private Map<String, OpenSetting> openSettingMap = new HashMap<>();
@@ -60,10 +58,10 @@ public class WeixinOpenidHandler extends AbstractWeixinHandler implements ApiHan
         WxUserInfo bean = JSONUtil.toBean(post, WxUserInfo.class);
         /*bean = new WxUserInfo();
         bean.setOpenid("oPU2l7TdiTOEPZ0lv6zCjaPARF3E");*/
-        if (StrUtil.isBlank(bean.getOpenid())) {
+        /*if (StrUtil.isBlank(bean.getOpenid())) {
             //return null;
             throw new AacException("微信登录失败");
-        }
+        }*/
         // 对结果进行处理
         return processOutput(bean, outputClass);
     }

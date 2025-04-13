@@ -8,11 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.dows.aac.api.ApiHandler;
 import org.dows.aac.api.ApiMapping;
 import org.dows.aac.constant.OpenApiEnum;
-import org.dows.aac.exception.AacException;
-import org.dows.aac.weixin.WxUserInfo;
 import org.dows.aac.yml.OpenSetting;
 import org.dows.rade.constant.OpenChannel;
-import org.dows.rade.context.AppContext;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
@@ -27,10 +24,23 @@ import java.net.URL;
 @ApiMapping(channel = OpenChannel.WEIXIN, func = OpenApiEnum.GET_ACCESS_TOKEN)
 public class WechatAccessTokenHandler extends AbstractWeixinHandler implements ApiHandler {
 
+
+    private static String accessToken;
+    private static long expireTime;
+
     private static final String URL = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s";
 
+    @Override
+    public <T> T execute(Object inputs, Class<T> outputClass) {
+        OpenSetting openSetting = verifyOpenSettingByCurrentAppId();
+        String uri = String.format(URL, openSetting.getThirdAppId(), openSetting.getSecret());
+        String response = HttpUtil.get(uri);
+        // todo 转为对应的对象处理
+        return JSONUtil.toBean(response, outputClass);
+    }
 
-    public static String getAccessToken() {
+
+    private static String getAccessToken() {
         try {
             URL url = new URL(URL);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -59,27 +69,5 @@ public class WechatAccessTokenHandler extends AbstractWeixinHandler implements A
             e.printStackTrace();
         }
         return null;
-    }
-
-    public static void main(String[] args) {
-        String accessToken = getAccessToken();
-        if (accessToken != null) {
-            System.out.println("Access Token: " + accessToken);
-        }
-    }
-
-
-    @Override
-    public <T> T execute(Object inputs, Class<T> outputClass) {
-        OpenSetting openSetting = openSettingMap.get(AppContext.getAppId());
-        if (openSetting == null) {
-            throw new AacException("应用未配置");
-        }
-        String uri = String.format(URL, openSetting.getThirdAppId(), openSetting.getSecret());
-        String response = HttpUtil.get(uri);
-        // todo 转为对应的对象处理
-        WxUserInfo bean = JSONUtil.toBean(response, WxUserInfo.class);
-
-        return (T) WechatAccessTokenHandler.getAccessToken();
     }
 }

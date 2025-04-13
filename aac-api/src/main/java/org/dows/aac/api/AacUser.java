@@ -29,7 +29,10 @@ public interface AacUser {
     //手机
     String getPhone();
 
+    void setPhone(String phone);
+
     // 邮箱
     String getEmail();
 
+    void setEmail(String email);
 }
