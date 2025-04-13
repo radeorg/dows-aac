@@ -14,4 +14,7 @@ public class BindingUserRequest {
     @Schema(description = "加密的标识用户获取用户信息")
     private String encryptIdentifier;
 
+    private String telephone;
+    private String email;
+
 }

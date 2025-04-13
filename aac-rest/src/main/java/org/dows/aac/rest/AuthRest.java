@@ -14,8 +14,8 @@ import org.dows.aac.constant.OpenApiEnum;
 import org.dows.aac.exception.AacException;
 import org.dows.aac.handler.HandlerDispatcher;
 import org.dows.aac.handler.uim.UimApiHandler;
-import org.dows.aac.request.LoginRequest;
 import org.dows.aac.request.BindingUserRequest;
+import org.dows.aac.request.LoginRequest;
 import org.dows.aac.response.LoginResponse;
 import org.dows.aac.weixin.GetTelephoneRequest;
 import org.dows.aac.weixin.GetTelephoneResponse;
@@ -104,7 +104,19 @@ public class AuthRest implements AacApi {
         getTelephoneRequest.setAccess_token(weixinAccessToken.getAccess_token());
         GetTelephoneResponse getTelephoneResponse = handler.execute(getTelephoneRequest, GetTelephoneResponse.class);
         if (getTelephoneResponse.getErrcode() != null) {
-            throw new AacException(getTelephoneResponse.getErrmsg());
+            if (!this.aacProperties.getLoginSetting().isTest()) {
+                throw new AacException(String.format("获取微信信息绑定账号失败,错误码:%s,错误信息:%s",
+                        getTelephoneResponse.getErrcode(), getTelephoneResponse.getErrmsg()));
+            }
+            GetTelephoneResponse.PhoneInfo phoneInfo = new GetTelephoneResponse.PhoneInfo();
+            String telephone = bindingUserRequest.getTelephone();
+            if (telephone == null) {
+                telephone = "13800138000";
+            }
+            phoneInfo.setPhoneNumber("+86" + telephone);
+            phoneInfo.setPurePhoneNumber(telephone);
+            phoneInfo.setCountryCode("86");
+            getTelephoneResponse.setPhone_info(phoneInfo);
         }
 
         //从认证信息上下文中 获取用户权限
