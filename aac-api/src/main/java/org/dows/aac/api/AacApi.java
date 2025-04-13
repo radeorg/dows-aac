@@ -9,7 +9,7 @@ public interface AacApi {
     @GetMapping("/v1/aac/user/info")
     AacUser getCurrentAacUser();
 
-    @PostMapping("/v1/aac/user/matching")
+    @PostMapping("/v1/aac/user/binding")
     AacUser bindingCurrentAacUser(BindingUserRequest bindingUserRequest);
 
     //当rbac域的角色发送变化时，同步账号权限
