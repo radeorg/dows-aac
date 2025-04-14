@@ -14,7 +14,10 @@ public interface AacApi {
 
     //当rbac域的角色发送变化时，同步账号权限
     //void syncPermission(SyncAccountPermissionRequest syncAccountPermissionRequest);
-
+    @PostMapping("/v1/aac/user/claim")
+    default AacUser claimCurrentAacUser(BindingUserRequest bindingUserRequest) {
+        throw new UnsupportedOperationException();
+    }
 
 
 }

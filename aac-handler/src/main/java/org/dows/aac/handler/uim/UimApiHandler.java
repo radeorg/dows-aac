@@ -21,6 +21,11 @@ public class UimApiHandler {
     private final AccountApi accountApi;
 
 
+    public void claimCurrentAacUser(AacUser aacUser, GetTelephoneResponse getTelephoneResponse) {
+
+
+    }
+
     /**
      * 绑定当前用户其他信息到UIM账号
      *
