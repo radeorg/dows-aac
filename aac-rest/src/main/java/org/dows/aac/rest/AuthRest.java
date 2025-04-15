@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
 //@Namespace(module = "aac", name = "用户信息", code = "aac.info", path = "/")
 @RequiredArgsConstructor
 @RestController
-@Tag(name="登录认证中心",description="登录认证中心")
+@Tag(name="认证授权中心",description="认证授权中心")
 public class AuthRest implements AacApi {
 
     private final LoginApi loginApi;
