@@ -113,11 +113,10 @@ public class UserDetailsServiceHandler implements UserDetailsService {
             // 设置账号所在组织根节点ID
             List<Long> orgIds = orgRootIdResponse.stream().map(RootOrgResponse::getRootOrgId).toList();
             defaultAacUser.setOrgRootIds(orgIds);
-            RootOrgResponse rootOrgResponse = orgRootIdResponse.stream().filter(RootOrgResponse::isDefaultOrg).findFirst()
-                    .orElse(null);
-            if (null != rootOrgResponse) {
-                defaultAacUser.setOrgRootId(orgRootIdResponse.get(0).getRootOrgId());
-            }
+            // 设置默认组织根节点ID
+            orgRootIdResponse.stream().filter(RootOrgResponse::isDefaultOrg).findFirst()
+                    .ifPresent(rootOrgResponse ->
+                            defaultAacUser.setOrgRootId(orgRootIdResponse.get(0).getRootOrgId()));
             // 设置账号类型 @org.dows.uim.constant.AccountType
             defaultAacUser.setAccountTypes(accountTypes);
         } catch (Exception e) {
