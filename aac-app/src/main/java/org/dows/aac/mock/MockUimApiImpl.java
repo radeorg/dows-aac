@@ -2,19 +2,17 @@ package org.dows.aac.mock;
 
 import lombok.extern.slf4j.Slf4j;
 import org.dows.uim.api.AccountApi;
+import org.dows.uim.api.OrgApi;
 import org.dows.uim.request.AccountInstanceRequest;
 import org.dows.uim.request.FindAccountIdentifierRequest;
-import org.dows.uim.response.AccountIdentifierResponse;
-import org.dows.uim.response.AccountInstanceResponse;
-import org.dows.uim.response.AccountOrgIdsResponse;
-import org.dows.uim.response.AccountRoleRelationResponse;
+import org.dows.uim.response.*;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Slf4j
 @Component
-public class MockUimApiImpl implements AccountApi {
+public class MockUimApiImpl implements AccountApi , OrgApi {
 
     public Long getAccountWithRegister(String appId, AccountInstanceRequest accountInstanceRequest) {
         return 1L;
@@ -82,6 +80,11 @@ public class MockUimApiImpl implements AccountApi {
 
     @Override
     public List<AccountRoleRelationResponse> getRoleByAccountInstanceId(List<Long> principals, String appId) {
+        return List.of();
+    }
+
+    @Override
+    public List<RootOrgResponse> getRootOrgListByAccountInstanceId(Long accountInstanceId) {
         return List.of();
     }
 }

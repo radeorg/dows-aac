@@ -10,32 +10,32 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
+@Setter
+@Getter
 public class DefaultAacUser extends User implements AacUser, UserDetails {
 
-    @Getter
-    @Setter
+
     private Long accountId;
-    @Getter
-    @Setter
+
     private List<Long> roleIds;
-    @Getter
-    @Setter
+
+    private List<Long> orgRootIds;
+
+    private List<Integer> accountTypes;
+
     private boolean superAccount;
-    @Getter
-    @Setter
+
+    private Long orgRootId;
+
     private Long userId;
-    @Getter
-    @Setter
+
     private String avatar;
-    @Getter
-    @Setter
+
     private String phone;
-    @Getter
-    @Setter
+
     private String email;
-    @Getter
-    @Setter
-    private String accountName;
+
+    private String nickname;
 
     public DefaultAacUser(Long accountId, String username, String password,
                           Collection<? extends GrantedAuthority> authorities,
@@ -44,7 +44,7 @@ public class DefaultAacUser extends User implements AacUser, UserDetails {
         this.accountId = accountId;
         this.roleIds = roleIds;
         this.superAccount = superAccount;
-        this.accountName = username;
+        this.nickname = username;
     }
 
 

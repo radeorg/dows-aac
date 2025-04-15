@@ -50,7 +50,7 @@ public class WeixinTelephoneHandler extends AbstractWeixinHandler implements Api
         String uri = String.format(URL, in.getAccess_token());
         Map<String, Object> params = new HashMap<>();
         params.put("code", in.getCode());
-        String post = HttpUtil.post(uri, params);
+        String post = HttpUtil.post(uri, JSONUtil.toJsonStr(params));
         //DocumentContext jsonContext = JsonPath.parse(json);
         return JSONUtil.toBean(post, outputClass);
     }

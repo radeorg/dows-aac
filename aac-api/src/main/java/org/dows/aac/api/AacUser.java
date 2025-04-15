@@ -13,12 +13,17 @@ public interface AacUser {
 
     // 角色集ID
     List<Long> getRoleIds();
+    //void setRoleIds(List<Long> roleIds);
+
+    // 账号类型
+    List<Integer> getAccountTypes();
+    //void setAccountTypes(List<Integer> accountTypes);
 
     // 超级账号
     boolean isSuperAccount();
 
     //账号名
-    String getAccountName();
+    String getNickname();
 
     //用户名
     String getUsername();
@@ -28,11 +33,9 @@ public interface AacUser {
 
     //手机
     String getPhone();
-
-    void setPhone(String phone);
+    //void setPhone(String phone);
 
     // 邮箱
     String getEmail();
-
-    void setEmail(String email);
+    //void setEmail(String email);
 }

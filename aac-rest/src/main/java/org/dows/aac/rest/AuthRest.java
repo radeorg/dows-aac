@@ -127,7 +127,7 @@ public class AuthRest implements AacApi {
         AacUser aacUser = (AacUser) authentication.getPrincipal();
         // 根据当前登录AacUser 的accountId 回填用户信息手机号，并返回用户信息
         uimApiHandler.bindingCurrentAacUser(aacUser, getTelephoneResponse);
-        aacUser.setPhone(getTelephoneResponse.getPhone_info().getPhoneNumber());
+        //aacUser.setPhone(getTelephoneResponse.getPhone_info().getPhoneNumber());
         return aacUser;
     }
 
@@ -145,7 +145,7 @@ public class AuthRest implements AacApi {
         AacUser aacUser = (AacUser) authentication.getPrincipal();
         // 根据当前登录AacUser 的accountId 回填用户信息手机号，并返回用户信息
         uimApiHandler.claimCurrentAacUser(aacUser, getTelephoneResponse);
-        aacUser.setPhone(getTelephoneResponse.getPhone_info().getPhoneNumber());
+        //aacUser.setPhone(getTelephoneResponse.getPhone_info().getPhoneNumber());
         return aacUser;
     }
 

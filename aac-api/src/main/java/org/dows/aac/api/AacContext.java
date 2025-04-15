@@ -1,10 +1,5 @@
-//package org.dows.aac.api;
-//
-//public interface AacContext {
-//
-//    String getAppId();
-//
-//    void setAppId(String appId);
-//
-//    void clear();
-//}
+package org.dows.aac.api;
+
+public interface AacContext {
+    AacUser getAacUser();
+}

@@ -11,6 +11,7 @@ import org.dows.rade.context.AppContext;
 import org.dows.rbac.model.RoleResourceResponse;
 import org.dows.rbac.response.RbacUriResponse;
 import org.dows.uim.response.AccountInstanceResponse;
+import org.dows.uim.response.RootOrgResponse;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -105,6 +106,23 @@ public class UserDetailsServiceHandler implements UserDetailsService {
                 accountInstanceResponse.getIdentifier(),
                 accountInstanceResponse.getPassword(),
                 grantedAuthorityList, roleIds, accountInstanceResponse.isSuperAccount());
+
+        try {
+            List<RootOrgResponse> orgRootIdResponse = uimApiHandler.getOrgRootId(accountInstanceResponse.getAccountInstanceId());
+            List<Integer> accountTypes = uimApiHandler.getAccountTypes(accountInstanceResponse.getAccountInstanceId());
+            // 设置账号所在组织根节点ID
+            List<Long> orgIds = orgRootIdResponse.stream().map(RootOrgResponse::getRootOrgId).toList();
+            defaultAacUser.setOrgRootIds(orgIds);
+            RootOrgResponse rootOrgResponse = orgRootIdResponse.stream().filter(RootOrgResponse::isDefaultOrg).findFirst()
+                    .orElse(null);
+            if (null != rootOrgResponse) {
+                defaultAacUser.setOrgRootId(orgRootIdResponse.get(0).getRootOrgId());
+            }
+            // 设置账号类型 @org.dows.uim.constant.AccountType
+            defaultAacUser.setAccountTypes(accountTypes);
+        } catch (Exception e) {
+            log.error("获取账号所在组织根节点ID及账号类型失败", e);
+        }
         log.debug("{}", defaultAacUser);
         return defaultAacUser;
     }
@@ -112,17 +130,6 @@ public class UserDetailsServiceHandler implements UserDetailsService {
     @Transactional
     public void newRegister(String name, String encode, LoginRequest loginRequest) {
         uimApiHandler.newRegister(name, encode, loginRequest);
-        /*AccountInstanceRequest accountInstanceRequest = new AccountInstanceRequest();
-        accountInstanceRequest.setPassword(encode);
-        accountInstanceRequest.setIdentifier(name);
-        accountInstanceRequest.setIdentifierType(loginRequest.getIdentifierType().getType());
-        accountInstanceRequest.setAppId(loginRequest.getAppId());
-        accountInstanceRequest.setZoneNo(loginRequest.getZoneNo());
-        accountInstanceRequest.setPhone(name);
-        accountInstanceRequest.setAvator(loginRequest.getAvator());
-        accountInstanceRequest.setSource(loginRequest.getSource());
-        accountInstanceRequest.setReferralsNo(loginRequest.getReferralsNo());
-        accountApi.getAccountWithRegister(accountInstanceRequest);*/
     }
 }
 
