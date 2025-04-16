@@ -32,10 +32,15 @@ public interface AacUser {
     String getAvatar();
 
     //手机
-    String getPhone();
+    String getTelephone();
     //void setPhone(String phone);
 
     // 邮箱
     String getEmail();
     //void setEmail(String email);
+    // 手机号绑定
+    Integer getState();
+
+    // 获取账号标识类型[weixin, qq, weibo, email...]
+    Integer getIdentifierType();
 }

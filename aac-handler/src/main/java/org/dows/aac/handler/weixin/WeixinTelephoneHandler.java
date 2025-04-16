@@ -16,6 +16,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 
+/**
+ * https://developers.weixin.qq.com/miniprogram/dev/OpenApiDoc/user-info/phone-number/getPhoneNumber.html
+ */
 @RequiredArgsConstructor
 @Slf4j
 @Component

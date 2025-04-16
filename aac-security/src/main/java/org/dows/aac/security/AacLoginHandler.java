@@ -94,7 +94,7 @@ public class AacLoginHandler implements LoginApi {
             throw new UsernameNotFoundException("登录失败");
         }
         if (aacProperties.getLoginSetting().getType().equalsIgnoreCase("single")) {
-            return singleToken(loginRequest, authenticate);
+            return singleToken(loginRequest.getIdentifier(), authenticate);
         }
         if (aacProperties.getLoginSetting().getType().equalsIgnoreCase("oauth")) {
             return oauthToken(loginRequest, authenticate);
@@ -102,14 +102,28 @@ public class AacLoginHandler implements LoginApi {
         throw new AuthenticationServiceException("登录失败");
     }
 
+    @Override
+    public LoginResponse openIdLogin(String openid) {
+        // TODO openid登录
+        // 根据openid查询用户信息
+        AbstractAuthenticationToken authenticationToken= new OpenidAuthenticationToken(openid);
+        //进行登录 获取认证信息
+        Authentication authenticate = authenticationManager.authenticate(authenticationToken);
+        if (authenticate == null) {
+            throw new UsernameNotFoundException("登录失败");
+        }
+        if (aacProperties.getLoginSetting().getType().equalsIgnoreCase("single")) {
+            return singleToken(openid, authenticate);
+        }
+        return null;
+    }
 
     /**
      * 单体登录
      *
-     * @param loginRequest
      * @return
      */
-    public LoginResponse singleToken(LoginRequest loginRequest, Authentication authenticate) {
+    public LoginResponse singleToken(String identifier, Authentication authenticate) {
         //创建安全上下文
         SecurityContext securityContext = SecurityContextHolder.getContext();
         //把用户认证信息放到 安全上下文中
@@ -128,9 +142,16 @@ public class AacLoginHandler implements LoginApi {
                 aacProperties.getJwtSetting().getSecretKey().getBytes(StandardCharsets.UTF_8));
         // 缓存
         radeCache.set(CacheKeyEnum.SECURITY_CONTEXT.getCacheKey(token), securityContext);
-        log.info("account:{},token:{}", loginRequest.getIdentifier(), token);
+        log.info("account:{},token:{}", identifier, token);
         LoginResponse loginResponse = new LoginResponse();
         loginResponse.setToken(token);
+        loginResponse.setAccountTypes(aacUser.getAccountTypes());
+        loginResponse.setIdentifierType(aacUser.getIdentifierType());
+        String telephone = aacUser.getTelephone();
+        // 手机号存在则说明已经绑定手机号 设置状态1
+        if (StrUtil.isNotBlank(telephone)) {
+            loginResponse.setState(1);
+        }
         //loginResponse.setOpenid(aacUser.getAccountName());
         return loginResponse;
     }
@@ -186,4 +207,6 @@ public class AacLoginHandler implements LoginApi {
         //删除缓存
 //        redisTemplate.delete(key);
     }
+
+
 }

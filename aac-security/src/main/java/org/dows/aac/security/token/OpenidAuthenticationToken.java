@@ -11,6 +11,12 @@ public class OpenidAuthenticationToken extends AbstractAuthenticationToken {
 
     private Object code;
 
+    public OpenidAuthenticationToken(Object openid) {
+        super(null);
+        this.openid = openid;
+        setAuthenticated(false);
+    }
+
     public OpenidAuthenticationToken(Object openid, Object code) {
         super(null);
         this.openid = openid;

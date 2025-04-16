@@ -15,6 +15,10 @@ import org.dows.rade.constant.OpenChannel;
 import org.dows.rade.context.AppContext;
 import org.springframework.stereotype.Component;
 
+/**
+ * https://developers.weixin.qq.com/miniprogram/dev/OpenApiDoc/user-login/code2Session.html
+ * https://developers.weixin.qq.com/miniprogram/dev/OpenApiDoc/user-info/phone-number/getPhoneNumber.html
+ */
 @RequiredArgsConstructor
 @Slf4j
 @Component

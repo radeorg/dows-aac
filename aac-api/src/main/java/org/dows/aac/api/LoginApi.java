@@ -20,4 +20,6 @@ public interface LoginApi {
      * @param id
      */
     void logout(String id);
+
+    LoginResponse openIdLogin(String openid);
 }

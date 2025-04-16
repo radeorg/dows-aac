@@ -31,11 +31,16 @@ public class DefaultAacUser extends User implements AacUser, UserDetails {
 
     private String avatar;
 
-    private String phone;
+    private String telephone;
 
     private String email;
 
     private String nickname;
+
+    private Integer state;
+
+    private Integer identifierType;
+
 
     public DefaultAacUser(Long accountId, String username, String password,
                           Collection<? extends GrantedAuthority> authorities,
@@ -46,6 +51,5 @@ public class DefaultAacUser extends User implements AacUser, UserDetails {
         this.superAccount = superAccount;
         this.nickname = username;
     }
-
 
 }

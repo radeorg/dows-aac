@@ -4,15 +4,21 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dows.aac.api.AacUser;
 import org.dows.aac.request.LoginRequest;
-import org.dows.uim.response.RootOrgResponse;
+import org.dows.aac.request.ThirdPartyPreRegisterRequest;
 import org.dows.aac.weixin.GetTelephoneResponse;
+import org.dows.aac.weixin.OpenidResponse;
+import org.dows.rade.constant.IdentifierType;
 import org.dows.uim.api.AccountApi;
 import org.dows.uim.api.AccountTypeRequest;
 import org.dows.uim.api.AccountTypeResponse;
 import org.dows.uim.api.OrgApi;
 import org.dows.uim.request.AccountInstanceRequest;
 import org.dows.uim.request.BindingAccountRequest;
+import org.dows.uim.request.FindAccountIdentifierRequest;
+import org.dows.uim.request.RelevancyAccountInstanceIdForOpenidByTelephoneRequest;
+import org.dows.uim.response.AccountIdentifierResponse;
 import org.dows.uim.response.AccountInstanceResponse;
+import org.dows.uim.response.RootOrgResponse;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -25,12 +31,6 @@ public class UimApiHandler {
 
     private final AccountApi accountApi;
     private final OrgApi orgApi;
-
-
-    public void claimCurrentAacUser(AacUser aacUser, GetTelephoneResponse getTelephoneResponse) {
-
-
-    }
 
     /**
      * 绑定当前用户其他信息到UIM账号
@@ -87,5 +87,45 @@ public class UimApiHandler {
     public List<RootOrgResponse> getOrgRootId(Long accountInstanceId) {
         // TODO 根据账号ID查询账号所在组织根节信息
         return orgApi.getRootOrgListByAccountInstanceId(accountInstanceId);
+    }
+
+    public Long addAccountIdentifierWithOpenid(OpenidResponse thirdPartyOpenidForBindingAccount,
+                                               ThirdPartyPreRegisterRequest thirdPartyPreRegisterRequest) {
+        if (Objects.nonNull(thirdPartyOpenidForBindingAccount)) {
+            String openid = thirdPartyOpenidForBindingAccount.getOpenid();
+            return accountApi.addAccountIdentifier(openid, thirdPartyPreRegisterRequest.getIdentifierType());
+        }
+        return null;
+    }
+
+    /**
+     * 关联openid和accountInstanceId，根据手机号码查询accountInstanceId，并绑定到当前用户openid账号标识
+     *
+     * @param accountIdentifierId
+     * @param getTelephoneResponse
+     * @param thirdPartyPreRegisterRequest
+     */
+    public void relevancyAccountInstanceIdForOpenid(Long accountIdentifierId, GetTelephoneResponse getTelephoneResponse,
+                                                    ThirdPartyPreRegisterRequest thirdPartyPreRegisterRequest) {
+
+        if (Objects.nonNull(getTelephoneResponse)) {
+            FindAccountIdentifierRequest findAccountIdentifierRequest = new FindAccountIdentifierRequest();
+            findAccountIdentifierRequest.setIdentifierType(IdentifierType.PHONE);
+            findAccountIdentifierRequest.setIdentifier(getTelephoneResponse.getPhone_info().getPurePhoneNumber());
+//            findAccountIdentifierRequest.setAppId();
+//            findAccountIdentifierRequest.setState();
+            AccountIdentifierResponse accountIdentifier = accountApi.getAccountIdentifier(findAccountIdentifierRequest);
+            if (accountIdentifier != null) {
+                //getTelephoneResponse.getPhone_info().getPhoneNumber(),thirdPartyPreRegisterRequest.getAppId()
+                RelevancyAccountInstanceIdForOpenidByTelephoneRequest relevancyAccountInstanceIdByTelephoneRequest =
+                        new RelevancyAccountInstanceIdForOpenidByTelephoneRequest();
+                relevancyAccountInstanceIdByTelephoneRequest.setAccountIdentifierId(accountIdentifierId);
+                relevancyAccountInstanceIdByTelephoneRequest.setAccountInstanceId(accountIdentifier.getAccountInstanceId());
+                relevancyAccountInstanceIdByTelephoneRequest.setIdentifier(getTelephoneResponse.getPhone_info().getPurePhoneNumber());
+                relevancyAccountInstanceIdByTelephoneRequest.setIdentifierType(IdentifierType.PHONE);
+                accountApi.relevancyAccountInstanceIdForOpenidByTelephone(relevancyAccountInstanceIdByTelephoneRequest);
+            }
+        }
+
     }
 }
