@@ -11,6 +11,8 @@ public interface AacUser {
     // 用户ID
     Long getUserId();
 
+    Long getOrgRootId();
+
     // 角色集ID
     List<Long> getRoleIds();
     //void setRoleIds(List<Long> roleIds);
