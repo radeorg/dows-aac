@@ -8,8 +8,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.dows.aac.api.ApiHandler;
 import org.dows.aac.api.ApiMapping;
 import org.dows.aac.constant.OpenApiEnum;
+import org.dows.aac.weixin.WeixinAccessToken;
 import org.dows.aac.yml.OpenSetting;
+import org.dows.rade.cache.RadeCache;
 import org.dows.rade.constant.OpenChannel;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
@@ -24,19 +27,29 @@ import java.net.URL;
 @ApiMapping(channel = OpenChannel.WEIXIN, func = OpenApiEnum.GET_ACCESS_TOKEN)
 public class WechatAccessTokenHandler extends AbstractWeixinHandler implements ApiHandler {
 
-
+    private final RadeCache radeCache;
     private static String accessToken;
     private static long expireTime;
+
+
+    @Value("${spring.application.appId}")
+    private String appId;
 
     private static final String URL = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s";
 
     @Override
     public <T> T execute(Object inputs, Class<T> outputClass) {
-        OpenSetting openSetting = verifyOpenSettingByCurrentAppId();
-        String uri = String.format(URL, openSetting.getThirdAppId(), openSetting.getSecret());
-        String response = HttpUtil.get(uri);
-        // todo 转为对应的对象处理
-        return JSONUtil.toBean(response, outputClass);
+        //String appId = AppContext.getAppId();
+        WeixinAccessToken weixinAccessToken = radeCache.get(appId + ":wx_access_token", WeixinAccessToken.class);
+        if (weixinAccessToken == null) {
+            OpenSetting openSetting = verifyOpenSettingByCurrentAppId();
+            String uri = String.format(URL, openSetting.getThirdAppId(), openSetting.getSecret());
+            String response = HttpUtil.get(uri);
+            // todo 转为对应的对象处理
+            WeixinAccessToken wxAccessToken = (WeixinAccessToken) JSONUtil.toBean(response, outputClass);
+            radeCache.set(appId + ":access_token", wxAccessToken, (long) wxAccessToken.getExpires_in());
+        }
+        return (T) weixinAccessToken;
     }
 
 

@@ -113,6 +113,7 @@ public class AuthRest implements AacApi {
         // 验证绑定状态，即判断是否已经绑定过手机号，没有绑定过手机号，则新增accountIdentifier表，有绑定过则直接放行
         if (accountIdentifierResponse == null) {
             LoginResponse loginResponse = new LoginResponse();
+            //loginResponse.setAccountIdentifierId(accountIdentifierResponse.getAccountIdentifierId());
             loginResponse.setState(null);
             return loginResponse;
         }
@@ -127,6 +128,7 @@ public class AuthRest implements AacApi {
                         getTelephoneResponse, thirdPartyPreRegisterRequest);
             } else {
                 LoginResponse loginResponse = new LoginResponse();
+                loginResponse.setAccountIdentifierId(accountIdentifierResponse.getAccountIdentifierId());
                 loginResponse.setState(null);
                 return loginResponse;
             }

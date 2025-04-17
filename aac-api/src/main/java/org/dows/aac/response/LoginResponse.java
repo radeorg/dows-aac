@@ -20,4 +20,6 @@ public class LoginResponse {
     // 账号标识类型，第三方登录渠道标识，如[weixin, douyin....]
     @Schema(description = "账号标识类型，第三方登录渠道标识，如[weixin, douyin....]")
     Integer identifierType;
+
+    private Long accountIdentifierId;
 }
