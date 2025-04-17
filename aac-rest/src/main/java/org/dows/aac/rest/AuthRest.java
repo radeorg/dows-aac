@@ -149,7 +149,6 @@ public class AuthRest implements AacApi {
 //        return Response.ok();
 //    }
     @Operation(summary = "绑定当前账号相关信息")
-    @Override
     public AacUser bindingCurrentAacUser(@RequestBody BindingUserRequest bindingUserRequest) {
 
         //从认证信息上下文中 获取用户权限
@@ -169,7 +168,6 @@ public class AuthRest implements AacApi {
     }
 
     @Operation(summary = "认领确认当前登录人信息")
-    @Override
     public AacUser claimCurrentAacUser(@RequestBody BindingUserRequest bindingUserRequest) {
         //从认证信息上下文中 获取用户权限
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -192,7 +190,6 @@ public class AuthRest implements AacApi {
      * @return
      */
     @Operation(summary = "获取当前登录人信息")
-    @Override
     public AacUser getCurrentAacUser() {
         //从认证信息上下文中 获取用户权限
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
