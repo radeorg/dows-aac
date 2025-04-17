@@ -21,10 +21,18 @@ public class OpenidAuthenticationProvider implements AuthenticationProvider {
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         OpenidAuthenticationToken authenticationToken = (OpenidAuthenticationToken) authentication;
-        //根据手机号（Principal）去查用户信息
-        UserDetails userDetails = userDetailsServiceHandler.loadUserByUsername((String) authentication.getPrincipal());
+
+        LoginRequest loginRequest =  (LoginRequest) authentication.getDetails();
+        //查询账号标识
+        UserDetails userDetails = userDetailsServiceHandler.loadUserByIdentifierName(loginRequest);
+        if(userDetails != null){
+            return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+        }
+        //
+        userDetails = userDetailsServiceHandler.loadUserByUsername((String) authentication.getPrincipal());
         if (userDetails == null) {
-            userDetailsServiceHandler.newRegister(authentication.getName(), "", (LoginRequest) authentication.getDetails());
+            //LoginRequest loginRequest =  (LoginRequest) authentication.getDetails();
+            userDetailsServiceHandler.newRegister(authentication.getName(), "",loginRequest);
             // todo 从新查询一次，此时查询不到
             userDetails = userDetailsServiceHandler.loadUserByUsername(authentication.getName());
             return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());

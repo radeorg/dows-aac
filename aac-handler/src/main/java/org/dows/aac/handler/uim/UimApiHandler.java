@@ -89,11 +89,11 @@ public class UimApiHandler {
         return orgApi.getRootOrgListByAccountInstanceId(accountInstanceId);
     }
 
-    public Long addAccountIdentifierWithOpenid(OpenidResponse thirdPartyOpenidForBindingAccount,
+    public AccountIdentifierResponse getAccountIdentifierWithOpenid(OpenidResponse thirdPartyOpenidForBindingAccount,
                                                ThirdPartyPreRegisterRequest thirdPartyPreRegisterRequest) {
         if (Objects.nonNull(thirdPartyOpenidForBindingAccount)) {
             String openid = thirdPartyOpenidForBindingAccount.getOpenid();
-            return accountApi.addAccountIdentifier(openid, thirdPartyPreRegisterRequest.getIdentifierType());
+            return accountApi.saveAccountIdentifier(openid, thirdPartyPreRegisterRequest.getIdentifierType());
         }
         return null;
     }
@@ -101,31 +101,36 @@ public class UimApiHandler {
     /**
      * 关联openid和accountInstanceId，根据手机号码查询accountInstanceId，并绑定到当前用户openid账号标识
      *
-     * @param accountIdentifierId
+     * @param accountIdentifierResponse
      * @param getTelephoneResponse
      * @param thirdPartyPreRegisterRequest
      */
-    public void relevancyAccountInstanceIdForOpenid(Long accountIdentifierId, GetTelephoneResponse getTelephoneResponse,
+    public void relevancyAccountInstanceIdForOpenid(AccountIdentifierResponse accountIdentifierResponse, GetTelephoneResponse getTelephoneResponse,
                                                     ThirdPartyPreRegisterRequest thirdPartyPreRegisterRequest) {
 
         if (Objects.nonNull(getTelephoneResponse)) {
             FindAccountIdentifierRequest findAccountIdentifierRequest = new FindAccountIdentifierRequest();
             findAccountIdentifierRequest.setIdentifierType(IdentifierType.PHONE);
             findAccountIdentifierRequest.setIdentifier(getTelephoneResponse.getPhone_info().getPurePhoneNumber());
-//            findAccountIdentifierRequest.setAppId();
-//            findAccountIdentifierRequest.setState();
             AccountIdentifierResponse accountIdentifier = accountApi.getAccountIdentifier(findAccountIdentifierRequest);
             if (accountIdentifier != null) {
-                //getTelephoneResponse.getPhone_info().getPhoneNumber(),thirdPartyPreRegisterRequest.getAppId()
                 RelevancyAccountInstanceIdForOpenidByTelephoneRequest relevancyAccountInstanceIdByTelephoneRequest =
                         new RelevancyAccountInstanceIdForOpenidByTelephoneRequest();
-                relevancyAccountInstanceIdByTelephoneRequest.setAccountIdentifierId(accountIdentifierId);
+                relevancyAccountInstanceIdByTelephoneRequest.setAccountIdentifierId(accountIdentifierResponse.getAccountIdentifierId());
                 relevancyAccountInstanceIdByTelephoneRequest.setAccountInstanceId(accountIdentifier.getAccountInstanceId());
-                relevancyAccountInstanceIdByTelephoneRequest.setIdentifier(getTelephoneResponse.getPhone_info().getPurePhoneNumber());
-                relevancyAccountInstanceIdByTelephoneRequest.setIdentifierType(IdentifierType.PHONE);
+                relevancyAccountInstanceIdByTelephoneRequest.setIdentifier(accountIdentifierResponse.getIdentifier());
+                relevancyAccountInstanceIdByTelephoneRequest.setIdentifierType(thirdPartyPreRegisterRequest.getIdentifierType());
                 accountApi.relevancyAccountInstanceIdForOpenidByTelephone(relevancyAccountInstanceIdByTelephoneRequest);
             }
         }
 
+    }
+
+    public AccountIdentifierResponse getAccountIdentifier(String appId, String identifier, IdentifierType identifierType) {
+        FindAccountIdentifierRequest findAccountIdentifierRequest  = new FindAccountIdentifierRequest();
+        findAccountIdentifierRequest.setIdentifierType(identifierType);
+        findAccountIdentifierRequest.setIdentifier(identifier);
+        findAccountIdentifierRequest.setAppId(appId);
+        return accountApi.getAccountIdentifier(findAccountIdentifierRequest);
     }
 }

@@ -25,5 +25,7 @@ public class LoginRequest implements Serializable {
     // 应用ID
     @JsonIgnore
     private String appId;
+    @JsonIgnore
+    private String openid;
 
 }

@@ -10,6 +10,7 @@ import org.dows.aac.request.LoginRequest;
 import org.dows.rade.context.AppContext;
 import org.dows.rbac.model.RoleResourceResponse;
 import org.dows.rbac.response.RbacUriResponse;
+import org.dows.uim.response.AccountIdentifierResponse;
 import org.dows.uim.response.AccountInstanceResponse;
 import org.dows.uim.response.RootOrgResponse;
 import org.springframework.security.core.GrantedAuthority;
@@ -134,9 +135,28 @@ public class UserDetailsServiceHandler implements UserDetailsService {
         return defaultAacUser;
     }
 
+    public UserDetails loadUserByIdentifierName(LoginRequest loginRequest) {
+        if (StrUtil.isBlank(loginRequest.getIdentifier())) {
+            throw new UsernameNotFoundException("不存在账号标识为空的账号");
+        }
+        log.info("根据账号标识:{}查询账号信息", loginRequest.getIdentifier());
+        String appId = AppContext.getAppId();
+        AccountIdentifierResponse accountIdentifierResponse = uimApiHandler
+                .getAccountIdentifier(appId, loginRequest.getIdentifier(), loginRequest.getIdentifierType());
+        if (null == accountIdentifierResponse) {
+            log.info("账号标识不存在");
+            return null;
+        }
+        //把权限放入用户对象中
+        return new DefaultAacUser(accountIdentifierResponse.getAccountInstanceId(),
+                accountIdentifierResponse.getIdentifier(), "", List.of(), null, false);
+    }
+
     @Transactional
     public void newRegister(String name, String encode, LoginRequest loginRequest) {
         uimApiHandler.newRegister(name, encode, loginRequest);
     }
+
+
 }
 

@@ -3,6 +3,7 @@ package org.dows.aac.api;
 import jakarta.servlet.http.HttpServletRequest;
 import org.dows.aac.request.LoginRequest;
 import org.dows.aac.response.LoginResponse;
+import org.dows.rade.constant.IdentifierType;
 
 public interface LoginApi {
     /**
@@ -21,5 +22,5 @@ public interface LoginApi {
      */
     void logout(String id);
 
-    LoginResponse openIdLogin(String openid);
+    LoginResponse openIdLogin(String openid, IdentifierType identifierType);
 }

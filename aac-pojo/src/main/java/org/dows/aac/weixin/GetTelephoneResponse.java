@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class GetTelephoneResponse {
     //	number	错误码
-    private String errcode;
+    private Integer errcode;
     //string	错误信息
     private String errmsg;
     //object	用户手机号信息

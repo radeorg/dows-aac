@@ -19,6 +19,7 @@ import org.dows.aac.response.ThirdPartyAccreditResponse;
 import org.dows.aac.weixin.GetTelephoneResponse;
 import org.dows.aac.weixin.OpenidResponse;
 import org.dows.aac.yml.AacProperties;
+import org.dows.uim.response.AccountIdentifierResponse;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -103,32 +104,34 @@ public class AuthRest implements AacApi {
     @Operation(summary = "伯乐小程序登录(第三方授权授权匹配模式登录系统)")
     public LoginResponse boleLogin(@RequestBody ThirdPartyPreRegisterRequest thirdPartyPreRegisterRequest,
                                    HttpServletRequest httpServletRequest) {
-
         // 获取openid,并新增accountIdentifier
         OpenidResponse thirdPartyOpenid = thirdPartyHandler
                 .getThirdPartyOpenid(thirdPartyPreRegisterRequest);
-        // 为accountIdentifier表新增openid标识
-        Long accountIdentifierId = uimApiHandler
-                .addAccountIdentifierWithOpenid(thirdPartyOpenid, thirdPartyPreRegisterRequest);
-        // 判断是否已经绑定过手机号，没有绑定过手机号，则新增accountIdentifier表，有绑定过则直接登录
-        if (thirdPartyPreRegisterRequest.getCodeForData() == null) {
+        // 获取accountIdentifierId，即为accountIdentifier表新增openid标识，如果存在则直接返回accountIdentifierId，没有则新增
+        AccountIdentifierResponse accountIdentifierResponse = uimApiHandler
+                .getAccountIdentifierWithOpenid(thirdPartyOpenid, thirdPartyPreRegisterRequest);
+        // 验证绑定状态，即判断是否已经绑定过手机号，没有绑定过手机号，则新增accountIdentifier表，有绑定过则直接放行
+        if (accountIdentifierResponse == null) {
             LoginResponse loginResponse = new LoginResponse();
             loginResponse.setState(null);
             return loginResponse;
         }
-        // 使用openid登录
-        LoginResponse loginResponse = loginApi.openIdLogin(thirdPartyOpenid.getOpenid());
-        // 判断绑定状态，是否绑定过手机号，如果没有绑定过手机号，则绑定手机号
-        if (loginResponse.getState() == null) {
+        if (accountIdentifierResponse.getAccountInstanceId() == null) {
             // 获取手机号
             GetTelephoneResponse getTelephoneResponse = thirdPartyHandler
                     .getThirdPartyTelephone(thirdPartyPreRegisterRequest);
-            // 根据手机号关联openid和accountInstanceId
-            uimApiHandler.relevancyAccountInstanceIdForOpenid(accountIdentifierId,
+
+            // 通过手机关联openid和accountInstanceId
+            uimApiHandler.relevancyAccountInstanceIdForOpenid(accountIdentifierResponse,
                     getTelephoneResponse, thirdPartyPreRegisterRequest);
+
         }
-        // 已绑定过手机号,直接返回
-        return loginResponse;
+        LoginRequest loginRequest = new LoginRequest();
+        loginRequest.setIdentifierType(thirdPartyPreRegisterRequest.getIdentifierType());
+        loginRequest.setIdentifier(thirdPartyOpenid.getOpenid());
+        loginRequest.setOpenid(thirdPartyOpenid.getOpenid());
+        // 使用openid登录
+        return loginApi.login(loginRequest, httpServletRequest);
     }
 
     /**

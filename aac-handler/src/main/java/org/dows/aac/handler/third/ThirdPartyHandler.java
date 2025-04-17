@@ -32,6 +32,9 @@ public class ThirdPartyHandler {
         // 获取access_token
         ApiHandler tokenHandler = handlerDispatcher
                 .getHandler(thirdPartyPreRegisterRequest.getIdentifierType(), OpenApiEnum.GET_ACCESS_TOKEN);
+        if (tokenHandler == null) {
+            throw new AacException(String.format("暂不支持%s获取信息", thirdPartyPreRegisterRequest.getIdentifierType()));
+        }
         WeixinAccessToken weixinAccessToken = tokenHandler.execute(null, WeixinAccessToken.class);
         if (weixinAccessToken.getErrcode() != null) {
             throw new AacException(weixinAccessToken.getErrmsg());
@@ -42,14 +45,19 @@ public class ThirdPartyHandler {
         // 根据access_token 获取手机号
         ApiHandler handler = handlerDispatcher
                 .getHandler(thirdPartyPreRegisterRequest.getIdentifierType(), OpenApiEnum.GET_TELEPHONE);
+        if (handler == null) {
+            throw new AacException(String.format("暂不支持%s获取信息", thirdPartyPreRegisterRequest.getIdentifierType()));
+        }
         GetTelephoneRequest getTelephoneRequest = new GetTelephoneRequest();
         getTelephoneRequest.setCode(thirdPartyPreRegisterRequest.getCodeForData());
         getTelephoneRequest.setAccess_token(weixinAccessToken.getAccess_token());
         GetTelephoneResponse getTelephoneResponse = handler.execute(getTelephoneRequest, GetTelephoneResponse.class);
-        if (getTelephoneResponse.getErrcode() != null) {
+        if (getTelephoneResponse.getErrcode() != 0) {
             if (!this.aacSettings.getLoginSetting().isTest()) {
-                throw new AacException(String.format("获取微信信息绑定账号失败,错误码:%s,错误信息:%s",
-                        getTelephoneResponse.getErrcode(), getTelephoneResponse.getErrmsg()));
+                String logStr = String.format("获取微信信息绑定账号失败,错误码:%s,错误信息:%s",
+                        getTelephoneResponse.getErrcode(), getTelephoneResponse.getErrmsg());
+                log.error(logStr);
+                throw new AacException(logStr);
             }
             GetTelephoneResponse.PhoneInfo phoneInfo = new GetTelephoneResponse.PhoneInfo();
             String telephone = thirdPartyPreRegisterRequest.getMockTelephone();
@@ -77,6 +85,9 @@ public class ThirdPartyHandler {
     public OpenidResponse getThirdPartyOpenid(ThirdPartyPreRegisterRequest thirdPartyPreRegisterRequest) {
         ApiHandler handler = handlerDispatcher
                 .getHandler(thirdPartyPreRegisterRequest.getIdentifierType(), OpenApiEnum.GET_OPENID);
+        if (handler == null) {
+            throw new AacException(String.format("暂不支持%s获取openid", thirdPartyPreRegisterRequest.getIdentifierType()));
+        }
         OpenidResponse openidResponse = handler.execute(thirdPartyPreRegisterRequest.getCodeForOpenid(), OpenidResponse.class);
         if (StrUtil.isBlank(openidResponse.getOpenid())) {
             log.error("hub获取openid失败:{}", openidResponse.getErrmsg());

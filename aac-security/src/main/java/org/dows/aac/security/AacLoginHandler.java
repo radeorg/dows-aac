@@ -71,20 +71,22 @@ public class AacLoginHandler implements LoginApi {
             authenticationToken = new UsernamePasswordAuthenticationToken(loginRequest.getIdentifier(), loginRequest.getPassword());
         } else if (loginRequest.getIdentifierType() == IdentifierType.PHONE) {// phone
             authenticationToken = new PhoneCodeAuthenticationToken(loginRequest.getIdentifier(), loginRequest.getPassword());
-        } else { // openid
-            ApiHandler handler = handlerDispatcher.getHandler(loginRequest.getIdentifierType(), OpenApiEnum.GET_OPENID);
-            OpenidResponse openidResponse = handler.execute(loginRequest.getVerifyCode(), OpenidResponse.class);
-            if (StrUtil.isBlank(openidResponse.getOpenid())) {
-                //return null;
-                log.info("微信登录失败:{}", openidResponse.getErrmsg());
-                if (aacProperties.getLoginSetting().isTest()) {
-                    openidResponse.setOpenid(loginRequest.getIdentifier());
-                } else {
-                    throw new AacException(String.format("微信登录失败:%s", openidResponse.getErrmsg()));
+        } else {
+            if(StrUtil.isBlank(loginRequest.getOpenid())) { // openid
+                ApiHandler handler = handlerDispatcher.getHandler(loginRequest.getIdentifierType(), OpenApiEnum.GET_OPENID);
+                OpenidResponse openidResponse = handler.execute(loginRequest.getVerifyCode(), OpenidResponse.class);
+                if (StrUtil.isBlank(openidResponse.getOpenid())) {
+                    //return null;
+                    log.info("微信登录失败:{}", openidResponse.getErrmsg());
+                    if (aacProperties.getLoginSetting().isTest()) {
+                        openidResponse.setOpenid(loginRequest.getIdentifier());
+                    } else {
+                        throw new AacException(String.format("微信登录失败:%s", openidResponse.getErrmsg()));
+                    }
                 }
+                // 填充openid 为identifier
+                loginRequest.setIdentifier(openidResponse.getOpenid());
             }
-            // 填充openid 为identifier
-            loginRequest.setIdentifier(openidResponse.getOpenid());
             authenticationToken = new OpenidAuthenticationToken(loginRequest.getIdentifier(), loginRequest.getPassword());
         }
         authenticationToken.setDetails(loginRequest);
@@ -103,14 +105,18 @@ public class AacLoginHandler implements LoginApi {
     }
 
     @Override
-    public LoginResponse openIdLogin(String openid) {
+    public LoginResponse openIdLogin(String openid, IdentifierType identifierType) {
         // TODO openid登录
         // 根据openid查询用户信息
         AbstractAuthenticationToken authenticationToken= new OpenidAuthenticationToken(openid);
+        LoginRequest loginRequest = new LoginRequest();
+        loginRequest.setIdentifierType(identifierType);
+        loginRequest.setIdentifier(openid);
+        authenticationToken.setDetails(loginRequest);
         //进行登录 获取认证信息
         Authentication authenticate = authenticationManager.authenticate(authenticationToken);
         if (authenticate == null) {
-            throw new UsernameNotFoundException("登录失败");
+            throw new UsernameNotFoundException("校验失败");
         }
         if (aacProperties.getLoginSetting().getType().equalsIgnoreCase("single")) {
             return singleToken(openid, authenticate);
