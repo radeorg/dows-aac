@@ -117,14 +117,19 @@ public class AuthRest implements AacApi {
             return loginResponse;
         }
         if (accountIdentifierResponse.getAccountInstanceId() == null) {
-            // 获取手机号
-            GetTelephoneResponse getTelephoneResponse = thirdPartyHandler
-                    .getThirdPartyTelephone(thirdPartyPreRegisterRequest);
+            if(thirdPartyPreRegisterRequest.getCodeForData() != null) {
+                // 获取手机号
+                GetTelephoneResponse getTelephoneResponse = thirdPartyHandler
+                        .getThirdPartyTelephone(thirdPartyPreRegisterRequest);
 
-            // 通过手机关联openid和accountInstanceId
-            uimApiHandler.relevancyAccountInstanceIdForOpenid(accountIdentifierResponse,
-                    getTelephoneResponse, thirdPartyPreRegisterRequest);
-
+                // 通过手机关联openid和accountInstanceId
+                uimApiHandler.relevancyAccountInstanceIdForOpenid(accountIdentifierResponse,
+                        getTelephoneResponse, thirdPartyPreRegisterRequest);
+            } else {
+                LoginResponse loginResponse = new LoginResponse();
+                loginResponse.setState(null);
+                return loginResponse;
+            }
         }
         LoginRequest loginRequest = new LoginRequest();
         loginRequest.setIdentifierType(thirdPartyPreRegisterRequest.getIdentifierType());
