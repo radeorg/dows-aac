@@ -131,6 +131,11 @@ public class UimApiHandler {
         findAccountIdentifierRequest.setIdentifierType(identifierType);
         findAccountIdentifierRequest.setIdentifier(identifier);
         findAccountIdentifierRequest.setAppId(appId);
+        //accountApi.getAccountByTelephone()
         return accountApi.getAccountIdentifier(findAccountIdentifierRequest);
+    }
+
+    public AccountInstanceResponse getAccountInstanceById(Long accountInstanceId) {
+        return accountApi.getAccountInstanceById(accountInstanceId);
     }
 }

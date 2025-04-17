@@ -24,7 +24,7 @@ public class OpenidAuthenticationProvider implements AuthenticationProvider {
 
         LoginRequest loginRequest =  (LoginRequest) authentication.getDetails();
         //查询账号标识
-        UserDetails userDetails = userDetailsServiceHandler.loadUserByIdentifierName(loginRequest);
+        UserDetails userDetails = userDetailsServiceHandler.loadUserByOpenId(loginRequest);
         if(userDetails != null){
             return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
         }
