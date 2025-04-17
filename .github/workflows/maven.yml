@@ -30,7 +30,7 @@ jobs:
         id: cfl
         # app_branch=dows-uim:dev-1.0.250330:
         run: |
-          echo "commit=$(git log -1 --pretty=%B)" >> $GITHUB_OUTPUT
+          echo "commit=$(git log -1 --pretty=%B | tr -d '\n')" >> $GITHUB_OUTPUT
           if ${{ github.event_name == 'pull_request' }}; then
             echo "changed_files=$(git diff --name-only -r HEAD^1 HEAD | xargs)" >> $GITHUB_OUTPUT
           else
