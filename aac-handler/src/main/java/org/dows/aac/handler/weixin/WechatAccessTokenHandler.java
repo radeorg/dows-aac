@@ -46,8 +46,8 @@ public class WechatAccessTokenHandler extends AbstractWeixinHandler implements A
             String uri = String.format(URL, openSetting.getThirdAppId(), openSetting.getSecret());
             String response = HttpUtil.get(uri);
             // todo 转为对应的对象处理
-            WeixinAccessToken wxAccessToken = (WeixinAccessToken) JSONUtil.toBean(response, outputClass);
-            radeCache.set(appId + ":access_token", wxAccessToken, (long) wxAccessToken.getExpires_in());
+            weixinAccessToken = (WeixinAccessToken) JSONUtil.toBean(response, outputClass);
+            radeCache.set(appId + ":access_token", weixinAccessToken, (long) weixinAccessToken.getExpires_in());
         }
         return (T) weixinAccessToken;
     }
