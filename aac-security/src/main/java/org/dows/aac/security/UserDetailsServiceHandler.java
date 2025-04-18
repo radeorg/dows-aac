@@ -172,7 +172,7 @@ public class UserDetailsServiceHandler implements UserDetailsService {
                                 defaultAacUser.setOrgRootId(orgRootIdResponse.get(0).getRootOrgId()));
             }
             // 设置账号标识类型
-            defaultAacUser.setIdentifierType(accountInstanceResponse.getIdentifierType().getType());
+            defaultAacUser.setIdentifierType(accountIdentifierResponse.getIdentifierType());
             // 设置账号类型 @org.dows.uim.constant.AccountType
             defaultAacUser.setAccountTypes(accountTypes);
             // 设置手机号
