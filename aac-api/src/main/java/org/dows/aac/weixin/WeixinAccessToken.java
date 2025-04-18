@@ -2,8 +2,10 @@ package org.dows.aac.weixin;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
-public class WeixinAccessToken {
+public class WeixinAccessToken implements Serializable {
     //string	获取到的凭证
     private String access_token;
     //number	凭证有效时间，单位：秒。目前是 7200 秒之内的值。
