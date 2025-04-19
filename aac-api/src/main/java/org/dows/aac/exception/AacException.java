@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.dows.aac.constant.AuthStatusCode;
 import org.dows.rade.exception.RadeException;
+import org.dows.rade.status.CommonStatusCode;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -19,11 +20,7 @@ public class AacException extends RadeException {
     }
 
     public AacException(String msg) {
-        super(msg);
-    }
-
-    public AacException(String msg, Throwable e) {
-        super(msg, e);
+        super(Integer.valueOf(CommonStatusCode.FAILED.getCode()), msg);
     }
 
 
