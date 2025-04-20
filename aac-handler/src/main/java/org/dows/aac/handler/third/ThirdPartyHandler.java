@@ -37,7 +37,8 @@ public class ThirdPartyHandler implements ThirdPartyApi {
         if (tokenHandler == null) {
             throw new AacException(String.format("暂不支持%s获取信息", thirdPartyPreRegisterRequest.getIdentifierType()));
         }
-        WeixinAccessToken weixinAccessToken = tokenHandler.execute(null, WeixinAccessToken.class);
+        GetAccessTokenRequest getAccessTokenRequest = new GetAccessTokenRequest();
+        WeixinAccessToken weixinAccessToken = tokenHandler.execute(getAccessTokenRequest, WeixinAccessToken.class);
         if (weixinAccessToken.getErrcode() != null) {
             throw new AacException(weixinAccessToken.getErrmsg());
         }
