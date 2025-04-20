@@ -90,7 +90,7 @@ public class UimApiHandler {
     }
 
     public AccountIdentifierResponse getAccountIdentifierWithOpenid(OpenidResponse thirdPartyOpenidForBindingAccount,
-                                               ThirdPartyPreRegisterRequest thirdPartyPreRegisterRequest) {
+                                                                    ThirdPartyPreRegisterRequest thirdPartyPreRegisterRequest) {
         if (Objects.nonNull(thirdPartyOpenidForBindingAccount)) {
             String openid = thirdPartyOpenidForBindingAccount.getOpenid();
             return accountApi.saveAccountIdentifier(openid, thirdPartyPreRegisterRequest.getIdentifierType());
@@ -113,7 +113,13 @@ public class UimApiHandler {
             findAccountIdentifierRequest.setIdentifierType(IdentifierType.PHONE);
             findAccountIdentifierRequest.setIdentifier(getTelephoneResponse.getPhone_info().getPurePhoneNumber());
             AccountIdentifierResponse accountIdentifier = accountApi.getAccountIdentifier(findAccountIdentifierRequest);
-            if (accountIdentifier != null) {
+            // 如果账号不存在，创建并绑定
+            if (accountIdentifier == null) {
+                AccountInstanceRequest accountInstanceRequest = new AccountInstanceRequest();
+                accountInstanceRequest.setIdentifierType(IdentifierType.PHONE.getType());
+                accountInstanceRequest.setIdentifier(getTelephoneResponse.getPhone_info().getPurePhoneNumber());
+                accountApi.getAccountWithRegister(accountInstanceRequest);
+            } else {
                 RelevancyAccountInstanceIdForOpenidByTelephoneRequest relevancyAccountInstanceIdByTelephoneRequest =
                         new RelevancyAccountInstanceIdForOpenidByTelephoneRequest();
                 relevancyAccountInstanceIdByTelephoneRequest.setAccountIdentifierId(accountIdentifierResponse.getAccountIdentifierId());
@@ -127,7 +133,7 @@ public class UimApiHandler {
     }
 
     public AccountIdentifierResponse getAccountIdentifier(String appId, String identifier, IdentifierType identifierType) {
-        FindAccountIdentifierRequest findAccountIdentifierRequest  = new FindAccountIdentifierRequest();
+        FindAccountIdentifierRequest findAccountIdentifierRequest = new FindAccountIdentifierRequest();
         findAccountIdentifierRequest.setIdentifierType(identifierType);
         findAccountIdentifierRequest.setIdentifier(identifier);
         findAccountIdentifierRequest.setAppId(appId);
