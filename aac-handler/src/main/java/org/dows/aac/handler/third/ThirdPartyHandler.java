@@ -5,9 +5,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dows.aac.AacSettings;
 import org.dows.aac.api.ApiHandler;
+import org.dows.aac.api.ThirdPartyApi;
 import org.dows.aac.constant.OpenApiEnum;
 import org.dows.aac.exception.AacException;
 import org.dows.aac.handler.HandlerDispatcher;
+import org.dows.aac.request.GetAccessTokenRequest;
 import org.dows.aac.request.ThirdPartyPreRegisterRequest;
 import org.dows.aac.weixin.GetTelephoneRequest;
 import org.dows.aac.weixin.GetTelephoneResponse;
@@ -18,7 +20,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class ThirdPartyHandler {
+public class ThirdPartyHandler implements ThirdPartyApi {
     private final AacSettings aacSettings;
     private final HandlerDispatcher handlerDispatcher;
 
@@ -98,5 +100,15 @@ public class ThirdPartyHandler {
             }
         }
         return openidResponse;
+    }
+
+    @Override
+    public WeixinAccessToken getAccessToken(GetAccessTokenRequest getAccessTokenReqeust) {
+        ApiHandler handler = handlerDispatcher
+                .getHandler(getAccessTokenReqeust.getIdentifierType(), OpenApiEnum.GET_ACCESS_TOKEN);
+        if (handler != null) {
+            return handler.execute(getAccessTokenReqeust, WeixinAccessToken.class);
+        }
+        throw new AacException(String.format("暂不支持%s获取access_token", getAccessTokenReqeust.getIdentifierType()));
     }
 }
