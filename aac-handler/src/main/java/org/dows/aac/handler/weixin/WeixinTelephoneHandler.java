@@ -48,7 +48,7 @@ public class WeixinTelephoneHandler extends AbstractWeixinHandler implements Api
     @Override
     public <T> T execute(Object input, Class<T> outputClass) {
         //Object in = processInputs(input);
-        verifyOpenSettingByCurrentAppId();
+        //verifyOpenSettingByCurrentAppId();
         GetTelephoneRequest in = (GetTelephoneRequest) input;
         String uri = String.format(URL, in.getAccess_token());
         Map<String, Object> params = new HashMap<>();

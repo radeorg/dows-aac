@@ -8,11 +8,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.dows.aac.api.ApiHandler;
 import org.dows.aac.api.ApiMapping;
 import org.dows.aac.constant.OpenApiEnum;
+import org.dows.aac.request.GetAccessTokenRequest;
 import org.dows.aac.weixin.WeixinAccessToken;
 import org.dows.aac.yml.OpenSetting;
 import org.dows.rade.cache.RadeCache;
 import org.dows.rade.constant.OpenChannel;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
@@ -32,17 +32,20 @@ public class WechatAccessTokenHandler extends AbstractWeixinHandler implements A
     private static long expireTime;
 
 
-    @Value("${spring.application.appId}")
-    private String appId;
+    /*@Value("${spring.application.appId}")
+    private String appId;*/
 
     private static final String URL = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s";
 
     @Override
     public <T> T execute(Object inputs, Class<T> outputClass) {
+        // 最好判断一下
+        GetAccessTokenRequest getAccessTokenRequest = (GetAccessTokenRequest) inputs;
+        String appId = getAccessTokenRequest.getAppId();
         //String appId = AppContext.getAppId();
         WeixinAccessToken weixinAccessToken = radeCache.get(appId + ":wx_access_token", WeixinAccessToken.class);
         if (weixinAccessToken == null) {
-            OpenSetting openSetting = verifyOpenSettingByCurrentAppId();
+            OpenSetting openSetting = verifyOpenSettingByCurrentAppId(appId);
             String uri = String.format(URL, openSetting.getThirdAppId(), openSetting.getSecret());
             String response = HttpUtil.get(uri);
             // todo 转为对应的对象处理

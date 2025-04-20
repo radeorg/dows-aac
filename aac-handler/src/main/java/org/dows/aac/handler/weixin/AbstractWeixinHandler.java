@@ -4,7 +4,6 @@ import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 import org.dows.aac.AacSettings;
 import org.dows.aac.yml.OpenSetting;
-import org.dows.rade.context.AppContext;
 
 import java.util.HashMap;
 import java.util.List;
@@ -28,8 +27,8 @@ public abstract class AbstractWeixinHandler {
     }
 
 
-    protected OpenSetting verifyOpenSettingByCurrentAppId() {
-        OpenSetting openSetting = openSettingMap.get(AppContext.getAppId());
+    protected OpenSetting verifyOpenSettingByCurrentAppId(String appId) {
+        OpenSetting openSetting = openSettingMap.get(appId);
         if (openSetting == null) {
             throw new RuntimeException("未找到对应的appId");
         }
