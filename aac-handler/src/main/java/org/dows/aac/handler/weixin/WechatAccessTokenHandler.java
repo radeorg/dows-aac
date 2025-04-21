@@ -1,5 +1,6 @@
 package org.dows.aac.handler.weixin;
 
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
@@ -13,6 +14,7 @@ import org.dows.aac.weixin.WeixinAccessToken;
 import org.dows.aac.yml.OpenSetting;
 import org.dows.rade.cache.RadeCache;
 import org.dows.rade.constant.OpenChannel;
+import org.dows.rade.context.AppContext;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
@@ -42,6 +44,9 @@ public class WechatAccessTokenHandler extends AbstractWeixinHandler implements A
         // 最好判断一下
         GetAccessTokenRequest getAccessTokenRequest = (GetAccessTokenRequest) inputs;
         String appId = getAccessTokenRequest.getAppId();
+        if(StrUtil.isBlank(appId)){
+            appId = AppContext.getAppId();
+        }
         //String appId = AppContext.getAppId();
         WeixinAccessToken weixinAccessToken = radeCache.get(appId + ":wx_access_token", WeixinAccessToken.class);
         if (weixinAccessToken == null) {
