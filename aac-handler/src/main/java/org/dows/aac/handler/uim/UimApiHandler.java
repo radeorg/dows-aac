@@ -62,7 +62,7 @@ public class UimApiHandler {
         accountInstanceRequest.setIdentifierType(loginRequest.getIdentifierType().getType());
         accountInstanceRequest.setAppId(loginRequest.getAppId());
         accountInstanceRequest.setZoneNo(loginRequest.getZoneNo());
-        accountInstanceRequest.setPhone(name);
+        accountInstanceRequest.setTelephone(name);
         accountInstanceRequest.setAvatar(loginRequest.getAvator());
         accountInstanceRequest.setSource(loginRequest.getSource());
         accountInstanceRequest.setReferralsNo(loginRequest.getReferralsNo());
@@ -118,6 +118,7 @@ public class UimApiHandler {
             if (accountIdentifier == null) {
                 AccountInstanceRequest accountInstanceRequest = new AccountInstanceRequest();
                 accountInstanceRequest.setIdentifierType(IdentifierType.PHONE.getType());
+                accountInstanceRequest.setTelephone(getTelephoneResponse.getPhone_info().getPurePhoneNumber());
                 accountInstanceRequest.setIdentifier(getTelephoneResponse.getPhone_info().getPurePhoneNumber());
                 accountInstanceId = accountApi.getAccountWithRegister(accountInstanceRequest);
             } else {
