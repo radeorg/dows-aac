@@ -33,7 +33,6 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -70,11 +69,7 @@ public class AacAuthenticationConfig {
 
     private final RbacApi rbacApi;
 
-    //密码加密
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+    private final PasswordEncoder passwordEncoder;
 
 
     //安全过滤器链
@@ -199,7 +194,7 @@ public class AacAuthenticationConfig {
         //AacCellphoneCodeAuthenticationProvider mobilePhoneVerificationCodeProvider = new AacCellphoneCodeAuthenticationProvider();
         //mobilePhoneVerificationCodeProvider.setUserDetailsService(userDetailsServiceHandler);
         UsernamePasswordAuthenticationProvider usernamePasswordAuthenticationProvider =
-                new UsernamePasswordAuthenticationProvider(userDetailsServiceHandler, passwordEncoder());
+                new UsernamePasswordAuthenticationProvider(userDetailsServiceHandler, passwordEncoder);
         CellphoneCodeAuthenticationProvider cellphoneCodeAuthenticationProvider =
                 new CellphoneCodeAuthenticationProvider(userDetailsServiceHandler);
         OpenidAuthenticationProvider openidAuthenticationProvider =
