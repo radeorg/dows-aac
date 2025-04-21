@@ -5,7 +5,6 @@ import cn.hutool.jwt.JWTUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.dows.rade.aac.AacUser;
 import org.dows.aac.api.ApiHandler;
 import org.dows.aac.api.LoginApi;
 import org.dows.aac.constant.AuthKey;
@@ -15,9 +14,9 @@ import org.dows.aac.handler.HandlerDispatcher;
 import org.dows.aac.request.LoginRequest;
 import org.dows.aac.response.LoginResponse;
 import org.dows.aac.security.token.OpenidAuthenticationToken;
-import org.dows.aac.security.token.PhoneCodeAuthenticationToken;
 import org.dows.aac.weixin.OpenidResponse;
 import org.dows.aac.yml.AacProperties;
+import org.dows.rade.aac.AacUser;
 import org.dows.rade.cache.RadeCache;
 import org.dows.rade.constant.IdentifierType;
 import org.dows.rbac.constant.CacheKeyEnum;
@@ -73,7 +72,8 @@ public class AacLoginHandler implements LoginApi {
             // 邮箱和账号密码一样登录
             authenticationToken = new UsernamePasswordAuthenticationToken(loginRequest.getIdentifier(), loginRequest.getPassword());
         } else if (loginRequest.getIdentifierType() == IdentifierType.PHONE) {// phone
-            authenticationToken = new PhoneCodeAuthenticationToken(loginRequest.getIdentifier(), loginRequest.getPassword());
+            authenticationToken = new UsernamePasswordAuthenticationToken(loginRequest.getIdentifier(), loginRequest.getPassword());
+            //authenticationToken = new PhoneCodeAuthenticationToken(loginRequest.getIdentifier(), loginRequest.getPassword());
         } else {
             // 如果openid 是空，曾创新并新增
             if (StrUtil.isBlank(loginRequest.getOpenid())) { // openid
