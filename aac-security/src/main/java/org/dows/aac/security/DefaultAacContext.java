@@ -1,9 +1,9 @@
 package org.dows.aac.security;
 
 import lombok.extern.slf4j.Slf4j;
-import org.dows.aac.api.AacContext;
-import org.dows.aac.api.AacUser;
 import org.dows.aac.exception.AacException;
+import org.dows.rade.aac.AacContext;
+import org.dows.rade.aac.AacUser;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;

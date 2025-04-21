@@ -6,7 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dows.aac.api.AacApi;
-import org.dows.aac.api.AacUser;
+import org.dows.rade.aac.AacUser;
 import org.dows.aac.api.LoginApi;
 import org.dows.aac.handler.third.ThirdPartyHandler;
 import org.dows.aac.handler.uim.UimApiHandler;

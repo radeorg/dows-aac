@@ -2,7 +2,7 @@ package org.dows.aac.security;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.dows.aac.api.AacUser;
+import org.dows.rade.aac.AacUser;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;

@@ -2,6 +2,7 @@ package org.dows.aac.api;
 
 
 import org.dows.aac.request.SyncAccountPermissionRequest;
+import org.dows.rade.aac.AacUser;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 

@@ -3,7 +3,7 @@ package org.dows.aac.security;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dows.aac.AacSettings;
-import org.dows.aac.api.AacUser;
+import org.dows.rade.aac.AacUser;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;

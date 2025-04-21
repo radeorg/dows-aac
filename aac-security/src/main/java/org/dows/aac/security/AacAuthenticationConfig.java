@@ -4,7 +4,7 @@ import cn.hutool.core.collection.CollectionUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dows.aac.AacSettings;
-import org.dows.aac.api.AacUser;
+import org.dows.rade.aac.AacUser;
 import org.dows.aac.constant.AuthStatusCode;
 import org.dows.aac.security.endpoint.AacUnauthorizedEntryPoint;
 import org.dows.aac.security.filter.HandlerExceptionResolverFilter;

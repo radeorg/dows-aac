@@ -2,7 +2,7 @@ package org.dows.aac.handler.uim;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.dows.aac.api.AacUser;
+import org.dows.rade.aac.AacUser;
 import org.dows.aac.request.LoginRequest;
 import org.dows.aac.request.ThirdPartyPreRegisterRequest;
 import org.dows.aac.weixin.GetTelephoneResponse;
