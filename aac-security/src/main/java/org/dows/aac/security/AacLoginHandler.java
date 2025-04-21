@@ -44,7 +44,7 @@ public class AacLoginHandler implements LoginApi {
     //认证管理器
     private final AuthenticationManager authenticationManager;
     private final RadeCache radeCache;
-//    private final AacSettings aacSettings;
+    //    private final AacSettings aacSettings;
     private final HandlerDispatcher handlerDispatcher;
     private final AacProperties aacProperties;
 
@@ -69,10 +69,14 @@ public class AacLoginHandler implements LoginApi {
         if (loginRequest.getIdentifierType() == IdentifierType.ACCOUNT) {// account
             //根据账号和密码 创建 认证令牌对象
             authenticationToken = new UsernamePasswordAuthenticationToken(loginRequest.getIdentifier(), loginRequest.getPassword());
+        } else if (loginRequest.getIdentifierType() == IdentifierType.EMAIL) {
+            // 邮箱和账号密码一样登录
+            authenticationToken = new UsernamePasswordAuthenticationToken(loginRequest.getIdentifier(), loginRequest.getPassword());
         } else if (loginRequest.getIdentifierType() == IdentifierType.PHONE) {// phone
             authenticationToken = new PhoneCodeAuthenticationToken(loginRequest.getIdentifier(), loginRequest.getPassword());
         } else {
-            if(StrUtil.isBlank(loginRequest.getOpenid())) { // openid
+            // 如果openid 是空，曾创新并新增
+            if (StrUtil.isBlank(loginRequest.getOpenid())) { // openid
                 ApiHandler handler = handlerDispatcher.getHandler(loginRequest.getIdentifierType(), OpenApiEnum.GET_OPENID);
                 OpenidResponse openidResponse = handler.execute(loginRequest.getVerifyCode(), OpenidResponse.class);
                 if (StrUtil.isBlank(openidResponse.getOpenid())) {
@@ -87,6 +91,7 @@ public class AacLoginHandler implements LoginApi {
                 // 填充openid 为identifier
                 loginRequest.setIdentifier(openidResponse.getOpenid());
             }
+            //直接使用openid登录，不需要密码验证
             authenticationToken = new OpenidAuthenticationToken(loginRequest.getIdentifier(), loginRequest.getPassword());
         }
         authenticationToken.setDetails(loginRequest);
@@ -104,11 +109,10 @@ public class AacLoginHandler implements LoginApi {
         throw new AuthenticationServiceException("登录失败");
     }
 
-    @Override
     public LoginResponse openIdLogin(String openid, IdentifierType identifierType) {
         // TODO openid登录
         // 根据openid查询用户信息
-        AbstractAuthenticationToken authenticationToken= new OpenidAuthenticationToken(openid);
+        AbstractAuthenticationToken authenticationToken = new OpenidAuthenticationToken(openid);
         LoginRequest loginRequest = new LoginRequest();
         loginRequest.setIdentifierType(identifierType);
         loginRequest.setIdentifier(openid);

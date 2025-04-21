@@ -113,21 +113,24 @@ public class UimApiHandler {
             findAccountIdentifierRequest.setIdentifierType(IdentifierType.PHONE);
             findAccountIdentifierRequest.setIdentifier(getTelephoneResponse.getPhone_info().getPurePhoneNumber());
             AccountIdentifierResponse accountIdentifier = accountApi.getAccountIdentifier(findAccountIdentifierRequest);
-            // 如果账号不存在，创建并绑定
+            Long accountInstanceId = null;
+            // 如果账号不存在，创建账号实例及账号标识
             if (accountIdentifier == null) {
                 AccountInstanceRequest accountInstanceRequest = new AccountInstanceRequest();
                 accountInstanceRequest.setIdentifierType(IdentifierType.PHONE.getType());
                 accountInstanceRequest.setIdentifier(getTelephoneResponse.getPhone_info().getPurePhoneNumber());
-                accountApi.getAccountWithRegister(accountInstanceRequest);
+                accountInstanceId = accountApi.getAccountWithRegister(accountInstanceRequest);
             } else {
-                RelevancyAccountInstanceIdForOpenidByTelephoneRequest relevancyAccountInstanceIdByTelephoneRequest =
-                        new RelevancyAccountInstanceIdForOpenidByTelephoneRequest();
-                relevancyAccountInstanceIdByTelephoneRequest.setAccountIdentifierId(accountIdentifierResponse.getAccountIdentifierId());
-                relevancyAccountInstanceIdByTelephoneRequest.setAccountInstanceId(accountIdentifier.getAccountInstanceId());
-                relevancyAccountInstanceIdByTelephoneRequest.setIdentifier(accountIdentifierResponse.getIdentifier());
-                relevancyAccountInstanceIdByTelephoneRequest.setIdentifierType(thirdPartyPreRegisterRequest.getIdentifierType());
-                accountApi.relevancyAccountInstanceIdForOpenidByTelephone(relevancyAccountInstanceIdByTelephoneRequest);
+                accountInstanceId = accountIdentifier.getAccountInstanceId();
             }
+            RelevancyAccountInstanceIdForOpenidByTelephoneRequest relevancyAccountInstanceIdByTelephoneRequest =
+                    new RelevancyAccountInstanceIdForOpenidByTelephoneRequest();
+            relevancyAccountInstanceIdByTelephoneRequest.setAccountIdentifierId(accountIdentifierResponse.getAccountIdentifierId());
+            relevancyAccountInstanceIdByTelephoneRequest.setAccountInstanceId(accountInstanceId);
+            relevancyAccountInstanceIdByTelephoneRequest.setIdentifier(accountIdentifierResponse.getIdentifier());
+            relevancyAccountInstanceIdByTelephoneRequest.setIdentifierType(thirdPartyPreRegisterRequest.getIdentifierType());
+            accountApi.relevancyAccountInstanceIdForOpenidByTelephone(relevancyAccountInstanceIdByTelephoneRequest);
+
         }
 
     }
