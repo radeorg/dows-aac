@@ -62,7 +62,9 @@ public class UimApiHandler {
         accountInstanceRequest.setIdentifierType(loginRequest.getIdentifierType().getType());
         accountInstanceRequest.setAppId(loginRequest.getAppId());
         accountInstanceRequest.setZoneNo(loginRequest.getZoneNo());
-        accountInstanceRequest.setTelephone(name);
+        if(loginRequest.getIdentifierType()==IdentifierType.PHONE) {
+            accountInstanceRequest.setTelephone(loginRequest.getIdentifier());
+        }
         accountInstanceRequest.setAvatar(loginRequest.getAvator());
         accountInstanceRequest.setSource(loginRequest.getSource());
         accountInstanceRequest.setReferralsNo(loginRequest.getReferralsNo());

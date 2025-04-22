@@ -6,7 +6,6 @@ import org.dows.aac.request.LoginRequest;
 import org.dows.aac.security.UserDetailsServiceHandler;
 import org.dows.aac.security.token.OpenidAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,17 +24,12 @@ public class OpenidAuthenticationProvider implements AuthenticationProvider {
         LoginRequest loginRequest =  (LoginRequest) authentication.getDetails();
         //查询账号标识
         UserDetails userDetails = userDetailsServiceHandler.loadUserByOpenId(loginRequest);
-        if(userDetails != null){
-            return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
-        }
-        //
-        userDetails = userDetailsServiceHandler.loadUserByUsername((String) authentication.getPrincipal());
-        if (userDetails == null) {
+        if(userDetails == null){
             //LoginRequest loginRequest =  (LoginRequest) authentication.getDetails();
             userDetailsServiceHandler.newRegister(authentication.getName(), "",loginRequest);
-            // todo 从新查询一次，此时查询不到
-            userDetails = userDetailsServiceHandler.loadUserByUsername(authentication.getName());
-            return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+            // todo 从新查询一次，走一遍流程
+            userDetails = userDetailsServiceHandler.loadUserByOpenId(loginRequest);
+            //return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
         }
         /*if (userDetails == null) {
             throw new InternalAuthenticationServiceException("无法获取用户信息");
