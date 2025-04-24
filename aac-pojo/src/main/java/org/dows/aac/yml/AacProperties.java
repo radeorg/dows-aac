@@ -2,6 +2,10 @@ package org.dows.aac.yml;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @description: </br>
@@ -15,9 +19,12 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "dows.aac")
 public class AacProperties {
 
+    @NestedConfigurationProperty
     private LoginSetting loginSetting;
     private String[] whitelist;
+    @NestedConfigurationProperty
     private JwtSetting jwtSetting;
+    private List<String> ralPages = new ArrayList<>();
 
 }
 

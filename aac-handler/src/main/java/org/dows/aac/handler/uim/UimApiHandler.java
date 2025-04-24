@@ -65,7 +65,7 @@ public class UimApiHandler {
         if(loginRequest.getIdentifierType()==IdentifierType.PHONE) {
             accountInstanceRequest.setTelephone(loginRequest.getIdentifier());
         }
-        accountInstanceRequest.setAvatar(loginRequest.getAvator());
+        accountInstanceRequest.setAvatar(loginRequest.getAvatar());
         accountInstanceRequest.setSource(loginRequest.getSource());
         accountInstanceRequest.setReferralsNo(loginRequest.getReferralsNo());
         accountApi.getAccountWithRegister(accountInstanceRequest);

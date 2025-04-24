@@ -1,9 +1,10 @@
 dows:
   aac:
+    ralPages: ""
     loginSetting:
       test: true
       type: single
-      url: /v1/api/aac/login
+      loginUrl: /v1/api/aac/login
     whitelist:
       - /v1/api/aac/login/enable
       - /v1/api/aac/captcha

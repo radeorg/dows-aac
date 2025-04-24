@@ -1,6 +1,7 @@
 package org.dows.aac.security.provider;
 
 import lombok.RequiredArgsConstructor;
+import org.dows.aac.AacSettings;
 import org.dows.aac.request.LoginRequest;
 import org.dows.aac.security.UserDetailsServiceHandler;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -27,7 +28,7 @@ public class UsernamePasswordAuthenticationProvider implements AuthenticationPro
 //    private final AccountApi accountApi;
     private final UserDetailsServiceHandler userDetailsServiceHandler;
     private final PasswordEncoder passwordEncoder;
-
+    private final AacSettings aacSettings;
 
     /**
      * LoginServiceImpl的登录方法点击认证的时候 直接跳转到这里
@@ -43,13 +44,18 @@ public class UsernamePasswordAuthenticationProvider implements AuthenticationPro
         String username = authentication.getName();
         String password = authentication.getCredentials().toString();
         UserDetails userDetails = userDetailsServiceHandler.loadUserByUsername(username);
-        // 如果为空则注册
-        if (userDetails == null) {
-            userDetailsServiceHandler.newRegister(authentication.getName()
-                    ,passwordEncoder.encode(password),(LoginRequest)authentication.getDetails());
-            // todo 从新查询一次，此时查询不到
-            userDetails = userDetailsServiceHandler.loadUserByUsername(username);
-            return new UsernamePasswordAuthenticationToken(userDetails, password, userDetails.getAuthorities());
+        LoginRequest loginRequest= (LoginRequest)authentication.getDetails();
+        String pageNo = loginRequest.getPage();
+        // 如果开启登录即注册的页面
+        if(aacSettings.getRalPages().contains(pageNo)) {
+            // 如果为空则注册
+            if (userDetails == null) {
+                userDetailsServiceHandler.newRegister(authentication.getName()
+                        , passwordEncoder.encode(password), loginRequest);
+                // todo 从新查询一次，此时查询不到
+                userDetails = userDetailsServiceHandler.loadUserByUsername(username);
+                return new UsernamePasswordAuthenticationToken(userDetails, password, userDetails.getAuthorities());
+            }
         }
         //Long accountInstanceId = accountApi.getAccountIdWithRegister(appId, s);
         if (passwordEncoder.matches(password, userDetails.getPassword())) {

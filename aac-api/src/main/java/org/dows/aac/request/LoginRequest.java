@@ -21,7 +21,10 @@ public class LoginRequest implements Serializable {
     private String zoneNo;
     // 推荐码
     private String referralsNo;
-    private String avator;
+    // 头像
+    private String avatar;
+    // 页面
+    private String page;
     // 应用ID
     @JsonIgnore
     private String appId;

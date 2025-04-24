@@ -14,6 +14,7 @@ public interface AacSettings {
 
 
     JwtSetting getJwtSetting();
+
     /**
      * 是否需要登录
      *
@@ -35,7 +36,13 @@ public interface AacSettings {
      */
     String[] getWhitelist();
 
-
+    /**
+     * 获取RAL(注册即登录)页面
+     * @return
+     */
+    default List<String> getRalPages() {
+        return List.of();
+    }
 
 
 }

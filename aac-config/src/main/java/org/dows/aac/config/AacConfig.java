@@ -26,6 +26,14 @@ public class AacConfig implements AacSettings {
     private final OpenProperties openProperties;
 
 
+    /**
+     * 获取注册即登录页面ID或编号
+     * @return
+     */
+    public List<String> getRalPages() {
+        return aacProperties.getRalPages();
+    }
+
     @Override
     public List<OpenSetting> getOpens() {
         return openProperties.getOpens();

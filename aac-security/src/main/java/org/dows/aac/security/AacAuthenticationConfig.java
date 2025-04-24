@@ -194,7 +194,7 @@ public class AacAuthenticationConfig {
         //AacCellphoneCodeAuthenticationProvider mobilePhoneVerificationCodeProvider = new AacCellphoneCodeAuthenticationProvider();
         //mobilePhoneVerificationCodeProvider.setUserDetailsService(userDetailsServiceHandler);
         UsernamePasswordAuthenticationProvider usernamePasswordAuthenticationProvider =
-                new UsernamePasswordAuthenticationProvider(userDetailsServiceHandler, passwordEncoder);
+                new UsernamePasswordAuthenticationProvider(userDetailsServiceHandler, passwordEncoder,aacSettings);
         CellphoneCodeAuthenticationProvider cellphoneCodeAuthenticationProvider =
                 new CellphoneCodeAuthenticationProvider(userDetailsServiceHandler);
         OpenidAuthenticationProvider openidAuthenticationProvider =
