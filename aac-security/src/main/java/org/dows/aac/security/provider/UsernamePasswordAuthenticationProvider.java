@@ -58,11 +58,14 @@ public class UsernamePasswordAuthenticationProvider implements AuthenticationPro
             }
         }
         //Long accountInstanceId = accountApi.getAccountIdWithRegister(appId, s);
+        if (userDetails == null) {
+            throw new BadCredentialsException("账号不存在");
+        }
         if (passwordEncoder.matches(password, userDetails.getPassword())) {
             //因为UsernamePasswordAuthenticationToken的上级父类的父类是Authentication 所以可以直接返回
             return new UsernamePasswordAuthenticationToken(userDetails, password, userDetails.getAuthorities());
         } else {
-            throw new BadCredentialsException("用户名或者密码错误");
+            throw new BadCredentialsException("账号名或者密码错误");
         }
     }
 

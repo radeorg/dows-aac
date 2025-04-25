@@ -6,6 +6,7 @@ import org.dows.aac.request.LoginRequest;
 import org.dows.aac.security.UserDetailsServiceHandler;
 import org.dows.aac.security.token.OpenidAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -31,9 +32,9 @@ public class OpenidAuthenticationProvider implements AuthenticationProvider {
             userDetails = userDetailsServiceHandler.loadUserByOpenId(loginRequest);
             //return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
         }
-        /*if (userDetails == null) {
-            throw new InternalAuthenticationServiceException("无法获取用户信息");
-        }*/
+        if (userDetails == null) {
+            throw new InternalAuthenticationServiceException("OPENID无法获取用户信息");
+        }
         //将认证信息传入进去。
         OpenidAuthenticationToken authenticationResult = new OpenidAuthenticationToken(userDetails, authentication.getCredentials(), userDetails.getAuthorities());
         //将请求的信息传递Token中。
