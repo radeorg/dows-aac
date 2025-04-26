@@ -113,14 +113,17 @@ public class UserDetailsServiceHandler implements UserDetailsService {
             List<RootOrgResponse> orgRootIdResponse = uimApiHandler.getOrgRootId(accountInstanceResponse.getAccountInstanceId());
             if (orgRootIdResponse != null) {
                 // 设置账号所在组织根节点ID
+                RootOrgResponse rootOrgResponse = orgRootIdResponse.get(0);
                 List<Long> orgIds = orgRootIdResponse.stream().map(RootOrgResponse::getOrgRootId).toList();
                 defaultAacUser.setOrgRootIds(orgIds);
                 // 设置默认组织根节点ID
-                orgRootIdResponse.stream()
-                        .filter(on->StrUtil.equals(on.getAppId(),AppContext.getAppId()))
+                /*orgRootIdResponse.stream()
+                        //.filter(on->StrUtil.equals(on.getAppId(),AppContext.getAppId()))
                         .findFirst()
                         .ifPresent(rootOrgResponse ->
-                                defaultAacUser.setOrgRootId(rootOrgResponse.getOrgRootId()));
+                                defaultAacUser.setOrgRootId(rootOrgResponse.getOrgRootId()));*/
+                defaultAacUser.setOrgRootId(rootOrgResponse.getOrgRootId());
+                defaultAacUser.setOrgTreeId(rootOrgResponse.getOrgTreeId());
             }
             // 设置账号标识类型
             defaultAacUser.setIdentifierType(accountInstanceResponse.getIdentifierType().getType());
@@ -162,17 +165,18 @@ public class UserDetailsServiceHandler implements UserDetailsService {
         try {
             // 设置账号所在组织根节点ID及默认组织根节点ID
             List<RootOrgResponse> orgRootIdResponse = uimApiHandler.getOrgRootId(accountInstanceResponse.getAccountInstanceId());
-            // 获取账号类型
-            List<Integer> accountTypes = uimApiHandler.getAccountTypes(accountInstanceResponse.getAccountInstanceId());
             if (orgRootIdResponse != null) {
                 // 设置账号所在组织根节点ID
+                RootOrgResponse rootOrgResponse = orgRootIdResponse.get(0);
                 List<Long> orgIds = orgRootIdResponse.stream().map(RootOrgResponse::getOrgRootId).toList();
                 defaultAacUser.setOrgRootIds(orgIds);
-                // 设置默认组织根节点ID
-                orgRootIdResponse.stream().filter(RootOrgResponse::isDefaultOrg).findFirst()
-                        .ifPresent(rootOrgResponse ->
-                                defaultAacUser.setOrgRootId(orgRootIdResponse.get(0).getOrgRootId()));
+
+                defaultAacUser.setOrgRootId(rootOrgResponse.getOrgRootId());
+                defaultAacUser.setOrgTreeId(rootOrgResponse.getOrgTreeId());
             }
+
+            // 获取账号类型
+            List<Integer> accountTypes = uimApiHandler.getAccountTypes(accountInstanceResponse.getAccountInstanceId());
             // 设置账号标识类型
             defaultAacUser.setIdentifierType(accountIdentifierResponse.getIdentifierType());
             // 设置账号类型 @org.dows.uim.constant.AccountType

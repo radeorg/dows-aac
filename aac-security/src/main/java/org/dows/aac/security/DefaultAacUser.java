@@ -27,6 +27,8 @@ public class DefaultAacUser extends User implements AacUser, UserDetails {
 
     private Long orgRootId;
 
+    private Long orgTreeId;
+
     private Long userId;
 
     private String avatar;
