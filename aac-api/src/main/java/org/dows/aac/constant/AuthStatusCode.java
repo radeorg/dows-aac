@@ -2,7 +2,7 @@ package org.dows.aac.constant;
 
 
 public enum AuthStatusCode  {
-    UNAUTHORIZED("AAC0001", "未认证"),
+    UNAUTHORIZED("401", "未认证"),
     TOKEN_EXPIRED("AAC0002", "token过期"),
     FORBIDDEN("AAC0003", "被禁止");
 

@@ -1,6 +1,7 @@
 package org.dows.aac.security;
 
 import lombok.extern.slf4j.Slf4j;
+import org.dows.aac.constant.AuthStatusCode;
 import org.dows.aac.exception.AacException;
 import org.dows.rade.aac.AacContext;
 import org.dows.rade.aac.AacUser;
@@ -17,7 +18,7 @@ public class DefaultAacContext implements AacContext {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Object principal = authentication.getPrincipal();
         if (principal instanceof String) {
-            throw new AacException("认证失败,当前账号未登录");
+            throw new AacException(AuthStatusCode.UNAUTHORIZED);
         }
         return (AacUser) authentication.getPrincipal();
     }
