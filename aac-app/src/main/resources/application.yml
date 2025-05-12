@@ -6,7 +6,7 @@ spring:
     appId: 1
   profiles:
     include: |
-      mysql,apidoc,aac,captcha,cache,rade,server,open
+      mysql,apidoc,aac,captcha,cache,rade,server,open,feign
     active: dev
 
   web:

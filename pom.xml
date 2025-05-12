@@ -46,6 +46,12 @@
 
             <dependency>
                 <groupId>org.dows.cloud</groupId>
+                <artifactId>uim-feign</artifactId>
+                <version>${uim.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.dows.cloud</groupId>
                 <artifactId>rbac-api</artifactId>
                 <version>${rbac.version}</version>
             </dependency>
