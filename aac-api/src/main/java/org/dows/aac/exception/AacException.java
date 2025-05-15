@@ -11,12 +11,9 @@ import org.dows.rade.status.CommonStatusCode;
 @Data
 public class AacException extends RadeException {
 
-    private AuthStatusCode authStatusCode;
-
 
     public AacException(AuthStatusCode authStatusCode) {
-        super(authStatusCode.getDescribe());
-        this.authStatusCode = authStatusCode;
+        super(authStatusCode);
     }
 
     public AacException(String msg) {
