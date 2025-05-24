@@ -33,7 +33,7 @@ spring:
       on-profile: dev
 
   datasource:
-    url: jdbc:mysql://115.159.24.40:13306/rade?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2b8
+    url: jdbc:mysql://115.159.24.40:13306/dev_rade?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2b8
     username: encrypted$HnOB7XSpPC5NvdV5HYhzAQ==
     password: encrypted$jwBBPVuexU/i22za5nVxCg==
 
