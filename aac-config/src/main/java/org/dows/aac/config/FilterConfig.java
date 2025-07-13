@@ -16,12 +16,19 @@ public class FilterConfig {
 
     private final AacSettings aacSettings;
 
+    //    private final
     @Bean
     public FilterRegistrationBean<AppContextSetupFilter> appIdFilter() {
         FilterRegistrationBean<AppContextSetupFilter> registration = new FilterRegistrationBean<>();
         AppContextSetupFilter appContextSetupFilter = new AppContextSetupFilter();
-        String[] whitelist = aacSettings.getWhitelist();
-        appContextSetupFilter.setWhitelist(whitelist);
+        //String[] whitelist = aacSettings.getWhitelist();
+        //appContextSetupFilter.setWhitelist(whitelist);
+
+        // todo 需要增加tenantApp 映射表
+        /*List<String> appIds =  tenantAppApi.listAppId();
+        for (String appId : appIds) {
+            appContextSetupFilter.syncWhitelistByAppId(appId);
+        }*/
         registration.setFilter(appContextSetupFilter);
         registration.setOrder(Ordered.HIGHEST_PRECEDENCE);  // 高优先级先执行
         return registration;
