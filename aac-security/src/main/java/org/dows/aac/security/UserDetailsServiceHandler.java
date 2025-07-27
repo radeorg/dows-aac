@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.dows.aac.handler.rbac.RbacApiHandler;
 import org.dows.aac.handler.uim.UimApiHandler;
 import org.dows.aac.request.LoginRequest;
-import org.dows.rade.aac.AacContext;
 import org.dows.rade.context.AppContext;
 import org.dows.rbac.model.RoleResourceResponse;
 import org.dows.rbac.response.RbacUriResponse;
@@ -50,7 +49,7 @@ public class UserDetailsServiceHandler implements UserDetailsService {
             throw new UsernameNotFoundException("不存在账号标识为空的账号");
         }
         log.info("根据账号标识:{}查询账号信息", s);
-        /**
+        /*
          * 根据账号标识查询账号信息,此时登录即注册，注册即登录,账号未查到信息可以通过其他账号标识[邮箱，电话]
          *             FindAccountIdentifierRequest findAccountIdentifierRequest = new FindAccountIdentifierRequest();
          *             findAccountIdentifierRequest.setIdentifier(s);
@@ -93,17 +92,12 @@ public class UserDetailsServiceHandler implements UserDetailsService {
             roleIds = uimApiHandler.getAllRoleIds(appId, accountInstanceResponse.getAccountInstanceId());
 
             if(CollectionUtil.isNotEmpty(roleIds)){
-                //for (Long roleId : roleIds) {
                 List<RoleResourceResponse> roleResourceResponses= rbacApiHandler.getUrisByRoleIds(appId, roleIds);
-                    //List<String> authority = rbacApi.getUriCode(Collections.singletonList(roleId));
-                    //Map<String,Object> roleInfo = new HashMap<>();
-                    //roleInfo.put(String.valueOf(roleId),authority);
                 for (RoleResourceResponse rr : roleResourceResponses) {
                     Map<String, Object> roleInfo = new HashMap<>();
                     roleInfo.put(String.valueOf(rr.getRoleId()), rr.getAuthority());
                     grantedAuthorityList.add(new OAuth2UserAuthority(String.valueOf(rr.getRoleId()), roleInfo));
                 }
-                //}
             }
         }
         //把权限放入用户对象中
@@ -159,18 +153,17 @@ public class UserDetailsServiceHandler implements UserDetailsService {
             log.debug("账号标识不存在");
             return null;
         }
-        String appId = accountIdentifierResponse.getAppId();
-        AppContext.setAppId(appId);
         AccountInstanceResponse accountInstanceResponse = uimApiHandler
                 .getAccountInstanceById(accountIdentifierResponse.getAccountInstanceId());
         if (null == accountInstanceResponse) {
             log.debug("账号不存在");
             return null;
         }
+        String appId = accountInstanceResponse.getAppId();
+        AppContext.setAppId(appId);
         //把权限放入用户对象中
         DefaultAacUser defaultAacUser = new DefaultAacUser(accountIdentifierResponse.getAccountInstanceId(),
                 accountIdentifierResponse.getIdentifier(), "", List.of(), null, false);
-        //defaultAacUser.setTelephone(accountInstanceResponse.getTelephone());
         try {
             // 设置账号所在组织根节点ID及默认组织根节点ID
             List<RootOrgResponse> orgRootIdResponse = uimApiHandler.getOrgRootId(accountInstanceResponse.getAccountInstanceId());
@@ -207,7 +200,4 @@ public class UserDetailsServiceHandler implements UserDetailsService {
     public void newRegister(String name, String encode, LoginRequest loginRequest) {
         uimApiHandler.newRegister(name, encode, loginRequest);
     }
-
-
 }
-

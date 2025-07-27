@@ -11,7 +11,6 @@ import org.dows.aac.request.ThirdPartyPreRegisterRequest;
 import org.dows.aac.response.LoginResponse;
 import org.dows.aac.weixin.GetTelephoneResponse;
 import org.dows.aac.weixin.OpenidResponse;
-import org.dows.rade.context.AppContext;
 import org.dows.uim.response.AccountIdentifierResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;

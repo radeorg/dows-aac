@@ -102,10 +102,6 @@ public class UimApiHandler {
 
     /**
      * 关联openid和accountInstanceId，根据手机号码查询accountInstanceId，并绑定到当前用户openid账号标识
-     *
-     * @param accountIdentifierResponse
-     * @param getTelephoneResponse
-     * @param thirdPartyPreRegisterRequest
      */
     public void relevancyAccountInstanceIdForOpenid(AccountIdentifierResponse accountIdentifierResponse, GetTelephoneResponse getTelephoneResponse,
                                                     ThirdPartyPreRegisterRequest thirdPartyPreRegisterRequest) {
@@ -115,7 +111,7 @@ public class UimApiHandler {
             findAccountIdentifierRequest.setIdentifierType(IdentifierType.PHONE);
             findAccountIdentifierRequest.setIdentifier(getTelephoneResponse.getPhone_info().getPurePhoneNumber());
             AccountIdentifierResponse accountIdentifier = accountApi.getAccountIdentifier(findAccountIdentifierRequest);
-            Long accountInstanceId = null;
+            Long accountInstanceId;
             // 如果账号不存在，创建账号实例及账号标识
             if (accountIdentifier == null) {
                 AccountInstanceRequest accountInstanceRequest = new AccountInstanceRequest();
@@ -132,10 +128,9 @@ public class UimApiHandler {
             relevancyAccountInstanceIdByTelephoneRequest.setAccountInstanceId(accountInstanceId);
             relevancyAccountInstanceIdByTelephoneRequest.setIdentifier(accountIdentifierResponse.getIdentifier());
             relevancyAccountInstanceIdByTelephoneRequest.setIdentifierType(thirdPartyPreRegisterRequest.getIdentifierType());
+            relevancyAccountInstanceIdByTelephoneRequest.setAppId(accountIdentifier == null ? "0" : accountIdentifier.getAppId());
             accountApi.relevancyAccountInstanceIdForOpenidByTelephone(relevancyAccountInstanceIdByTelephoneRequest);
-
         }
-
     }
 
     public AccountIdentifierResponse getAccountIdentifier(String identifier, IdentifierType identifierType) {
