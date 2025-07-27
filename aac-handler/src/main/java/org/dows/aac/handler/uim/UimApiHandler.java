@@ -51,8 +51,8 @@ public class UimApiHandler {
     }
 
 
-    public AccountInstanceResponse getAccountInstanceByIdentifier(String appId, String accountName) {
-        return accountApi.getAccountInstanceByIdentifier(appId, accountName);
+    public AccountInstanceResponse getAccountInstanceByIdentifier(String accountName) {
+        return accountApi.getAccountInstanceByIdentifier(accountName);
     }
 
     public void newRegister(String name, String encode, LoginRequest loginRequest) {
@@ -138,12 +138,10 @@ public class UimApiHandler {
 
     }
 
-    public AccountIdentifierResponse getAccountIdentifier(String appId, String identifier, IdentifierType identifierType) {
+    public AccountIdentifierResponse getAccountIdentifier(String identifier, IdentifierType identifierType) {
         FindAccountIdentifierRequest findAccountIdentifierRequest = new FindAccountIdentifierRequest();
         findAccountIdentifierRequest.setIdentifierType(identifierType);
         findAccountIdentifierRequest.setIdentifier(identifier);
-        findAccountIdentifierRequest.setAppId(appId);
-        //accountApi.getAccountByTelephone()
         return accountApi.getAccountIdentifier(findAccountIdentifierRequest);
     }
 

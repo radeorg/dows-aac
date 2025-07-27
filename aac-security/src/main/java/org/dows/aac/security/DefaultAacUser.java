@@ -43,6 +43,9 @@ public class DefaultAacUser extends User implements AacUser, UserDetails {
 
     private Integer identifierType;
 
+    private String appId;
+
+    private String nameSpace;
 
     public DefaultAacUser(Long accountId, String username, String password,
                           Collection<? extends GrantedAuthority> authorities,

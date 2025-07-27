@@ -25,4 +25,7 @@ public class LoginResponse {
 
     @Schema(description = "应用ID")
     private String appId;
+
+    @Schema(description = "组织空间")
+    private String namespace;
 }

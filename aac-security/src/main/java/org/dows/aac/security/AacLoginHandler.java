@@ -62,7 +62,7 @@ public class AacLoginHandler implements LoginApi {
         if (appId != null && appId.isBlank()) {
             throw new AacException("appId不能为空");
         }
-        loginRequest.setAppId(appId);
+//        loginRequest.setAppId(appId);
         AbstractAuthenticationToken authenticationToken = null;
 
         if (loginRequest.getIdentifierType() == IdentifierType.ACCOUNT) {// account
@@ -109,24 +109,24 @@ public class AacLoginHandler implements LoginApi {
         throw new AuthenticationServiceException("登录失败");
     }
 
-    public LoginResponse openIdLogin(String openid, IdentifierType identifierType) {
-        // TODO openid登录
-        // 根据openid查询用户信息
-        AbstractAuthenticationToken authenticationToken = new OpenidAuthenticationToken(openid);
-        LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setIdentifierType(identifierType);
-        loginRequest.setIdentifier(openid);
-        authenticationToken.setDetails(loginRequest);
-        //进行登录 获取认证信息
-        Authentication authenticate = authenticationManager.authenticate(authenticationToken);
-        if (authenticate == null) {
-            throw new UsernameNotFoundException("校验失败");
-        }
-        if (aacProperties.getLoginSetting().getType().equalsIgnoreCase("single")) {
-            return singleToken(openid, authenticate);
-        }
-        return null;
-    }
+//    public LoginResponse openIdLogin(String openid, IdentifierType identifierType) {
+//        // TODO openid登录
+//        // 根据openid查询用户信息
+//        AbstractAuthenticationToken authenticationToken = new OpenidAuthenticationToken(openid);
+//        LoginRequest loginRequest = new LoginRequest();
+//        loginRequest.setIdentifierType(identifierType);
+//        loginRequest.setIdentifier(openid);
+//        authenticationToken.setDetails(loginRequest);
+//        //进行登录 获取认证信息
+//        Authentication authenticate = authenticationManager.authenticate(authenticationToken);
+//        if (authenticate == null) {
+//            throw new UsernameNotFoundException("校验失败");
+//        }
+//        if (aacProperties.getLoginSetting().getType().equalsIgnoreCase("single")) {
+//            return singleToken(openid, authenticate);
+//        }
+//        return null;
+//    }
 
     /**
      * 单体登录
@@ -157,6 +157,8 @@ public class AacLoginHandler implements LoginApi {
         loginResponse.setToken(token);
         loginResponse.setAccountTypes(aacUser.getAccountTypes());
         loginResponse.setIdentifierType(aacUser.getIdentifierType());
+        loginResponse.setAppId(aacUser.getAppId());
+        loginResponse.setNamespace(aacUser.getNameSpace());
         String telephone = aacUser.getTelephone();
         // 手机号存在则说明已经绑定手机号 设置状态1
         if (StrUtil.isNotBlank(telephone)) {
@@ -199,6 +201,8 @@ public class AacLoginHandler implements LoginApi {
 
         LoginResponse response = new LoginResponse();
         response.setToken(token);
+        response.setAppId(aacUser.getAppId());
+        response.setNamespace(aacUser.getNameSpace());
 
         return response;
     }

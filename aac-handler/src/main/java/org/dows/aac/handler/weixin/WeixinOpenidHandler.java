@@ -52,7 +52,8 @@ public class WeixinOpenidHandler extends AbstractWeixinHandler implements ApiHan
     @Override
     public <T> T execute(Object input, Class<T> outputClass) {
         Object in = processInputs(input);
-        OpenSetting openSetting = openSettingMap.get(AppContext.getAppId());
+        // TODO
+        OpenSetting openSetting = openSettingMap.get("1");
         if (openSetting == null) {
             throw new AacException("应用未配置");
         }

@@ -7,9 +7,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.dows.aac.handler.rbac.RbacApiHandler;
 import org.dows.aac.handler.uim.UimApiHandler;
 import org.dows.aac.request.LoginRequest;
+import org.dows.rade.aac.AacContext;
 import org.dows.rade.context.AppContext;
 import org.dows.rbac.model.RoleResourceResponse;
 import org.dows.rbac.response.RbacUriResponse;
+import org.dows.uim.api.TenantAppApi;
 import org.dows.uim.response.AccountIdentifierResponse;
 import org.dows.uim.response.AccountInstanceResponse;
 import org.dows.uim.response.RootOrgResponse;
@@ -37,6 +39,7 @@ import java.util.*;
 public class UserDetailsServiceHandler implements UserDetailsService {
     private final UimApiHandler uimApiHandler;
     private final RbacApiHandler rbacApiHandler;
+    private final TenantAppApi tenantAppApi;
 //    private final AccountApi accountApi;
 //    private final RbacApi rbacApi;
 //    private final AacContext aacContext;
@@ -47,7 +50,6 @@ public class UserDetailsServiceHandler implements UserDetailsService {
             throw new UsernameNotFoundException("不存在账号标识为空的账号");
         }
         log.info("根据账号标识:{}查询账号信息", s);
-        String appId = AppContext.getAppId();
         /**
          * 根据账号标识查询账号信息,此时登录即注册，注册即登录,账号未查到信息可以通过其他账号标识[邮箱，电话]
          *             FindAccountIdentifierRequest findAccountIdentifierRequest = new FindAccountIdentifierRequest();
@@ -67,11 +69,13 @@ public class UserDetailsServiceHandler implements UserDetailsService {
          *                 throw new UsernameNotFoundException("账号不存在");
          *             }
          */
-        AccountInstanceResponse accountInstanceResponse = uimApiHandler.getAccountInstanceByIdentifier(appId, s);
+        AccountInstanceResponse accountInstanceResponse = uimApiHandler.getAccountInstanceByIdentifier(s);
         if (null == accountInstanceResponse) {
             log.info("账号不存在");
             return null;
         }
+        String appId = accountInstanceResponse.getAppId();
+        AppContext.setAppId(appId);
         List<GrantedAuthority> grantedAuthorityList = new ArrayList<>();
         List<Long> roleIds = null;
         // 超管
@@ -133,6 +137,10 @@ public class UserDetailsServiceHandler implements UserDetailsService {
             defaultAacUser.setAccountTypes(accountTypes);
             // 设置手机号
             defaultAacUser.setTelephone(accountInstanceResponse.getTelephone());
+            defaultAacUser.setAppId(appId);
+
+            String namespace = tenantAppApi.getNamespaceByAppId(appId);
+            defaultAacUser.setNameSpace(namespace);
         } catch (Exception e) {
             log.error("获取账号所在组织根节点ID及账号类型失败", e);
         }
@@ -145,13 +153,14 @@ public class UserDetailsServiceHandler implements UserDetailsService {
             throw new UsernameNotFoundException("不存在账号标识为空的账号");
         }
         log.debug("根据账号标识:{}查询账号信息", loginRequest.getIdentifier());
-        String appId = AppContext.getAppId();
         AccountIdentifierResponse accountIdentifierResponse = uimApiHandler
-                .getAccountIdentifier(appId, loginRequest.getIdentifier(), loginRequest.getIdentifierType());
+                .getAccountIdentifier(loginRequest.getIdentifier(), loginRequest.getIdentifierType());
         if (null == accountIdentifierResponse) {
             log.debug("账号标识不存在");
             return null;
         }
+        String appId = accountIdentifierResponse.getAppId();
+        AppContext.setAppId(appId);
         AccountInstanceResponse accountInstanceResponse = uimApiHandler
                 .getAccountInstanceById(accountIdentifierResponse.getAccountInstanceId());
         if (null == accountInstanceResponse) {
@@ -183,6 +192,11 @@ public class UserDetailsServiceHandler implements UserDetailsService {
             defaultAacUser.setAccountTypes(accountTypes);
             // 设置手机号
             defaultAacUser.setTelephone(accountInstanceResponse.getTelephone());
+
+            defaultAacUser.setAppId(appId);
+
+            String namespace = tenantAppApi.getNamespaceByAppId(appId);
+            defaultAacUser.setNameSpace(namespace);
         } catch (Exception e) {
             log.error("获取账号所在组织根节点ID及账号类型失败", e);
         }
