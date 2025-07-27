@@ -3,6 +3,7 @@ package org.dows.aac.security;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dows.aac.AacSettings;
+import org.dows.uim.api.TenantAppApi;
 import org.dows.aac.constant.AuthStatusCode;
 import org.dows.aac.exception.AacException;
 import org.dows.rade.aac.AacContext;
@@ -16,7 +17,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class DefaultAacContext implements AacContext {
 
-    //private final TentantAppApi tentantAppApi;
+    private final TenantAppApi tenantAppApi;
 
     private final AacSettings aacSettings;
     @Override
@@ -29,11 +30,8 @@ public class DefaultAacContext implements AacContext {
         return (AacUser) authentication.getPrincipal();
     }
 
-
     public String getAppIdByNamespace(String namespace) {
-        String appId = null;//tentantAppApi.getAppIdByNamespace(namespace);
-        return appId;
-
+        return tenantAppApi.getAppIdByNamespace(namespace);
     }
 
     public String[] getWhitelist(String appId) {

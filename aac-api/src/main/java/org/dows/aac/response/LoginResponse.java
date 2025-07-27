@@ -22,4 +22,7 @@ public class LoginResponse {
     Integer identifierType;
 
     private Long accountIdentifierId;
+
+    @Schema(description = "应用ID")
+    private String appId;
 }
