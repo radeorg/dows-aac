@@ -43,7 +43,8 @@ public class WechatAccessTokenHandler extends AbstractWeixinHandler implements A
     public <T> T execute(Object inputs, Class<T> outputClass) {
         // 最好判断一下
         GetAccessTokenRequest getAccessTokenRequest = (GetAccessTokenRequest) inputs;
-        String appId = getAccessTokenRequest.getAppId();
+        // TODO
+        String appId = "1";//getAccessTokenRequest.getAppId();
         if(StrUtil.isBlank(appId)){
             appId = AppContext.getAppId();
         }
